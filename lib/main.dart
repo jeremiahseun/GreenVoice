@@ -4,8 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greenvoice/routes/app_router.dart';
 import 'package:greenvoice/utils/helpers/locator.dart';
 
+import 'firebase_options.dart';
+
 void main() async {
-    await Firebase.initializeApp(
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const ProviderScope(child: GreenVoice()));
