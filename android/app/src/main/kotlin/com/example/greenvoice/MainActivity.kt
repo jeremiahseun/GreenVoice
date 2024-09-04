@@ -1,4 +1,4 @@
-package com.example.greenvoice
+package com.greenvoice.app
 
 import io.flutter.embedding.android.FlutterActivity
 
