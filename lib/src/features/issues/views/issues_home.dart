@@ -1,5 +1,6 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:greenvoice/src/features/issues/views/add_issue.dart';
 import 'package:greenvoice/src/features/issues/widgets/category_tabs.dart';
 import 'package:greenvoice/src/features/issues/widgets/issue_card.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
@@ -41,6 +42,7 @@ class _IssuesScreenState extends State<IssuesScreen> {
                 ),
               ),
             ],
+            
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 'Issues',
@@ -133,9 +135,12 @@ class _IssuesScreenState extends State<IssuesScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          setState(() {
-            isExtended = !isExtended;
-          });
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ReportIssueScreen(),
+            ),
+          );
         },
         isExtended: isExtended,
         label: Text(
