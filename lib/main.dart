@@ -1,8 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:greenvoice/routes/app_router.dart';
 import 'package:greenvoice/utils/helpers/locator.dart';
+import 'package:greenvoice/utils/styles/styles.dart';
 
 import 'firebase_options.dart';
 
@@ -14,6 +17,7 @@ void main() async {
   runApp(const ProviderScope(child: GreenVoice()));
 
   await setupLocator();
+  Animate.restartOnHotReload = true;
 }
 
 class GreenVoice extends StatelessWidget {
@@ -28,7 +32,17 @@ class GreenVoice extends StatelessWidget {
       routerDelegate: greenVoice.routerDelegate,
       debugShowCheckedModeBanner: false,
       title: 'GreenVoice',
-      theme: ThemeData(),
+      theme: ThemeData(
+        colorScheme: const ColorScheme.light(
+          primary: AppColors.primaryColor),
+          progressIndicatorTheme: const ProgressIndicatorThemeData(
+            color: AppColors.primaryColor),
+          textTheme: GoogleFonts.publicSansTextTheme(),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              textStyle: GoogleFonts.publicSans(),
+            ),
+          )),
     );
   }
 }
