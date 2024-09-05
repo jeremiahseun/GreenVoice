@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "870660907182",
+    "project_id": "greenvoiceapp",
+    "storage_bucket": "greenvoiceapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:870660907182:android:0340cfe22f5aa962354d3f",
+        "android_client_info": {
+          "package_name": "com.greenvoice.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAknludzskRhMbcNlsbgs4VCUxu3ja5Qvg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
