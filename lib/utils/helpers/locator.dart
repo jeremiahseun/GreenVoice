@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import 'package:greenvoice/routes/app_router.dart';
+import 'package:greenvoice/utils/constants/exports.dart';
 
 final GetIt locator = GetIt.instance;
 

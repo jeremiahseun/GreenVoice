@@ -14,6 +14,7 @@ class FirebaseAuthService {
     required String password,
     required String firstName,
     required String lastName,
+    required String phoneNumber,
   }) async {
     try {
       final credential = await _auth.createUserWithEmailAndPassword(
