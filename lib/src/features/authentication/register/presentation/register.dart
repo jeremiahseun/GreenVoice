@@ -1,4 +1,3 @@
-
 import 'package:greenvoice/src/services/providers.dart';
 import 'package:greenvoice/utils/components/phone_textfield.dart';
 
@@ -106,14 +105,14 @@ class _RegisterState extends ConsumerState<Register> {
               ),
               const Gap(20),
               CustomTextField(
-                  labelText: 'Password',
+                  labelText: 'Enter Password',
                   hintText: '******************',
                   obsureText: true,
                   controller: passwordController,
                   keyboardType: TextInputType.emailAddress),
               const Gap(20),
               CustomTextField(
-                  labelText: 'Password',
+                  labelText: 'Re-Enter Password',
                   hintText: '******************',
                   obsureText: true,
                   controller: confirmController,
@@ -132,12 +131,14 @@ class _RegisterState extends ConsumerState<Register> {
                 },
                 isFilledButton: true,
               ),
-              RichTextWidget(
-                ontap: () {
-                  context.push(NavigateToPage.login);
-                },
-                text: 'Already have an account? ',
-                subText: 'Login',
+              Center(
+                child: RichTextWidget(
+                  ontap: () {
+                    context.push(NavigateToPage.login);
+                  },
+                  text: 'Already have an account? ',
+                  subText: 'Login',
+                ),
               ),
             ],
           )),

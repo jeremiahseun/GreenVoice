@@ -13,21 +13,19 @@ class RichTextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: IconButton(
-        onPressed: ontap,
-        icon: Text.rich(
-          TextSpan(
-            text: text,
-            style: AppStyles.blackNormal14,
-            children: <TextSpan>[
-              TextSpan(
-                text: subText,
-                style: AppStyles.blackNormal14
-                    .copyWith(color: AppColors.primaryColor),
-              ),
-            ],
-          ),
+    return IconButton(
+      onPressed: ontap,
+      icon: Text.rich(
+        TextSpan(
+          text: text,
+          style: AppStyles.blackNormal14,
+          children: <TextSpan>[
+            TextSpan(
+              text: subText,
+              style:
+                  AppStyles.blackBold14.copyWith(color: AppColors.primaryColor),
+            ),
+          ],
         ),
       ),
     );
