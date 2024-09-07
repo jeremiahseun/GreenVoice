@@ -48,7 +48,7 @@ class _LoginState extends ConsumerState<Login> {
                 subText: 'Forgot Password?',
               ),
             ),
-            const Gap(50),
+            const Gap(40),
             CustomButton(
               text: 'Login',
               isBigButton: true,
