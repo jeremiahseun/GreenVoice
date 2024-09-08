@@ -1,13 +1,13 @@
 import 'package:greenvoice/utils/constants/exports.dart';
 
-class Forgotpassword extends ConsumerStatefulWidget {
-  const Forgotpassword({super.key});
+class ForgotPasswordView extends ConsumerStatefulWidget {
+  const ForgotPasswordView({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _ForgotpasswordState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _ForgotPasswordState();
 }
 
-class _ForgotpasswordState extends ConsumerState<Forgotpassword> {
+class _ForgotPasswordState extends ConsumerState<ForgotPasswordView> {
   @override
   Widget build(BuildContext context) {
     return DefaultScaffold(

@@ -1,8 +1,8 @@
-import 'package:greenvoice/routes/app_router.dart';
+import 'package:greenvoice/core/routes/app_router.dart';
 import 'package:greenvoice/src/features/issues/views/issue_description.dart';
 import 'package:greenvoice/src/features/issues/views/issues_home.dart';
 import 'package:greenvoice/src/models/user/issue/issue_model.dart';
-import 'package:greenvoice/utils/helpers/locator.dart';
+import 'package:greenvoice/core/locator.dart';
 
 export 'package:go_router/go_router.dart';
 
