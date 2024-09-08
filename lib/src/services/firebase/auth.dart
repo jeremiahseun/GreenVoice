@@ -9,7 +9,7 @@ class FirebaseAuthService {
     return _auth.authStateChanges();
   }
 
-  Future<(bool status, String message, UserCredential? user)> createUser({
+  Future<(bool status, String message, UserCredential? user)> registerUser({
     required String email,
     required String password,
     required String firstName,
@@ -21,7 +21,6 @@ class FirebaseAuthService {
         email: email,
         password: password,
       );
-
       await credential.user?.updateDisplayName('$firstName $lastName');
       return (true, "User created", credential);
     } on FirebaseAuthException catch (e) {

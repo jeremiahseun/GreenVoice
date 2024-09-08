@@ -26,7 +26,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             return const SplashScreen(); // Replace with your home screen
           } else {
             // User is not logged in
-            return const Login(); // Replace with your login screen
+            return const LoginScreen(); // Replace with your login screen
           }
         } else {
           // Still waiting for authentication state

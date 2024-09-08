@@ -4,6 +4,7 @@ class UserModel {
   final String? firstName;
   final String? lastName;
   final String? photo;
+  final String? phoneNumber;
 
   UserModel({
     required this.uid,
@@ -11,6 +12,7 @@ class UserModel {
     this.firstName,
     this.lastName,
     this.photo,
+    this.phoneNumber
   });
 
   factory UserModel.fromMap(Map<String, dynamic>? map) {
@@ -20,6 +22,7 @@ class UserModel {
       firstName: map?['firstName'] ?? "",
       lastName: map?['lastName'] ?? "",
       photo: map?['photo'] ?? "",
+      phoneNumber: map?['phoneNumber'] ?? "",
     );
   }
 
@@ -30,6 +33,7 @@ class UserModel {
       'firstName': firstName,
       'lastName': lastName,
       'photo': photo,
+      'phoneNumber':phoneNumber
     };
   }
 }

@@ -24,6 +24,7 @@ class PhoneField extends StatelessWidget {
         ),
         const Gap(5),
         IntlPhoneField(
+            style: AppStyles.blackNormal14,
             pickerDialogStyle: PickerDialogStyle(
               backgroundColor: AppColors.whiteColor,
               searchFieldCursorColor: AppColors.blackColor,
@@ -32,7 +33,6 @@ class PhoneField extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   borderSide: const BorderSide(color: AppColors.greyColor),
                 ),
-                hintText: 'Search Country',
                 focusedBorder: const UnderlineInputBorder(
                   borderSide: BorderSide(color: AppColors.blackColor),
                 ),
@@ -44,6 +44,7 @@ class PhoneField extends StatelessWidget {
             showCountryFlag: false,
             showDropdownIcon: true,
             decoration: InputDecoration(
+              hintText: '01234454664*',
               contentPadding: const EdgeInsets.all(10),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),

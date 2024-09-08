@@ -11,11 +11,11 @@ import 'package:greenvoice/utils/constants/exports.dart';
 class GreenVoiceRoutes {
   final greenVoiceRouter = GoRouter(debugLogDiagnostics: true, routes: [
     GoRoute(
-      path: '/',
-      builder: (context, state) => const Login(),
+      path: AppRoutes.login,
+      builder: (context, state) => const LoginScreen(),
     ),
     GoRoute(
-      path: AppRoutes.register,
+      path: '/',
       builder: (context, state) => const Register(),
     ),
     GoRoute(
