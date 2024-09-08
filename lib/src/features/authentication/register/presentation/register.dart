@@ -1,12 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
-
-
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greenvoice/src/services/providers.dart';
-import 'package:greenvoice/utils/components/custom_toast.dart';
-import 'package:greenvoice/utils/components/phone_textfield.dart';
+import 'package:greenvoice/utils/common_widgets/phone_textfield.dart';
+import 'package:greenvoice/utils/common_widgets/snackbar_message.dart';
 import 'package:greenvoice/utils/constants/exports.dart';
 import 'package:greenvoice/utils/helpers/enums.dart';
 
@@ -185,9 +181,8 @@ class _RegisterState extends ConsumerState<Register> {
                     isBigButton: true,
                     onTap: () async {
                       if (passwordController.text != confirmController.text) {
-                        CustomToast().showCustomToast(
+                        SnackbarMessage.showError(
                             message: 'Passwords do not match',
-                            isError: true,
                             context: context);
                         return;
                       }
@@ -202,10 +197,10 @@ class _RegisterState extends ConsumerState<Register> {
                                 phoneNumber: phoneNumber);
 
                         if (registerUser == true) {
-                          CustomToast().showCustomToast(
+                          SnackbarMessage.showSuccess(
                               message: 'Account created successfully',
-                              isError: false,
                               context: context);
+
                           Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -213,10 +208,8 @@ class _RegisterState extends ConsumerState<Register> {
                           //   context.push(NavigateToPage.login);
                         } else if (regsisterState.loadingState ==
                             LoadingState.error) {
-                          CustomToast().showCustomToast(
-                              message: 'Registration Failed',
-                              isError: false,
-                              context: context);
+                          SnackbarMessage.showError(
+                              message: 'Registration Failed', context: context);
                           return;
                         }
                       }

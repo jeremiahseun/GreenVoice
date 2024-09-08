@@ -3,7 +3,7 @@
 import 'package:greenvoice/src/features/authentication/forgotPassword/forgot_password.dart';
 import 'package:greenvoice/src/features/issues/views/issues_home.dart';
 import 'package:greenvoice/src/services/providers.dart';
-import 'package:greenvoice/utils/components/custom_toast.dart';
+import 'package:greenvoice/utils/common_widgets/snackbar_message.dart';
 import 'package:greenvoice/utils/constants/exports.dart';
 import 'package:greenvoice/utils/helpers/enums.dart';
 
@@ -106,10 +106,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               email: emailController.text,
                               password: passwordController.text);
                       if (loginUser == true) {
-                        CustomToast().showCustomToast(
-                            message: 'login successful',
-                            isError: false,
-                            context: context);
+                        SnackbarMessage.showSuccess(
+                            context: context, message: 'Login successful');
                         Navigator.push(
                             context,
                             MaterialPageRoute(
