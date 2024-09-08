@@ -1,20 +1,23 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:developer';
 
-import 'package:greenvoice/src/services/firebase/firestore.dart';
-import 'package:greenvoice/utils/constants/exports.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:greenvoice/src/services/firebase/firebase.dart';
 import 'package:greenvoice/utils/helpers/enums.dart';
+import 'package:greenvoice/utils/helpers/greenvoice_notifier.dart';
 
-class LoginScreenNotifier extends StateNotifier<LoginScreenState> {
-  LoginScreenNotifier(
-      {required this.firebaseFirestoreService,
-      required this.firebaseAuthService})
-      : super(LoginScreenState());
+final loginNotifierProvider =
+    ChangeNotifierProvider.autoDispose((ref) => LoginScreenNotifier());
 
-  final FirebaseAuthService firebaseAuthService;
-  final FirebaseFirestoreService firebaseFirestoreService;
-  obscurePassword() {
-    state = state.copyWith(isSelected: !state.isSelected);
+class LoginScreenNotifier extends GreenVoiceNotifier {
+  final FirebaseAuthService firebaseAuthService = FirebaseAuthService();
+  final FirebaseFirestoreService firebaseFirestoreService =
+      FirebaseFirestoreService();
+  bool isObscurePassword = false;
+
+  void obscurePassword() {
+    isObscurePassword = !isObscurePassword;
+    notifyListeners();
   }
 
   Future<bool> loginGreenVoiceUser({
@@ -22,12 +25,13 @@ class LoginScreenNotifier extends StateNotifier<LoginScreenState> {
     required String password,
   }) async {
     log('Triggering code');
+    startLoading();
     try {
-      state = state.copyWith(loadingState: LoadingState.loading);
       final registerUser = await firebaseAuthService.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+      stopLoading();
 
       if (registerUser.$1 == true) {
         log(' Sign IN successful');
@@ -37,7 +41,7 @@ class LoginScreenNotifier extends StateNotifier<LoginScreenState> {
       return true;
     } catch (e) {
       log('Something went wrong $e');
-      state = state.copyWith(loadingState: LoadingState.error);
+      stopLoading();
       return false;
     }
   }

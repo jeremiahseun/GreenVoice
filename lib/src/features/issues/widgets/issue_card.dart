@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:greenvoice/routes/app_router.dart';
+import 'package:greenvoice/core/routes/app_router.dart';
 import 'package:greenvoice/src/features/issues/views/issue_description.dart';
 import 'package:greenvoice/src/models/user/issue/issue_model.dart';
 

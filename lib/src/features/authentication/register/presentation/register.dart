@@ -6,14 +6,14 @@ import 'package:greenvoice/utils/common_widgets/snackbar_message.dart';
 import 'package:greenvoice/utils/constants/exports.dart';
 import 'package:greenvoice/utils/helpers/enums.dart';
 
-class Register extends ConsumerStatefulWidget {
-  const Register({super.key});
+class RegisterView extends ConsumerStatefulWidget {
+  const RegisterView({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _RegisterState();
 }
 
-class _RegisterState extends ConsumerState<Register> {
+class _RegisterState extends ConsumerState<RegisterView> {
   String phoneNumber = '';
 
   final nameController = TextEditingController();
@@ -204,7 +204,7 @@ class _RegisterState extends ConsumerState<Register> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const LoginScreen()));
+                                  builder: (context) => const LoginView()));
                           //   context.push(NavigateToPage.login);
                         } else if (regsisterState.loadingState ==
                             LoadingState.error) {
@@ -223,7 +223,7 @@ class _RegisterState extends ConsumerState<Register> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const LoginScreen()));
+                                builder: (context) => const LoginView()));
                       },
                       text: 'Already have an account? ',
                       subText: 'Login',

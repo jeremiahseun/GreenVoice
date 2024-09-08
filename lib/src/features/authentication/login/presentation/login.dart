@@ -1,28 +1,28 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:greenvoice/src/features/authentication/forgotPassword/forgot_password.dart';
+import 'package:greenvoice/src/features/authentication/forgot_password/forgot_password.dart';
+import 'package:greenvoice/src/features/authentication/login/data/login_notifier.dart';
 import 'package:greenvoice/src/features/issues/views/issues_home.dart';
 import 'package:greenvoice/src/services/providers.dart';
 import 'package:greenvoice/utils/common_widgets/snackbar_message.dart';
 import 'package:greenvoice/utils/constants/exports.dart';
-import 'package:greenvoice/utils/helpers/enums.dart';
 
-class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+class LoginView extends ConsumerStatefulWidget {
+  const LoginView({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginView> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    final loginState = ref.watch(loginNotifier);
+    final loginState = ref.watch(loginNotifierProvider);
     return DefaultScaffold(
-      isBusy: loginState.loadingState == LoadingState.loading ? true : false,
+      isBusy: loginState.isLoading ? true : false,
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -55,22 +55,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const Gap(20),
                 CustomTextField(
                   suffixIcon: InkWell(
-                    onTap: () {
-                      ref.read(loginNotifier.notifier).obscurePassword();
-                    },
-                    child: loginState.isSelected
-                        ? const Icon(
-                            Icons.visibility,
-                            color: AppColors.greyColor,
-                          )
-                        : const Icon(
-                            Icons.visibility_off,
-                            color: AppColors.greyColor,
-                          ),
-                  ),
+                      onTap: ref.read(loginNotifier.notifier).obscurePassword,
+                      child: Visibility(
+                        visible: loginState.isObscurePassword,
+                        replacement: const Icon(
+                          Icons.visibility,
+                          color: AppColors.greyColor,
+                        ),
+                        child: const Icon(
+                          Icons.visibility_off,
+                          color: AppColors.greyColor,
+                        ),
+                      )),
                   labelText: 'Password',
                   hintText: '******************',
-                  obsureText: loginState.isSelected,
+                  obsureText: loginState.isObscurePassword,
                   controller: passwordController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -88,7 +87,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const Forgotpassword()));
+                              builder: (context) =>
+                                  const ForgotPasswordView()));
                     },
                     text: '',
                     subText: 'Forgot Password?',
@@ -101,10 +101,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   onTap: () async {
                     if (formKey.currentState!.validate()) {
                       final loginUser = await ref
-                          .read(loginNotifier.notifier)
+                          .read(loginNotifierProvider)
                           .loginGreenVoiceUser(
-                              email: emailController.text,
-                              password: passwordController.text);
+                              email: emailController.text.trim(),
+                              password: passwordController.text.trim());
                       if (loginUser == true) {
                         SnackbarMessage.showSuccess(
                             context: context, message: 'Login successful');
