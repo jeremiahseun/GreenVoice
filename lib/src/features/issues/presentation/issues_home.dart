@@ -1,18 +1,18 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:greenvoice/src/features/issues/views/add_issue.dart';
+import 'package:greenvoice/src/features/issues/presentation/add_issue.dart';
 import 'package:greenvoice/src/features/issues/widgets/category_tabs.dart';
 import 'package:greenvoice/src/features/issues/widgets/issue_card.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 
-class IssuesScreen extends StatefulWidget {
-  const IssuesScreen({super.key});
+class IssuesView extends StatefulWidget {
+  const IssuesView({super.key});
 
   @override
-  _IssuesScreenState createState() => _IssuesScreenState();
+  _IssuesViewState createState() => _IssuesViewState();
 }
 
-class _IssuesScreenState extends State<IssuesScreen> {
+class _IssuesViewState extends State<IssuesView> {
   bool isExtended = true;
   late ScrollController _scrollController;
 
