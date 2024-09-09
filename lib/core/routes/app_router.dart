@@ -90,6 +90,10 @@ class GreenVoiceRoutes {
               path: AppRoutes.profile,
               builder: (context, state) => const ProfileView(),
               routes: const []),
+          GoRoute(
+            path: AppRoutes.projectDetails,
+            builder: (context, state) => ProjectDetailsScreen(),
+          ),
         ]),
   ]);
 }
