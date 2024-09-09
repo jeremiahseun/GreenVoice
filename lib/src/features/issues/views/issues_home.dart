@@ -42,7 +42,6 @@ class _IssuesScreenState extends State<IssuesScreen> {
                 ),
               ),
             ],
-            
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 'Issues',
