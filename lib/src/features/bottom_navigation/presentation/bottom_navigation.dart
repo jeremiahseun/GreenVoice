@@ -32,7 +32,7 @@ class HomeScreen extends ConsumerWidget {
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Screen 1'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Projects'),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Screen 2'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Screen 3'),
         ],
       ),
