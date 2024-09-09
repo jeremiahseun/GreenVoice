@@ -9,11 +9,12 @@ class FirebaseAuthService {
     return _auth.authStateChanges();
   }
 
-  Future<(bool status, String message, UserCredential? user)> createUser({
+  Future<(bool status, String message, UserCredential? user)> registerUser({
     required String email,
     required String password,
     required String firstName,
     required String lastName,
+    required String phoneNumber,
   }) async {
     try {
       final credential = await _auth.createUserWithEmailAndPassword(

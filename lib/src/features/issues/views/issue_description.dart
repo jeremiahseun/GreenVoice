@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:greenvoice/routes/app_router.dart';
+import 'package:greenvoice/core/routes/app_router.dart';
 import 'package:greenvoice/src/features/issues/widgets/adaptive_images.dart';
 import 'package:greenvoice/src/features/issues/widgets/info_row.dart';
 import 'package:greenvoice/src/features/issues/widgets/status_chip.dart';
