@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:greenvoice/core/routes/app_router.dart';
 import 'package:greenvoice/core/routes/routes.dart';
-import 'package:greenvoice/src/features/authentication/forgot_password/forgot_password.dart';
 import 'package:greenvoice/src/features/authentication/login/data/login_notifier.dart';
 import 'package:greenvoice/src/features/issues/views/issues_home.dart';
 import 'package:greenvoice/utils/common_widgets/custom_button.dart';
