@@ -5,18 +5,20 @@ import 'dart:developer';
 import 'package:greenvoice/src/models/user/user_model.dart';
 import 'package:greenvoice/src/services/firebase/firestore.dart';
 import 'package:greenvoice/utils/constants/exports.dart';
-import 'package:greenvoice/utils/helpers/enums.dart';
+import 'package:greenvoice/utils/helpers/greenvoice_notifier.dart';
 
-class RegisterNotifier extends StateNotifier<RegisterState> {
-  RegisterNotifier(
-      {required this.firebaseFirestoreService,
-      required this.firebaseAuthService})
-      : super(RegisterState());
+final registerNotifierProvider =
+    ChangeNotifierProvider.autoDispose((ref) => RegisterNotifier());
 
-  final FirebaseAuthService firebaseAuthService;
-  final FirebaseFirestoreService firebaseFirestoreService;
-  obscurePassword() {
-    state = state.copyWith(isSelected: !state.isSelected);
+class RegisterNotifier extends GreenVoiceNotifier {
+  final FirebaseAuthService firebaseAuthService = FirebaseAuthService();
+  final FirebaseFirestoreService firebaseFirestoreService =
+      FirebaseFirestoreService();
+  bool isObscurePassword = false;
+
+  void obscurePassword() {
+    isObscurePassword = !isObscurePassword;
+    notifyListeners();
   }
 
   Future<bool> createGreenVoiceUser({
@@ -29,7 +31,7 @@ class RegisterNotifier extends StateNotifier<RegisterState> {
     log('Triggering code');
 
     try {
-      state = state.copyWith(loadingState: LoadingState.loading);
+      startLoading();
       final registerUser = await firebaseAuthService.registerUser(
           email: email,
           password: password,
@@ -37,7 +39,7 @@ class RegisterNotifier extends StateNotifier<RegisterState> {
           lastName: lastName,
           phoneNumber: phoneNumber);
 
-      state = state.copyWith(loadingState: LoadingState.success);
+      stopLoading();
       if (registerUser.$1 == true) {
         log(' ${registerUser.$3?.user?.uid.toString()}');
         final String userId = registerUser.$3?.user?.uid ?? '';
@@ -53,27 +55,8 @@ class RegisterNotifier extends StateNotifier<RegisterState> {
       return true;
     } catch (e) {
       log('Something went wrong $e');
-      state = state.copyWith(loadingState: LoadingState.error);
+      stopLoading();
       return false;
     }
-  }
-}
-
-class RegisterState {
-  LoadingState loadingState;
-  bool isSelected;
-  RegisterState({
-    this.loadingState = LoadingState.idle,
-    this.isSelected = true,
-  });
-
-  RegisterState copyWith({
-    LoadingState? loadingState,
-    bool? isSelected,
-  }) {
-    return RegisterState(
-      loadingState: loadingState ?? this.loadingState,
-      isSelected: isSelected ?? this.isSelected,
-    );
   }
 }

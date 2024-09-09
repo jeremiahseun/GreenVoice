@@ -3,7 +3,6 @@
 import 'package:greenvoice/src/features/authentication/forgot_password/forgot_password.dart';
 import 'package:greenvoice/src/features/authentication/login/data/login_notifier.dart';
 import 'package:greenvoice/src/features/issues/views/issues_home.dart';
-import 'package:greenvoice/src/services/providers.dart';
 import 'package:greenvoice/utils/common_widgets/snackbar_message.dart';
 import 'package:greenvoice/utils/constants/exports.dart';
 
@@ -55,7 +54,7 @@ class _LoginScreenState extends ConsumerState<LoginView> {
                 const Gap(20),
                 CustomTextField(
                   suffixIcon: InkWell(
-                      onTap: ref.read(loginNotifier.notifier).obscurePassword,
+                      onTap: ref.read(loginNotifierProvider).obscurePassword,
                       child: Visibility(
                         visible: loginState.isObscurePassword,
                         replacement: const Icon(

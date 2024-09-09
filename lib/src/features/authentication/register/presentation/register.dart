@@ -1,10 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:greenvoice/src/services/providers.dart';
+import 'package:greenvoice/src/features/authentication/register/data/register_notifier.dart';
 import 'package:greenvoice/utils/common_widgets/phone_textfield.dart';
 import 'package:greenvoice/utils/common_widgets/snackbar_message.dart';
 import 'package:greenvoice/utils/constants/exports.dart';
-import 'package:greenvoice/utils/helpers/enums.dart';
 
 class RegisterView extends ConsumerStatefulWidget {
   const RegisterView({super.key});
@@ -26,11 +25,10 @@ class _RegisterState extends ConsumerState<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
-    final regsisterState = ref.watch(registerNotifier);
+    final registerState = ref.watch(registerNotifierProvider);
     return DefaultScaffold(
       safeAreaTop: true,
-      isBusy:
-          regsisterState.loadingState == LoadingState.loading ? true : false,
+      isBusy: registerState.isLoading ? true : false,
       body: SingleChildScrollView(
         child: Container(
             alignment: Alignment.center,
@@ -124,19 +122,20 @@ class _RegisterState extends ConsumerState<RegisterView> {
                   const Gap(20),
                   CustomTextField(
                       suffixIcon: InkWell(
-                        onTap: () {
-                          ref.read(registerNotifier.notifier).obscurePassword();
-                        },
-                        child: regsisterState.isSelected
-                            ? const Icon(
-                                Icons.visibility,
-                                color: AppColors.greyColor,
-                              )
-                            : const Icon(
-                                Icons.visibility_off,
-                                color: AppColors.greyColor,
-                              ),
-                      ),
+                          onTap: ref
+                              .read(registerNotifierProvider)
+                              .obscurePassword,
+                          child: Visibility(
+                            visible: registerState.isObscurePassword,
+                            replacement: const Icon(
+                              Icons.visibility,
+                              color: AppColors.greyColor,
+                            ),
+                            child: const Icon(
+                              Icons.visibility_off,
+                              color: AppColors.greyColor,
+                            ),
+                          )),
                       labelText: 'Enter Password',
                       hintText: '******************',
                       validator: (value) {
@@ -145,28 +144,29 @@ class _RegisterState extends ConsumerState<RegisterView> {
                         }
                         return null;
                       },
-                      obsureText: regsisterState.isSelected,
+                      obsureText: registerState.isObscurePassword,
                       controller: passwordController,
                       keyboardType: TextInputType.emailAddress),
                   const Gap(20),
                   CustomTextField(
                       suffixIcon: InkWell(
-                        onTap: () {
-                          ref.read(registerNotifier.notifier).obscurePassword();
-                        },
-                        child: regsisterState.isSelected
-                            ? const Icon(
-                                Icons.visibility,
-                                color: AppColors.greyColor,
-                              )
-                            : const Icon(
-                                Icons.visibility_off,
-                                color: AppColors.greyColor,
-                              ),
-                      ),
+                          onTap: ref
+                              .read(registerNotifierProvider)
+                              .obscurePassword,
+                          child: Visibility(
+                            visible: registerState.isObscurePassword,
+                            replacement: const Icon(
+                              Icons.visibility,
+                              color: AppColors.greyColor,
+                            ),
+                            child: const Icon(
+                              Icons.visibility_off,
+                              color: AppColors.greyColor,
+                            ),
+                          )),
                       labelText: 'Re-Enter Password',
                       hintText: '******************',
-                      obsureText: regsisterState.isSelected,
+                      obsureText: registerState.isObscurePassword,
                       controller: confirmController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -188,7 +188,7 @@ class _RegisterState extends ConsumerState<RegisterView> {
                       }
                       if (formKey.currentState!.validate()) {
                         final registerUser = await ref
-                            .read(registerNotifier.notifier)
+                            .read(registerNotifierProvider.notifier)
                             .createGreenVoiceUser(
                                 email: emailController.text,
                                 password: passwordController.text,
@@ -206,11 +206,6 @@ class _RegisterState extends ConsumerState<RegisterView> {
                               MaterialPageRoute(
                                   builder: (context) => const LoginView()));
                           //   context.push(NavigateToPage.login);
-                        } else if (regsisterState.loadingState ==
-                            LoadingState.error) {
-                          SnackbarMessage.showError(
-                              message: 'Registration Failed', context: context);
-                          return;
                         }
                       }
                     },
