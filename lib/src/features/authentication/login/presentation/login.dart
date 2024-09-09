@@ -111,10 +111,7 @@ class _LoginScreenState extends ConsumerState<LoginView> {
                       if (loginUser == true) {
                         SnackbarMessage.showSuccess(
                             context: context, message: 'Login successful');
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const IssuesView()));
+                        context.go(NavigateToPage.home);
                       } else {}
                     }
                   },

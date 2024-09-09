@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:greenvoice/src/features/authentication/login/presentation/login.dart';
-import 'package:greenvoice/src/features/issues/presentation/issues_home.dart';
+import 'package:greenvoice/src/features/bottom_navigation/presentation/bottom_navigation.dart';
 import 'package:greenvoice/src/services/firebase/auth.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -25,7 +25,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         if (snapshot.connectionState == ConnectionState.active) {
           if (snapshot.hasData) {
             // User is logged in
-            return const IssuesView(); // Replace with your home screen
+            return HomeScreen(); // Replace with your home screen
           } else {
             // User is not logged in
             return const LoginView(); // Replace with your login screen
