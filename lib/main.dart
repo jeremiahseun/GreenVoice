@@ -11,12 +11,12 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await setupLocator();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const ProviderScope(child: GreenVoice()));
 
-  await setupLocator();
   Animate.restartOnHotReload = true;
 }
 

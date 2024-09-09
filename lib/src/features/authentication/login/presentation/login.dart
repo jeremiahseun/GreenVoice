@@ -92,12 +92,7 @@ class _LoginScreenState extends ConsumerState<LoginView> {
                   alignment: Alignment.centerRight,
                   child: RichTextWidget(
                     ontap: () {
-                      // context.push(NavigateToPage.forgotPassword);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const ForgotPasswordView()));
+                      context.push(NavigateToPage.forgotPassword);
                     },
                     text: '',
                     subText: 'Forgot Password?',
