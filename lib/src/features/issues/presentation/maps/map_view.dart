@@ -12,12 +12,25 @@ class MapView extends ConsumerStatefulWidget {
 
 class _MapViewState extends ConsumerState<MapView> {
   @override
+  void initState() {
+    ref.read(mapProvider.notifier).getCurrentLocation();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final mapRead = ref.watch(mapProvider);
     return Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => ref.read(mapProvider.notifier).getCurrentLocation(),
+          child: const Icon(Icons.location_on),
+        ),
         body: MapWidget(
-      key: const ValueKey("mapWidget"),
-      onMapCreated: (map) => mapRead.onMapCreated(map),
-    ));
+          styleUri: "mapbox://styles/jeremiahseun/cm0ud5srb00qo01qub70them8",
+          onMapLoadedListener: (mapLoadedEventData) =>
+              ref.read(mapProvider.notifier).getCurrentLocation(),
+          key: const ValueKey("mapWidget"),
+          onMapCreated: (map) => mapRead.onMapCreated(map),
+        ));
   }
 }
