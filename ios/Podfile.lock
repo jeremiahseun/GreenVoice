@@ -107,6 +107,8 @@ PODS:
   - fluttertoast (0.0.2):
     - Flutter
     - Toast
+  - geolocator_apple (1.2.0):
+    - Flutter
   - GoogleAppMeasurement (10.22.0):
     - GoogleAppMeasurement/AdIdSupport (= 10.22.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
@@ -159,6 +161,17 @@ PODS:
   - image_picker_ios (0.0.1):
     - Flutter
   - leveldb-library (1.22.5)
+  - mapbox_maps_flutter (2.2.1):
+    - Flutter
+    - MapboxMaps (~> 11.6.0)
+    - Turf (= 2.8.0)
+  - MapboxCommon (24.6.0)
+  - MapboxCoreMaps (11.6.0):
+    - MapboxCommon (~> 24.6)
+  - MapboxMaps (11.6.0):
+    - MapboxCommon (= 24.6.0)
+    - MapboxCoreMaps (= 11.6.0)
+    - Turf (= 2.8.0)
   - nanopb (2.30909.1):
     - nanopb/decode (= 2.30909.1)
     - nanopb/encode (= 2.30909.1)
@@ -173,6 +186,7 @@ PODS:
     - Flutter
     - FlutterMacOS
   - Toast (4.1.1)
+  - Turf (2.8.0)
 
 DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
@@ -183,7 +197,9 @@ DEPENDENCIES:
   - FirebaseFirestore (from `https://github.com/invertase/firestore-ios-sdk-frameworks.git`, tag `10.22.0`)
   - Flutter (from `Flutter`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
+  - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
+  - mapbox_maps_flutter (from `.symlinks/plugins/mapbox_maps_flutter/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - sqflite (from `.symlinks/plugins/sqflite/darwin`)
 
@@ -210,10 +226,14 @@ SPEC REPOS:
     - GoogleUtilities
     - GTMSessionFetcher
     - leveldb-library
+    - MapboxCommon
+    - MapboxCoreMaps
+    - MapboxMaps
     - nanopb
     - PromisesObjC
     - RecaptchaInterop
     - Toast
+    - Turf
 
 EXTERNAL SOURCES:
   cloud_firestore:
@@ -233,8 +253,12 @@ EXTERNAL SOURCES:
     :path: Flutter
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
+  geolocator_apple:
+    :path: ".symlinks/plugins/geolocator_apple/ios"
   image_picker_ios:
     :path: ".symlinks/plugins/image_picker_ios/ios"
+  mapbox_maps_flutter:
+    :path: ".symlinks/plugins/mapbox_maps_flutter/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   sqflite:
@@ -271,18 +295,24 @@ SPEC CHECKSUMS:
   FirebaseStorage: bc7bddc743548a89cfb896843a77cf4bdde2c231
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   fluttertoast: e9a18c7be5413da53898f660530c56f35edfba9c
+  geolocator_apple: 6cbaf322953988e009e5ecb481f07efece75c450
   GoogleAppMeasurement: ccefe3eac9b0aa27f96066809fb1a7fe4b462626
   GoogleUtilities: ea963c370a38a8069cc5f7ba4ca849a60b6d7d15
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
   image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
   leveldb-library: e8eadf9008a61f9e1dde3978c086d2b6d9b9dc28
+  mapbox_maps_flutter: 943324063065b4ef15e146be95ed87f5bae1a6ba
+  MapboxCommon: 6008e74b1312a093dec291497a036fc8b47f344f
+  MapboxCoreMaps: bd097795c5ae4f002181769e7151474a33ce878a
+  MapboxMaps: fc1b2ab98563d0157ba01f6e4a2fd8a8af556d92
   nanopb: d4d75c12cd1316f4a64e3c6963f879ecd4b5e0d5
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
   sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
   Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
+  Turf: aa2ede4298009639d10db36aba1a7ebaad072a5e
 
-PODFILE CHECKSUM: a0585dfbcdd0fca382f716e1684d3477ea96a456
+PODFILE CHECKSUM: 41e60cc279f7b3a8c000758295a7ad9f83bf3a1e
 
 COCOAPODS: 1.15.2
