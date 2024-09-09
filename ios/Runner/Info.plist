@@ -32,6 +32,8 @@
 	<string>This allows you to report issues around your community right from your gallery</string>
 	<key>NSCameraUsageDescription</key>
 	<string>This allows you to report issues around your community right from your camera</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Your location is needed to personalize your experience on what you see around you.</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
