@@ -43,7 +43,7 @@ class _ForgotPasswordState extends ConsumerState<ForgotPasswordView> {
                 text: 'Verify',
                 isBigButton: true,
                 onTap: () {
-                  context.push(NavigateToPage.issues);
+                  context.go(NavigateToPage.home);
                 },
                 isFilledButton: true,
               ),

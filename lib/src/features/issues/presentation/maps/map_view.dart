@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:greenvoice/src/features/issues/application/map_provider.dart';
+import 'package:greenvoice/src/features/issues/data/map_provider.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 class MapView extends ConsumerStatefulWidget {
