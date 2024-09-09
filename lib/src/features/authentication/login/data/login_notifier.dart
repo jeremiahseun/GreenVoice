@@ -3,7 +3,6 @@ import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greenvoice/src/services/firebase/firebase.dart';
-import 'package:greenvoice/utils/helpers/enums.dart';
 import 'package:greenvoice/utils/helpers/greenvoice_notifier.dart';
 
 final loginNotifierProvider =
@@ -44,27 +43,5 @@ class LoginScreenNotifier extends GreenVoiceNotifier {
       stopLoading();
       return false;
     }
-  }
-}
-
-class LoginScreenState {
-  LoadingState loadingState;
-  bool isSelected;
-  bool isSuccessful;
-  LoginScreenState(
-      {this.loadingState = LoadingState.idle,
-      this.isSelected = true,
-      this.isSuccessful = false});
-
-  LoginScreenState copyWith({
-    LoadingState? loadingState,
-    bool? isSelected,
-    bool? isSuccessful,
-  }) {
-    return LoginScreenState(
-      loadingState: loadingState ?? this.loadingState,
-      isSelected: isSelected ?? this.isSelected,
-      isSuccessful: isSuccessful ?? this.isSuccessful,
-    );
   }
 }
