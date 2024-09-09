@@ -2,9 +2,9 @@
 
 import 'dart:developer';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greenvoice/src/models/user/user_model.dart';
-import 'package:greenvoice/src/services/firebase/firestore.dart';
-import 'package:greenvoice/utils/constants/exports.dart';
+import 'package:greenvoice/src/services/firebase/firebase.dart';
 import 'package:greenvoice/utils/helpers/greenvoice_notifier.dart';
 
 final registerNotifierProvider =
