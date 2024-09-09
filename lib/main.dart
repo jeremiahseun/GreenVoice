@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:greenvoice/routes/app_router.dart';
 import 'package:greenvoice/utils/helpers/locator.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 import 'firebase_options.dart';
 
@@ -18,6 +19,8 @@ void main() async {
 
   await setupLocator();
   Animate.restartOnHotReload = true;
+  MapboxOptions.setAccessToken(
+      "pk.eyJ1IjoiamVyZW1pYWhzZXVuIiwiYSI6ImNtMHU2NHllNjB1MG8ybHI1ZzRpMDR1bGYifQ.srO22bCjZuGdApdDXdooSg");
 }
 
 class GreenVoice extends StatelessWidget {
@@ -33,10 +36,9 @@ class GreenVoice extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'GreenVoice',
       theme: ThemeData(
-        colorScheme: const ColorScheme.light(
-          primary: AppColors.primaryColor),
-          progressIndicatorTheme: const ProgressIndicatorThemeData(
-            color: AppColors.primaryColor),
+          colorScheme: const ColorScheme.light(primary: AppColors.primaryColor),
+          progressIndicatorTheme:
+              const ProgressIndicatorThemeData(color: AppColors.primaryColor),
           textTheme: GoogleFonts.publicSansTextTheme(),
           textButtonTheme: TextButtonThemeData(
             style: TextButton.styleFrom(
