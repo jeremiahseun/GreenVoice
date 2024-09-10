@@ -111,6 +111,7 @@ class _LoginScreenState extends ConsumerState<LoginView> {
                         SnackbarMessage.showSuccess(
                             context: context, message: 'Login successful');
                         context.go(NavigateToPage.home);
+
                       } else {}
                     }
                   },
