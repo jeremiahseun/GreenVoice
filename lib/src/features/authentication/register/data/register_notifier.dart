@@ -21,15 +21,13 @@ class RegisterNotifier extends GreenVoiceNotifier {
     notifyListeners();
   }
 
-  Future<bool> createGreenVoiceUser({
+  Future<(bool status, String message)> createGreenVoiceUser({
     required String email,
     required String password,
     required String firstName,
     required String lastName,
     required String phoneNumber,
   }) async {
-    log('Triggering code');
-
     try {
       startLoading();
       final registerUser = await firebaseAuthService.registerUser(
@@ -49,14 +47,15 @@ class RegisterNotifier extends GreenVoiceNotifier {
             firstName: firstName,
             email: email,
             photo: '');
-
         await firebaseFirestoreService.createUser(userModel);
+      } else {
+        return (false, (registerUser.$2));
       }
-      return true;
+      return (true, 'Registration Successful');
     } catch (e) {
       log('Something went wrong $e');
       stopLoading();
-      return false;
+      return (false, 'An error occured: $e');
     }
   }
 }
