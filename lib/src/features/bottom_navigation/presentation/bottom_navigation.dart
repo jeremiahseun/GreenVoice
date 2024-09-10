@@ -4,6 +4,7 @@ import 'package:greenvoice/src/features/bottom_navigation/data/bottom_navigation
 import 'package:greenvoice/src/features/issues/presentation/issues_home.dart';
 
 import 'package:greenvoice/src/features/profile/presentation/profile_view.dart';
+import 'package:greenvoice/src/features/projects/presentation/projects.dart';
 
 
 class HomeScreen extends ConsumerWidget {
@@ -32,7 +33,7 @@ class HomeScreen extends ConsumerWidget {
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Screen 1'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Screen 2'),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Projects'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Screen 3'),
         ],
       ),
