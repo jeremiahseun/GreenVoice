@@ -4,7 +4,7 @@ import 'package:greenvoice/src/features/bottom_navigation/data/bottom_navigation
 import 'package:greenvoice/src/features/issues/presentation/issues_home.dart';
 
 import 'package:greenvoice/src/features/profile/presentation/profile_view.dart';
-import 'package:greenvoice/src/features/projects/presentation/projects.dart';
+
 
 
 class HomeScreen extends ConsumerWidget {
