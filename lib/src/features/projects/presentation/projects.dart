@@ -56,7 +56,7 @@ class _ProjectScreenState extends ConsumerState<ProjectScreen> {
                       children: [
                         InkWell(
                           onTap: () {
-                            context.push(NavigateToPage.projectDetails);
+                          //  context.push(NavigateToPage.projectDetails);
                           },
                           child: Container(
                             decoration: BoxDecoration(
