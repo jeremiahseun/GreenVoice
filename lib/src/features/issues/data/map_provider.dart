@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greenvoice/core/locator.dart';
 import 'package:greenvoice/src/features/issues/data/issues_provider.dart';
 import 'package:greenvoice/src/features/issues/presentation/maps/map_view.dart';
+import 'package:greenvoice/src/models/user/issue/issue_model.dart';
 import 'package:greenvoice/src/services/location_service.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
@@ -23,6 +24,14 @@ class MapProvider extends ChangeNotifier {
   ByteData? bytes;
   bool isIssuesLoading = false;
   bool isMarkerLoading = false;
+  IssueModel? selectedIssue;
+
+  bool isCarouselVisible = true;
+
+  void toggleCarouselVisibility() {
+    isCarouselVisible = !isCarouselVisible;
+    notifyListeners();
+  }
 
   void onMapCreated(MapboxMap mapboxMap) {
     this.mapboxMap = mapboxMap;
@@ -151,7 +160,7 @@ class MapProvider extends ChangeNotifier {
       // Add the point annotations to the map
       await pointAnnotationManager?.createMulti(options);
       pointAnnotationManager!
-          .addOnPointAnnotationClickListener(AnnotationClickListener());
+          .addOnPointAnnotationClickListener(AnnotationClickListener(this));
       isMarkerLoading = false;
       notifyListeners();
 
@@ -186,9 +195,34 @@ class MapProvider extends ChangeNotifier {
             duration: 2000,
           ));
     }
+  }
 
-    void onMapCreated(MapboxMap mapboxMap) {
-      this.mapboxMap = mapboxMap;
+  void selectIssue(IssueModel issue) {
+    selectedIssue = issue.copyWith(id: issue.id);
+    notifyListeners();
+    _moveCamera(issue);
+  }
+
+  void _moveCamera(IssueModel issue) {
+    final cameraOptions = CameraOptions(
+      center: Point(
+          coordinates: Position(
+              double.parse(issue.longitude), double.parse(issue.latitude))),
+      zoom: 15.0,
+    );
+    mapboxMap?.flyTo(cameraOptions, MapAnimationOptions(duration: 500));
+  }
+
+  void onAnnotationClick(PointAnnotation annotation) {
+    final clickedIssue = ref.read(issuesProvider).value?.firstWhere(
+          (issue) =>
+              issue.longitude ==
+                  annotation.geometry.coordinates[0].toString() &&
+              issue.latitude == annotation.geometry.coordinates[1].toString(),
+        );
+
+    if (clickedIssue != null) {
+      selectIssue(clickedIssue);
     }
   }
 }

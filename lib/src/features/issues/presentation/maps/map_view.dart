@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:greenvoice/src/features/issues/data/issues_provider.dart';
 import 'package:greenvoice/src/features/issues/data/map_provider.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' hide Visibility;
+
+import 'issue_carousel.dart';
 
 class MapView extends ConsumerStatefulWidget {
   const MapView({super.key});
@@ -13,43 +16,77 @@ class MapView extends ConsumerStatefulWidget {
 class _MapViewState extends ConsumerState<MapView> {
   @override
   void initState() {
-    ref.read(mapProvider.notifier).getCurrentLocation();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(mapProvider.notifier).getCurrentLocation();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final mapRead = ref.read(mapProvider);
+    final mapRead = ref.read(mapProvider.notifier);
     final mapWatch = ref.watch(mapProvider);
+    final issues = ref.watch(issuesProvider).value ?? [];
+
     return Scaffold(
-        appBar: AppBar(),
-        body: Column(
+      body: SafeArea(
+        child: Stack(
           children: [
-            Visibility(
-                visible: mapWatch.isIssuesLoading,
-                child: const LinearProgressIndicator()),
-            Expanded(
-              child: MapWidget(
-                styleUri:
-                    "mapbox://styles/jeremiahseun/cm0ud5srb00qo01qub70them8",
-                onMapLoadedListener: (mapLoadedEventData) =>
-                    ref.read(mapProvider.notifier).getCurrentLocation(),
-                onStyleLoadedListener: (styleLoadedEventData) => ref
-                    .read(mapProvider.notifier)
-                    .onStyleLoaded(styleLoadedEventData),
-                key: const ValueKey("mapWidget"),
-                onMapCreated: (map) => mapRead.onMapCreated(map),
+            GestureDetector(
+              onTap: mapRead.toggleCarouselVisibility,
+              child: Column(
+                children: [
+                  if (mapWatch.isIssuesLoading) const LinearProgressIndicator(),
+                  Expanded(
+                    child: MapWidget(
+                      styleUri:
+                          "mapbox://styles/jeremiahseun/cm0ud5srb00qo01qub70them8",
+                      onMapLoadedListener: (_) => mapRead.getCurrentLocation(),
+                      onStyleLoadedListener: mapRead.onStyleLoaded,
+                      key: const ValueKey("mapWidget"),
+                      onMapCreated: mapRead.onMapCreated,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 40, width: double.infinity, child: Text(""))
+            Positioned(
+              top: 30,
+              left: 20,
+              child: Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                ),
+                child: const BackButton(),
+              ),
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 20,
+              child: IssueCarousel(
+                isVisible: mapWatch.isCarouselVisible,
+                onToggleVisibility: mapRead.toggleCarouselVisibility,
+                issues: issues,
+                onIssueSelected: mapRead.selectIssue,
+                selectedIssueId: mapWatch.selectedIssue?.id,
+              ),
+            ),
           ],
-        ));
+        ),
+      ),
+    );
   }
 }
 
 class AnnotationClickListener extends OnPointAnnotationClickListener {
+  final MapProvider mapProvider;
+
+  AnnotationClickListener(this.mapProvider);
+
   @override
   void onPointAnnotationClick(PointAnnotation annotation) {
-    print("onAnnotationClick, id: ${annotation.id}");
+    mapProvider.onAnnotationClick(annotation);
   }
 }
