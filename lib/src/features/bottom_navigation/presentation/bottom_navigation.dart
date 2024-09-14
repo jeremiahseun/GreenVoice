@@ -3,9 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greenvoice/src/features/bottom_navigation/data/bottom_navigation_notifier.dart';
 import 'package:greenvoice/src/features/issues/presentation/issues_home.dart';
 
-
-import 'package:greenvoice/src/features/profile/presentation/profile_view.dart';
 import 'package:greenvoice/src/features/projects/presentation/projects.dart';
+import 'package:greenvoice/src/features/profile/presentation/profile_view.dart';
 
 
 
@@ -16,7 +15,7 @@ class HomeScreen extends ConsumerWidget {
 
 
     // const MapView(),
-    const ProjectsScreen(),
+    const ProjectHome(),
 
 
     const ProfileView()

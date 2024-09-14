@@ -17,7 +17,6 @@ import 'package:greenvoice/src/features/issues/presentation/issue_description.da
 import 'package:greenvoice/src/features/issues/presentation/issues_home.dart';
 import 'package:greenvoice/src/features/issues/presentation/maps/map_view.dart';
 import 'package:greenvoice/src/features/profile/presentation/profile_view.dart';
-import 'package:greenvoice/src/features/projects/presentation/projects_details.dart';
 import 'package:greenvoice/src/models/user/issue/issue_model.dart';
 
 export 'package:go_router/go_router.dart';

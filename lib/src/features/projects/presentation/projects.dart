@@ -1,62 +1,59 @@
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
-import 'package:greenvoice/core/routes/app_router.dart';
-import 'package:greenvoice/core/routes/routes.dart';
-import 'package:greenvoice/utils/common_widgets/custom_textfield.dart';
 import 'package:greenvoice/utils/common_widgets/project_stats.dart';
 import 'package:greenvoice/utils/common_widgets/rich_text_widget.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 
-class ProjectScreen extends ConsumerStatefulWidget {
-  const ProjectScreen({super.key});
+class ProjectHome extends ConsumerStatefulWidget {
+  const ProjectHome({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ProjectScreenState();
 }
 
-class _ProjectScreenState extends ConsumerState<ProjectScreen> {
+class _ProjectScreenState extends ConsumerState<ProjectHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomTextField(
-                hintText: 'Search Projects',
-                controller: TextEditingController(),
-                keyboardType: TextInputType.name,
-                prefixIcon: const Icon(
-                  Icons.search,
-                  color: AppColors.greyColor,
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 100,
+              pinned: true,
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 10.0),
+                  child: IconButton(
+                    icon: const Icon(EvaIcons.search),
+                    onPressed: () {},
+                  ),
                 ),
-              ),
-              const Gap(10),
-              ListTile(
-                contentPadding: const EdgeInsets.all(0),
-                leading: const Icon(Icons.location_on_outlined),
+              ],
+              flexibleSpace: FlexibleSpaceBar(
+                stretchModes: const [
+                  StretchMode.blurBackground,
+                  StretchMode.zoomBackground,
+                  StretchMode.fadeTitle,
+                ],
                 title: Text(
                   'Proposed Projects',
-                  style: AppStyles.blackBold15,
-                ),
-                trailing: const Icon(
-                  Icons.search,
-                  color: AppColors.blackColor,
+                  style: AppStyles.blackBold18,
                 ),
               ),
-              const Gap(20),
-              Expanded(
-                child: ListView.separated(
-                  separatorBuilder: (context, index) => const Gap(25),
-                  itemBuilder: (context, index) {
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.all(16.0),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
                     return Column(
                       children: [
                         InkWell(
                           onTap: () {
-                          //  context.push(NavigateToPage.projectDetails);
+                            //  context.push(NavigateToPage.projectDetails);
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -96,11 +93,12 @@ class _ProjectScreenState extends ConsumerState<ProjectScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
+                                      const Gap(5),
                                       Text(
                                         'Build a new public Restaurant',
-                                        style: AppStyles.blackBold15,
+                                        style: AppStyles.blackBold18,
                                       ),
-                                      const Gap(10),
+                                      const Gap(5),
                                       const Text(
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 4,
@@ -168,16 +166,16 @@ class _ProjectScreenState extends ConsumerState<ProjectScreen> {
                               ),
                             ),
                           ],
-                        )
+                        ),
+                        const Gap(25),
                       ],
                     );
                   },
-                  itemCount: 5,
+                  childCount: 5,
                 ),
-              )
-            ],
-          ),
-
+              ),
+            ),
+          ],
         ),
       ),
     );
