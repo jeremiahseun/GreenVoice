@@ -187,6 +187,8 @@ PODS:
     - FlutterMacOS
   - Toast (4.1.1)
   - Turf (2.8.0)
+  - uni_links2 (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
@@ -202,6 +204,7 @@ DEPENDENCIES:
   - mapbox_maps_flutter (from `.symlinks/plugins/mapbox_maps_flutter/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - sqflite (from `.symlinks/plugins/sqflite/darwin`)
+  - uni_links2 (from `.symlinks/plugins/uni_links2/ios`)
 
 SPEC REPOS:
   trunk:
@@ -263,6 +266,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   sqflite:
     :path: ".symlinks/plugins/sqflite/darwin"
+  uni_links2:
+    :path: ".symlinks/plugins/uni_links2/ios"
 
 CHECKOUT OPTIONS:
   FirebaseFirestore:
@@ -312,6 +317,7 @@ SPEC CHECKSUMS:
   sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
   Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
   Turf: aa2ede4298009639d10db36aba1a7ebaad072a5e
+  uni_links2: fbc37081577fc19c6e0f7e6cdbd3baa150023635
 
 PODFILE CHECKSUM: 41e60cc279f7b3a8c000758295a7ad9f83bf3a1e
 

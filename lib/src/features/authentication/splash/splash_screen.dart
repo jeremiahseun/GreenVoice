@@ -2,10 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import 'package:greenvoice/core/deep_link.dart';
 import 'package:greenvoice/src/features/authentication/login/presentation/login.dart';
-
 import 'package:greenvoice/src/features/bottom_navigation/presentation/bottom_navigation.dart';
-
 import 'package:greenvoice/src/services/firebase/auth.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -19,6 +18,18 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   FirebaseAuthService firebaseAuthService = FirebaseAuthService();
 
   @override
+  void initState() {
+    super.initState();
+    DeepLinking.initUniLinks();
+  }
+
+  @override
+  void dispose() {
+    DeepLinking.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
       stream: firebaseAuthService
@@ -28,7 +39,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           if (snapshot.hasData) {
             // User is logged in
             return HomeScreen(); // Replace with your home screen
-
           } else {
             // User is not logged in
             return const LoginView(); // Replace with your login screen
