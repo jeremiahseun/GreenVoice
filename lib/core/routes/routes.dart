@@ -11,6 +11,7 @@ class AppRoutes {
   static const String profile = 'profile';
   static const String mapView = 'mapView';
   static const String projectDetails = 'projectDetails';
+  static const String projects = 'projects';
 }
 
 class NavigateToPage {
@@ -25,5 +26,6 @@ class NavigateToPage {
   static const String issueDetails = '$issues/issueDetails';
   static const String profile = '$home/profile';
   static const String mapView = '$home/mapView';
-  static const String projectDetails = '$home/projectDetails';
+  static const String projectDetails = '$projects/projectDetails';
+  static const String projects = '$home/projects';
 }
