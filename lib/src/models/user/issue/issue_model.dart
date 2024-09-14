@@ -67,4 +67,37 @@ class IssueModel {
       longitude: map?['longitude'] ?? ''
     );
   }
+
+
+  IssueModel copyWith({
+    String? id,
+    String? title,
+    String? description,
+    String? location,
+    String? latitude,
+    String? longitude,
+    int? votes,
+    bool? isResolved,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    List<String>? images,
+    String? userId,
+    String? category,
+  }) {
+    return IssueModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      location: location ?? this.location,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      votes: votes ?? this.votes,
+      isResolved: isResolved ?? this.isResolved,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      images: images ?? this.images,
+      userId: userId ?? this.userId,
+      category: category ?? this.category,
+    );
+  }
 }
