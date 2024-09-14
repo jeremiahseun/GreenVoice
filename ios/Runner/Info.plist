@@ -28,6 +28,17 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+     <key>CFBundleURLTypes</key>
+    <array>
+    <dict>
+      <key>CFBundleTypeRole</key>
+      <string>Editor</string>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>greenvoice</string>
+      </array>
+    </dict>
+    </array>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This allows you to report issues around your community right from your gallery</string>
 	<key>NSCameraUsageDescription</key>
