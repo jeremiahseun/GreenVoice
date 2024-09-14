@@ -4,8 +4,8 @@ import 'package:gap/gap.dart';
 import 'package:greenvoice/utils/common_widgets/data_box.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 
-class ProjectDetailsScreen extends ConsumerWidget {
-  const ProjectDetailsScreen({super.key});
+class ProjectDetailsView extends ConsumerWidget {
+  const ProjectDetailsView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

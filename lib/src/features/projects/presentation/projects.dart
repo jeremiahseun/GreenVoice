@@ -2,6 +2,8 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import 'package:greenvoice/core/routes/app_router.dart';
+import 'package:greenvoice/core/routes/routes.dart';
 import 'package:greenvoice/utils/common_widgets/project_stats.dart';
 import 'package:greenvoice/utils/common_widgets/rich_text_widget.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
@@ -53,7 +55,7 @@ class _ProjectScreenState extends ConsumerState<ProjectHome> {
                       children: [
                         InkWell(
                           onTap: () {
-                            //  context.push(NavigateToPage.projectDetails);
+                             context.push(NavigateToPage.projectDetails);
                           },
                           child: Container(
                             decoration: BoxDecoration(
