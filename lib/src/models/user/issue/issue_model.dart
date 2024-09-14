@@ -3,6 +3,8 @@ class IssueModel {
   final String? title;
   final String? description;
   final String? location;
+  final String latitude;
+  final String longitude;
   final int votes;
   final bool isResolved;
   final DateTime? createdAt;
@@ -22,6 +24,8 @@ class IssueModel {
       this.category,
       this.isResolved = false,
       this.userId,
+      required this.latitude,
+      required this.longitude,
       this.images = const []});
 
   Map<String, dynamic> toMap() {
@@ -37,6 +41,8 @@ class IssueModel {
       'images': images,
       'userId': userId,
       'category': category,
+      'latitude': latitude,
+      'longitude': longitude,
     };
   }
 
@@ -57,6 +63,8 @@ class IssueModel {
       images: map?['images'] == null ? [] : List<String>.from(map?['images']),
       userId: map?['userId'] ?? '',
       category: map?['category'] ?? '',
+      latitude: map?['latitude'] ?? '',
+      longitude: map?['longitude'] ?? ''
     );
   }
 }

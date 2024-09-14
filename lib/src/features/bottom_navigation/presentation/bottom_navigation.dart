@@ -8,7 +8,7 @@ import 'package:greenvoice/src/features/profile/presentation/profile_view.dart';
 class HomeScreen extends ConsumerWidget {
   final List<Widget> _screens = [
     const IssuesView(),
-    const MapView(),
+    const ProjectHome(),
     const ProfileView()
   ];
 
