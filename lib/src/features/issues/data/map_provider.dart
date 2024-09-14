@@ -42,5 +42,9 @@ class MapProvider extends ChangeNotifier {
             duration: 2000,
           ));
     }
+
+    void onMapCreated(MapboxMap mapboxMap) {
+      this.mapboxMap = mapboxMap;
+    }
   }
 }
