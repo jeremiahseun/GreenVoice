@@ -6,7 +6,6 @@ import 'package:gap/gap.dart';
 import 'package:greenvoice/core/routes/app_router.dart';
 import 'package:greenvoice/core/routes/routes.dart';
 import 'package:greenvoice/src/features/authentication/login/data/login_notifier.dart';
-import 'package:greenvoice/src/features/issues/presentation/issues_home.dart';
 import 'package:greenvoice/utils/common_widgets/custom_button.dart';
 import 'package:greenvoice/utils/common_widgets/custom_textfield.dart';
 import 'package:greenvoice/utils/common_widgets/default_scaffold.dart';
@@ -111,10 +110,7 @@ class _LoginScreenState extends ConsumerState<LoginView> {
                       if (loginUser == true) {
                         SnackbarMessage.showSuccess(
                             context: context, message: 'Login successful');
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const IssuesView()));
+                        context.go(NavigateToPage.home);
                       } else {}
                     }
                   },
