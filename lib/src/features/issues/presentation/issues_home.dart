@@ -26,7 +26,9 @@ class _IssuesViewState extends ConsumerState<IssuesView> {
   @override
   void initState() {
     _scrollController = ScrollController();
-    ref.read(issuesProvider.notifier).getAllIssues();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(issuesProvider.notifier).getAllIssues();
+    });
     super.initState();
   }
 
