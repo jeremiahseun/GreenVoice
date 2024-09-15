@@ -29,6 +29,7 @@ class MapProvider extends ChangeNotifier {
   bool isCarouselVisible = true;
 
   void toggleCarouselVisibility() {
+    log("Toggling visibility");
     isCarouselVisible = !isCarouselVisible;
     notifyListeners();
   }
