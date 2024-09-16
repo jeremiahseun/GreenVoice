@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gap/gap.dart';
 import 'package:greenvoice/src/features/issues/data/issues_provider.dart';
 import 'package:greenvoice/src/models/user/issue/issue_model.dart';
+import 'package:greenvoice/utils/common_widgets/green_voice_button.dart';
 import 'package:greenvoice/utils/helpers/date_formatter.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 
@@ -46,7 +48,7 @@ class LoginPrompt extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 18),
             ),
-            const SizedBox(height: 20),
+            const Gap(20),
             ElevatedButton(
               onPressed: () {
                 // Implement login logic here
@@ -87,12 +89,13 @@ class LoggedInProfile extends ConsumerWidget {
                     lastName: "Adelaja",
                     location: "Epe Lagos",
                   ),
-                  const SizedBox(height: 20),
+                  const Gap(20),
                   IssuesReported(issues: demoIssuesList),
-                  const SizedBox(height: 20),
+                  const Gap(20),
                   const VotingHistory(),
-                  const SizedBox(height: 20),
-                  const LogoutButton(),
+                  const Gap(50),
+                  GreenVoiceButton.red(onTap: () {}, title: 'Log out'),
+                  const Gap(50),
                 ],
               ),
             ),
@@ -131,7 +134,7 @@ class ProfileHeader extends StatelessWidget {
               borderRadius: BorderRadius.circular(15),
               color: AppColors.primaryColor),
         ),
-        const SizedBox(height: 10),
+        const Gap(10),
         Text(
           '$firstName, ${lastName.split('').first.toUpperCase()}',
           style: AppStyles.blackBold24,
@@ -192,7 +195,7 @@ class IssuesReported extends StatelessWidget {
             child: Text("${issues?.length}", style: AppStyles.blackBold20),
           )
         ]),
-        const SizedBox(height: 10),
+        const Gap(10),
         Visibility(
             visible: issues != null && issues!.isNotEmpty,
             replacement: const Text("No issues reported."),
@@ -254,7 +257,7 @@ class VotingHistory extends StatelessWidget {
       children: [
         Text('Voting History',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        SizedBox(height: 10),
+        Gap(10),
         VoteItem(
             title: 'Vote for the new park location', date: 'Voted on Jan 7'),
         VoteItem(
@@ -277,22 +280,6 @@ class VoteItem extends StatelessWidget {
       title: Text(title),
       subtitle: Text(date),
       trailing: const Icon(Icons.chevron_right),
-    );
-  }
-}
-
-class LogoutButton extends ConsumerWidget {
-  const LogoutButton({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Center(
-      child: ElevatedButton(
-        onPressed: () {
-          ref.read(isLoggedInProvider.notifier).state = false;
-        },
-        child: const Text('Log out'),
-      ),
     );
   }
 }

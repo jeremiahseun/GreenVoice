@@ -5,7 +5,6 @@ import 'package:gap/gap.dart';
 import 'package:greenvoice/core/routes/app_router.dart';
 import 'package:greenvoice/core/routes/routes.dart';
 import 'package:greenvoice/src/features/issues/data/issues_provider.dart';
-import 'package:greenvoice/src/features/issues/presentation/add_issue.dart';
 import 'package:greenvoice/src/features/issues/widgets/category_tabs.dart';
 import 'package:greenvoice/src/features/issues/widgets/issue_card.dart';
 import 'package:greenvoice/src/models/user/issue/issue_model.dart';
@@ -115,14 +114,7 @@ class _IssuesViewState extends ConsumerState<IssuesView> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const ReportIssueScreen(),
-            ),
-          );
-        },
+        onPressed: () => context.push(NavigateToPage.addIssue),
         isExtended: isExtended,
         label: Text(
           'Report Issue',

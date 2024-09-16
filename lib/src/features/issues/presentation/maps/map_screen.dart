@@ -6,14 +6,14 @@ import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' hide Visibility;
 
 import 'issue_carousel.dart';
 
-class MapView extends ConsumerStatefulWidget {
-  const MapView({super.key});
+class MapScreen extends ConsumerStatefulWidget {
+  const MapScreen({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _MapViewState();
 }
 
-class _MapViewState extends ConsumerState<MapView> {
+class _MapViewState extends ConsumerState<MapScreen> {
   @override
   void initState() {
     super.initState();

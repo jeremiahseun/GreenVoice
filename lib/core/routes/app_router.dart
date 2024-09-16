@@ -13,9 +13,10 @@ import 'package:greenvoice/src/features/authentication/register/presentation/reg
 import 'package:greenvoice/src/features/authentication/reset_password/reset_password.dart';
 import 'package:greenvoice/src/features/authentication/splash/splash_screen.dart';
 import 'package:greenvoice/src/features/bottom_navigation/presentation/bottom_navigation.dart';
+import 'package:greenvoice/src/features/issues/presentation/add_issue.dart';
 import 'package:greenvoice/src/features/issues/presentation/issue_description.dart';
 import 'package:greenvoice/src/features/issues/presentation/issues_home.dart';
-import 'package:greenvoice/src/features/issues/presentation/maps/map_view.dart';
+import 'package:greenvoice/src/features/issues/presentation/maps/map_screen.dart';
 import 'package:greenvoice/src/features/profile/presentation/profile_view.dart';
 import 'package:greenvoice/src/features/projects/presentation/projects.dart';
 import 'package:greenvoice/src/features/projects/presentation/projects_details.dart';
@@ -84,22 +85,25 @@ class GreenVoiceRoutes {
                 ),
               ]),
           GoRoute(
-              path: AppRoutes.mapView,
-              builder: (context, state) => const MapView(),
+            path: AppRoutes.mapView,
+            builder: (context, state) => MapScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.projects,
+            builder: (context, state) => const ProjectHome(),
+          ),
+          GoRoute(
+              path: AppRoutes.projectDetails,
+              builder: (context, state) => const ProjectDetailsView(),
               routes: const []),
           GoRoute(
               path: AppRoutes.profile,
               builder: (context, state) => const ProfileView(),
               routes: const []),
-        ]),
-    GoRoute(
-        path: AppRoutes.projects,
-        builder: (context, state) => const ProjectHome(),
-        routes: [
           GoRoute(
-              path: AppRoutes.projectDetails,
-              builder: (context, state) => const ProjectDetailsView(),
-              routes: const []),
+            path: AppRoutes.addIssue,
+            builder: (context, state) => const AddIssueScreen(),
+          ),
         ]),
   ]);
 }

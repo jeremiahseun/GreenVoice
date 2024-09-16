@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 import 'package:image_picker/image_picker.dart';
 
-class ReportIssueScreen extends StatefulWidget {
-  const ReportIssueScreen({super.key});
+class AddIssueScreen extends StatefulWidget {
+  const AddIssueScreen({super.key});
 
   @override
-  _ReportIssueScreenState createState() => _ReportIssueScreenState();
+  _AddIssueScreenState createState() => _AddIssueScreenState();
 }
 
-class _ReportIssueScreenState extends State<ReportIssueScreen> {
+class _AddIssueScreenState extends State<AddIssueScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   String? _location;

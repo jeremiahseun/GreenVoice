@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greenvoice/core/locator.dart';
 import 'package:greenvoice/src/features/issues/data/issues_provider.dart';
-import 'package:greenvoice/src/features/issues/presentation/maps/map_view.dart';
+import 'package:greenvoice/src/features/issues/presentation/maps/map_screen.dart';
 import 'package:greenvoice/src/models/user/issue/issue_model.dart';
 import 'package:greenvoice/src/services/location_service.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
