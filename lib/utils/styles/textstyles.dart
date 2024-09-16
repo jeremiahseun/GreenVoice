@@ -15,6 +15,8 @@ class AppStyles {
       fontSize: 24.0, fontWeight: FontWeight.w500, color: AppColors.blackColor);
   static TextStyle blackBold20 = GoogleFonts.publicSans(
       fontSize: 20.0, fontWeight: FontWeight.bold, color: AppColors.blackColor);
+  static TextStyle blackBold22 = GoogleFonts.publicSans(
+      fontSize: 22.0, fontWeight: FontWeight.bold, color: AppColors.blackColor);
   static TextStyle blackBold36 = GoogleFonts.publicSans(
       fontSize: 36.0, fontWeight: FontWeight.bold, color: AppColors.blackColor);
   static TextStyle blackBold15 = GoogleFonts.publicSans(
@@ -66,5 +68,7 @@ class AppStyles {
       fontWeight: FontWeight.normal,
       color: AppColors.blackColor);
   static TextStyle blackSemi15 = GoogleFonts.publicSans(
+      fontSize: 14.0, fontWeight: FontWeight.w600, color: AppColors.blackColor);
+  static TextStyle blackSemi17 = GoogleFonts.publicSans(
       fontSize: 14.0, fontWeight: FontWeight.w600, color: AppColors.blackColor);
 }

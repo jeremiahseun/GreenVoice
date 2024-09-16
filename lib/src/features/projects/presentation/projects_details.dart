@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:greenvoice/utils/common_widgets/data_box.dart';
+import 'package:greenvoice/utils/common_widgets/green_voice_button.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 
 class ProjectDetailsView extends ConsumerWidget {
@@ -37,20 +38,19 @@ class ProjectDetailsView extends ConsumerWidget {
                 children: [
                   Text(
                     'Community Garden',
-                    style: AppStyles.blackBold20,
+                    style: AppStyles.blackBold22,
                   ),
                   const Gap(15),
                   Text(
                     'We need to build a garden so we can enjoy healthy foods like this. How far, Eljoy you no reason am?',
-                    style: AppStyles.blackSemi15,
+                    style: AppStyles.blackSemi17,
                   ),
                   const Gap(25),
                   const Row(
                     children: [
                       Expanded(child: DataBox(title: 'Votes', data: '6,000')),
                       Gap(10),
-                      Expanded(
-                          child: DataBox(title: '30 days left', data: '60')),
+                      Expanded(child: DataBox(title: 'Days Left', data: '60')),
                     ],
                   ),
                   const Gap(15.0),
@@ -70,12 +70,12 @@ class ProjectDetailsView extends ConsumerWidget {
                         ),
                         child: const Icon(Icons.calendar_month)),
                     title: Text(
-                      'Voting Ends in 30...',
-                      style: AppStyles.blackBold14,
+                      'Voting Ends in 60 days',
+                      style: AppStyles.blackBold16,
                     ),
                     subtitle: Text(
                       'Dec 10, 2020',
-                      style: AppStyles.blackNormal13,
+                      style: AppStyles.blackNormal14,
                     ),
                     trailing: SizedBox(
                       width: 120.0,
@@ -102,37 +102,21 @@ class ProjectDetailsView extends ConsumerWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: Container(
-                          alignment: Alignment.center,
-                          height: 40,
-                          width: 150,
-                          decoration: BoxDecoration(
-                              color: AppColors.primaryColor,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Text(
-                            'Vote',
-                            style: AppStyles.blackBold12
-                                .copyWith(color: AppColors.whiteColor),
-                          ),
+                        child: GreenVoiceButton.fill(
+                          onTap: () {},
+                          title: "Vote",
                         ),
                       ),
                       const Gap(15.0),
                       Expanded(
-                        child: Container(
-                          alignment: Alignment.center,
-                          height: 40,
-                          width: 150,
-                          decoration: BoxDecoration(
-                              color: AppColors.lightPrimaryColor,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Text(
-                            'Share',
-                            style: AppStyles.blackBold12,
-                          ),
+                        child: GreenVoiceButton.outline(
+                          onTap: () {},
+                          title: "Share",
                         ),
                       )
                     ],
-                  )
+                  ),
+                  const Gap(30.0),
                 ],
               ),
             )
