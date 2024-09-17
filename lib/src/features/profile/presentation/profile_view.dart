@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:greenvoice/src/features/issues/data/issues_provider.dart';
-import 'package:greenvoice/src/models/user/issue/issue_model.dart';
+import 'package:greenvoice/src/models/issue/issue_model.dart';
 import 'package:greenvoice/utils/common_widgets/green_voice_button.dart';
 import 'package:greenvoice/utils/helpers/date_formatter.dart';
 import 'package:greenvoice/utils/styles/styles.dart';

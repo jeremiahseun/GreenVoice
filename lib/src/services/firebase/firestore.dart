@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:greenvoice/src/models/user/issue/issue_model.dart';
+import 'package:greenvoice/src/models/issue/issue_model.dart';
 import 'package:greenvoice/src/models/user/user_model.dart';
 
 class FirestoreStrings {
