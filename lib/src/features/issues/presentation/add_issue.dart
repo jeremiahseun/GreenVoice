@@ -1,30 +1,41 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:greenvoice/utils/styles/styles.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:flutter_location_search/flutter_location_search.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gap/gap.dart';
+import 'package:greenvoice/core/routes/app_router.dart';
+import 'package:greenvoice/src/features/issues/data/issues_provider.dart';
+import 'package:greenvoice/src/features/issues/widgets/add_issues_widgets.dart';
+import 'package:greenvoice/utils/common_widgets/green_voice_button.dart';
+import 'package:greenvoice/utils/common_widgets/snackbar_message.dart';
 
-class AddIssueScreen extends StatefulWidget {
+class AddIssueScreen extends ConsumerStatefulWidget {
   const AddIssueScreen({super.key});
 
   @override
-  _AddIssueScreenState createState() => _AddIssueScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _AddIssueScreenState();
 }
 
-class _AddIssueScreenState extends State<AddIssueScreen> {
+class _AddIssueScreenState extends ConsumerState<AddIssueScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  String? _location;
-  final List<File> _images = [];
-  bool _postAnonymously = false;
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    ref.read(addIssueProvider).disposeItems();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final addIssueRead = ref.read(addIssueProvider);
+    final addIssueWatch = ref.watch(addIssueProvider);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.close),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.pop(),
         ),
         title: const Text('Report an issue'),
       ),
@@ -36,204 +47,100 @@ class _AddIssueScreenState extends State<AddIssueScreen> {
             const Text('Issue',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            _buildTextField(_titleController, 'Title'),
+            CustomTextField(controller: _titleController, hint: 'Title'),
             const SizedBox(height: 16),
             const Text('Details',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            _buildTextField(_descriptionController, 'Description', maxLines: 5),
+            CustomTextField(
+                controller: _descriptionController,
+                hint: 'Description',
+                maxLines: 5),
             const SizedBox(height: 16),
-            _buildLocationButton(),
+            LocationButton(
+                address: addIssueWatch.address.isEmpty
+                    ? 'Add location'
+                    : addIssueWatch.address,
+                onLocationSelected: () async {
+                  LocationData? locationData = await LocationSearch.show(
+                      countryCodes: ["NG"],
+                      loadingWidget: const CircularProgressIndicator.adaptive(),
+                      context: context,
+                      mode: Mode.overlay);
+                  if (locationData != null) {
+                    addIssueRead.setLocation(
+                        address: locationData.address,
+                        longitude: locationData.longitude,
+                        latitude: locationData.latitude);
+                  }
+                }),
             const SizedBox(height: 16),
-            _buildImageGrid(),
+            ImageGrid(
+                images: addIssueWatch.images,
+                onImageAdded: () async {
+                  if (addIssueWatch.images.length > 5) {
+                    SnackbarMessage.showInfo(
+                        context: context,
+                        message: "You cannot upload more than 5 images");
+                    return;
+                  }
+                  await showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return SafeArea(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            ListTile(
+                              leading: const Icon(Icons.camera),
+                              title: const Text('Take a photo'),
+                              onTap: () async {
+                                context.pop();
+                                await addIssueRead.pickImage(false);
+                              },
+                            ),
+                            ListTile(
+                              leading: const Icon(Icons.photo_library),
+                              title: const Text('Choose from gallery'),
+                              onTap: () async {
+                                context.pop();
+                                await addIssueRead.pickImage(true);
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                }),
             const SizedBox(height: 16),
-            _buildAnonymousSwitch(),
+            AnonymousSwitch(
+              value: addIssueWatch.postAnonymously,
+              onChanged: (value) => addIssueRead.setPostAnonymous(value),
+            ),
             const SizedBox(height: 24),
-            _buildPostButton(),
+            Row(
+              children: [
+                Expanded(
+                  child: GreenVoiceButton.outline(
+                    onTap: () {},
+                    title: 'Post Anonymously',
+                    size: const Size(300, 120),
+                  ),
+                ),
+                const Gap(16),
+                Expanded(
+                  child: GreenVoiceButton.fill(
+                    onTap: () {},
+                    title: 'Post',
+                    size: const Size(300, 120),
+                  ),
+                )
+              ],
+            )
           ],
         ),
       ),
     );
-  }
-
-  Widget _buildTextField(TextEditingController controller, String hint,
-      {int maxLines = 1}) {
-    return TextField(
-      controller: controller,
-      maxLines: maxLines,
-      decoration: InputDecoration(
-        hintText: hint,
-        filled: true,
-        fillColor: AppColors.lightPrimaryColor,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide.none,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLocationButton() {
-    return InkWell(
-      onTap: () {
-        // Implement location selection
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: AppColors.lightPrimaryColor,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.location_on, size: 20),
-            SizedBox(width: 8),
-            Text('Add location'),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildImageGrid() {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-      ),
-      itemCount: _images.length + 1,
-      itemBuilder: (context, index) {
-        if (index == _images.length) {
-          return _buildAddPhotoButton();
-        }
-        return _buildImageTile(_images[index]);
-      },
-    );
-  }
-
-  Widget _buildImageTile(File image) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: Image.file(
-        image,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
-
-  Widget _buildAddPhotoButton() {
-    return InkWell(
-      onTap: _showImageSourceBottomSheet,
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.lightPrimaryColor,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: const Icon(Icons.add_a_photo, color: Colors.pink),
-      ),
-    );
-  }
-
-  void _showImageSourceBottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ListTile(
-                leading: const Icon(Icons.camera),
-                title: const Text('Take a photo'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickImage(ImageSource.camera);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('Choose from gallery'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickImage(ImageSource.gallery);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _pickImage(ImageSource source) async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: source);
-    if (pickedFile != null) {
-      setState(() {
-        _images.add(File(pickedFile.path));
-      });
-    }
-  }
-
-  Widget _buildAnonymousSwitch() {
-    return Row(
-      children: [
-        const Text('Post anonymously'),
-        const Spacer(),
-        Switch(
-          value: _postAnonymously,
-          onChanged: (value) {
-            setState(() {
-              _postAnonymously = value;
-            });
-          },
-          activeColor: AppColors.lightPrimaryColor,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPostButton() {
-    return Row(
-      children: [
-        Expanded(
-          child: ElevatedButton(
-            onPressed: _postAnonymously ? _postIssue : null,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.lightPrimaryColor,
-              foregroundColor: Colors.black,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-            ),
-            child: const Text('Post anonymously'),
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: ElevatedButton(
-            onPressed: _postIssue,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryColor,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-            ),
-            child: const Text('Post'),
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _postIssue() {
-    // Implement issue posting logic
-    print('Posting issue:');
-    print('Title: ${_titleController.text}');
-    print('Description: ${_descriptionController.text}');
-    print('Location: $_location');
-    print('Images: ${_images.length}');
-    print('Post anonymously: $_postAnonymously');
   }
 }

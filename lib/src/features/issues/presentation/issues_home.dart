@@ -7,7 +7,7 @@ import 'package:greenvoice/core/routes/routes.dart';
 import 'package:greenvoice/src/features/issues/data/issues_provider.dart';
 import 'package:greenvoice/src/features/issues/widgets/category_tabs.dart';
 import 'package:greenvoice/src/features/issues/widgets/issue_card.dart';
-import 'package:greenvoice/src/models/user/issue/issue_model.dart';
+import 'package:greenvoice/src/models/issue/issue_model.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -88,25 +88,28 @@ class _IssuesViewState extends ConsumerState<IssuesView> {
                       itemCount: 4,
                       separatorBuilder: (context, index) => const Gap(16),
                       itemBuilder: (context, i) => IssueCard(
-                        issue: IssueModel(
-                          id: '123',
-                          title: 'Sample Issue',
-                          description: 'This is a sample issue description.',
-                          location: 'San Francisco, CA',
-                          votes: 42,
-                          isResolved: false,
-                          createdAt: DateTime.now(),
-                          updatedAt: DateTime.now(),
-                          images: [
-                            'https://picsum.photos/400',
-                            'https://picsum.photos/400',
-                            'https://picsum.photos/400',
-                          ],
-                          userId: 'user123',
-                          category: 'Infrastructure',
-                          latitude: '37.7749',
-                          longitude: '-122.4194',
-                        ),
+                        issue:   IssueModel(
+                            id: '123',
+                            title: 'Sample Issue',
+                            description: 'This is a sample issue description.',
+                            location: 'San Francisco, CA',
+                            votes: [],
+                            isResolved: false,
+                            createdAt: DateTime.now(),
+                            updatedAt: DateTime.now(),
+                            images: [
+                              'https://picsum.photos/400',
+                              'https://picsum.photos/400',
+                              'https://picsum.photos/400',
+                            ],
+                            createdByUserId: 'user123',
+                            category: 'Infrastructure',
+                            latitude: '37.7749',
+                            longitude: '-122.4194',
+                            comments: [],
+                            createdByUserName: '',
+                            createdByUserPicture: '',
+                            shares: []),
                       ),
                     ))),
           ),

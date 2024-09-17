@@ -19,7 +19,7 @@ class IssueDetailScreen extends StatelessWidget {
     final issue = arguments.issue;
     return Scaffold(
       appBar: AppBar(
-        title: Text(issue.title ?? 'Issue Detail'),
+        title: Text(issue.title),
         actions: [
           IconButton(
             icon: const Icon(Icons.share),
@@ -43,7 +43,7 @@ class IssueDetailScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    issue.title ?? 'Untitled Issue',
+                    issue.title,
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 8),
@@ -53,7 +53,7 @@ class IssueDetailScreen extends StatelessWidget {
                           size: 16, color: Colors.grey[600]),
                       const SizedBox(width: 4),
                       Text(
-                        issue.location ?? 'Unknown location',
+                        issue.location,
                         style: TextStyle(color: Colors.grey[600]),
                       ),
                     ],
@@ -62,26 +62,28 @@ class IssueDetailScreen extends StatelessWidget {
                   IssueStatusChip(isResolved: issue.isResolved),
                   const SizedBox(height: 16),
                   Text(
-                    issue.description ?? 'No description provided.',
+                    issue.description,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   const SizedBox(height: 16),
                   InfoRow(
-                      icon: Icons.category, text: issue.category ?? 'Uncategorized'),
+                      icon: Icons.category,
+                      text: issue.category),
                   InfoRow(
                       icon: Icons.person,
-                      text: 'User ID: ${issue.userId ?? 'Unknown'}'),
+                      text: 'User ID: ${issue.createdByUserName}'),
                   InfoRow(
                     icon: Icons.access_time,
-                    text: 'Created: ${DateFormatter.formatDate(issue.createdAt)}',
+                    text:
+                        'Created: ${DateFormatter.formatDate(issue.createdAt)}',
                   ),
-                  if (issue.updatedAt != null)
-                    InfoRow(
-                      icon: Icons.update,
-                      text: 'Updated: ${DateFormatter.formatDate(issue.updatedAt)}',
-                    ),
+                  InfoRow(
+                    icon: Icons.update,
+                    text:
+                        'Updated: ${DateFormatter.formatDate(issue.updatedAt)}',
+                  ),
                   const SizedBox(height: 16),
-                  VoteButton(votes: issue.votes),
+                  VoteButton(votes: issue.votes.length),
                 ],
               ),
             ),

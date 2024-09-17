@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
-import 'package:greenvoice/src/models/user/issue/issue_model.dart';
+import 'package:greenvoice/src/models/issue/issue_model.dart';
 
 class IssuesExpandedView extends ConsumerWidget {
   final IssueModel issue;

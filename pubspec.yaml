@@ -17,6 +17,10 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_animate: ^4.5.0
+  flutter_location_search:
+    git:
+      url: https://github.com/jeremiahseun/flutter_location_search.git
+      ref: main
   flutter_riverpod: ^2.5.1
   flutter_screenutil: ^5.9.3
   fluttertoast: ^8.2.8
@@ -31,6 +35,7 @@ dependencies:
   skeletonizer: ^1.4.2
   geolocator: ^13.0.1
   uni_links2: ^0.6.0+2
+  flutter_image_compress: ^2.3.0
 
 dev_dependencies:
   flutter_lints: ^3.0.0

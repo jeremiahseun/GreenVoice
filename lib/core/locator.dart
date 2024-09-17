@@ -11,6 +11,8 @@ Future<void> setupLocator() async {
       .registerLazySingleton<FirebaseAuthService>(() => FirebaseAuthService());
   locator.registerLazySingleton<FirebaseFirestoreService>(
       () => FirebaseFirestoreService());
+  locator.registerLazySingleton<FirebaseStorageService>(
+      () => FirebaseStorageService());
   locator.registerLazySingleton<LocationService>(
       () => LocationService());
 }
