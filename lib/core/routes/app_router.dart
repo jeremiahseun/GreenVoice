@@ -20,7 +20,7 @@ import 'package:greenvoice/src/features/issues/presentation/maps/map_screen.dart
 import 'package:greenvoice/src/features/profile/presentation/profile_view.dart';
 import 'package:greenvoice/src/features/projects/presentation/projects.dart';
 import 'package:greenvoice/src/features/projects/presentation/projects_details.dart';
-import 'package:greenvoice/src/models/user/issue/issue_model.dart';
+import 'package:greenvoice/src/models/issue/issue_model.dart';
 
 export 'package:go_router/go_router.dart';
 

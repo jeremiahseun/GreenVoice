@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:greenvoice/src/features/issues/presentation/maps/widgets/expanded_view.dart';
-import 'package:greenvoice/src/models/user/issue/issue_model.dart';
+import 'package:greenvoice/src/models/issue/issue_model.dart';
 
 class IssueCarousel extends StatefulWidget {
   final List<IssueModel> issues;

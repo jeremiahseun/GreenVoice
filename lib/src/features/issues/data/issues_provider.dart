@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:greenvoice/src/models/user/issue/issue_model.dart';
+import 'package:greenvoice/src/models/issue/issue_model.dart';
 
 final issuesProvider =
     StateNotifierProvider<IssuesProvider, AsyncValue<List<IssueModel>>>(
