@@ -9,12 +9,14 @@ class GreenVoiceButton extends StatelessWidget {
   final Color textColor;
   final Color? outlineColor;
   final bool isOutlined;
+  final bool isLoading;
   const GreenVoiceButton(
       {super.key,
       required this.onTap,
       this.size = const Size(150, 40),
       required this.title,
       this.isOutlined = false,
+      this.isLoading = false,
       this.textColor = AppColors.blackColor,
       this.outlineColor,
       this.color = AppColors.primaryColor});
@@ -24,6 +26,7 @@ class GreenVoiceButton extends StatelessWidget {
       this.size = const Size(150, 40),
       required this.title,
       this.isOutlined = true,
+      this.isLoading = false,
       this.textColor = AppColors.primaryColor,
       this.outlineColor = AppColors.primaryColor,
       this.color});
@@ -33,6 +36,7 @@ class GreenVoiceButton extends StatelessWidget {
       this.size = const Size(150, 40),
       required this.title,
       this.isOutlined = false,
+      this.isLoading = false,
       this.textColor = AppColors.whiteColor,
       this.outlineColor,
       this.color = Colors.red});
@@ -42,6 +46,7 @@ class GreenVoiceButton extends StatelessWidget {
       this.size = const Size(150, 40),
       required this.title,
       this.isOutlined = false,
+      this.isLoading = false,
       this.textColor = AppColors.whiteColor,
       this.outlineColor,
       this.color = AppColors.primaryColor});
@@ -63,9 +68,15 @@ class GreenVoiceButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child: Text(
-          title,
-          style: AppStyles.blackBold12.copyWith(color: textColor),
-        ));
+        child: isLoading
+            ? const Center(
+                child: CircularProgressIndicator.adaptive(
+                  backgroundColor: AppColors.blackColor,
+                ),
+              )
+            : Text(
+                title,
+                style: AppStyles.blackBold12.copyWith(color: textColor),
+              ));
   }
 }

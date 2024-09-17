@@ -48,3 +48,18 @@ class GreenVoice extends StatelessWidget {
     );
   }
 }
+
+/**
+ *
+ * ISSUES HOME SEARCH
+ * ISSUE DETAILS (WITH ID TO NAVIGATE TO THE PARTICULAR ISSUE)
+ * - VOTING
+ * - COMMENTS
+ * - SHARE ISSUE
+ * DEEP LINKING
+ * FIREBASE IMPLEMENTATION
+ * - ADD ISSUE
+ * - LIST ALL PROJECTS
+ * - ADD PROJECT
+ * 
+ */
