@@ -14,10 +14,11 @@ class FirebaseFirestoreService {
 
   //? USERS
   //* Get a User
-  Future<(bool status, String message, UserModel? user)> getUser(String userId) async {
+  Future<(bool status, String message, UserModel? user)> getUser(
+      String userId) async {
     try {
-     final snapshot = await db
-          .collection(FirestoreStrings.users).doc(userId).get();
+      final snapshot =
+          await db.collection(FirestoreStrings.users).doc(userId).get();
       if (snapshot.exists) {
         final user = UserModel.fromMap(snapshot.data());
         return (true, "User gotten successfully", user);
@@ -51,7 +52,7 @@ class FirebaseFirestoreService {
           .collection(FirestoreStrings.users)
           .doc(user.uid)
           .update(user.toMap());
-          return (true, "User updated successfully");
+      return (true, "User updated successfully");
     } catch (e) {
       log("Error updating user: $e");
       return (false, "$e");
@@ -76,8 +77,8 @@ class FirebaseFirestoreService {
     try {
       final snapshot =
           await db.collection(FirestoreStrings.issues).doc(issueId).get();
-      if (snapshot.exists) {
-        final issue = IssueModel.fromMap(snapshot.data());
+      if (snapshot.exists && snapshot.data() != null) {
+        final issue = IssueModel.fromMap(snapshot.data()!);
         return (true, "Issue gotten successfully", issue);
       } else {
         return (false, "Issue not found", null);
@@ -140,9 +141,9 @@ class FirebaseFirestoreService {
       final docRef = db.collection(FirestoreStrings.issues).doc(issueId);
       final docSnapshot = await docRef.get();
 
-      if (docSnapshot.exists) {
-        final issue = IssueModel.fromMap(docSnapshot.data());
-        final updatedVotes = issue.votes + 1;
+      if (docSnapshot.exists && docSnapshot.data() != null) {
+        final issue = IssueModel.fromMap(docSnapshot.data()!);
+        final updatedVotes = issue.votes;
 
         await docRef.update({'votes': updatedVotes});
         return (true, "Issue liked successfully");
