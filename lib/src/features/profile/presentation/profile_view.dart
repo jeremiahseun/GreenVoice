@@ -98,14 +98,7 @@ class LoggedInProfile extends ConsumerWidget {
                   const Gap(20),
                   const VotingHistory(),
                   const Gap(50),
-                  GreenVoiceButton.red(
-                      onTap: () {
-                        FirebaseAuth.instance.signOut();
-
-                        /// TO BE PROPERLY MANAGED
-                        context.go(NavigateToPage.login);
-                      },
-                      title: 'Log out'),
+                  GreenVoiceButton.red(onTap: () {}, title: 'Log out'),
                   const Gap(50),
                 ],
               ),
