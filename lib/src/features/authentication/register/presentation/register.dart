@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import 'package:greenvoice/core/routes/app_router.dart';
+import 'package:greenvoice/core/routes/routes.dart';
 import 'package:greenvoice/src/features/authentication/login/presentation/login.dart';
 import 'package:greenvoice/src/features/authentication/register/data/register_notifier.dart';
 import 'package:greenvoice/utils/common_widgets/custom_button.dart';
@@ -204,17 +206,15 @@ class _RegisterState extends ConsumerState<RegisterView> {
                                 firstName: nameController.text,
                                 lastName: lastNameController.text,
                                 phoneNumber: phoneNumber);
-
                         if (registerUser == true) {
                           SnackbarMessage.showSuccess(
                               message: 'Account created successfully',
                               context: context);
 
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const LoginView()));
-                          //   context.push(NavigateToPage.login);
+                          context.push(NavigateToPage.login);
+                        } else {
+                          SnackbarMessage.showError(
+                              context: context, message: 'Login failed');
                         }
                       }
                     },
