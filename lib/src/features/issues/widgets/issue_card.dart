@@ -42,16 +42,16 @@ class IssueCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    issue.title ?? '',
+                    issue.title,
                     style: const TextStyle(
                         fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    issue.location ?? '',
+                    issue.location,
                     style: TextStyle(color: Colors.grey[600]),
                   ),
                   const SizedBox(height: 8),
-                  Text('${issue.votes} votes'),
+                  Text('${issue.votes.length} votes'),
                 ],
               ),
             ),

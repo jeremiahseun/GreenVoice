@@ -23,8 +23,13 @@ class _AddIssueScreenState extends ConsumerState<AddIssueScreen> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
-    ref.read(addIssueProvider).disposeItems();
     super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    ref.read(addIssueProvider).disposeItems();
+    super.deactivate();
   }
 
   @override
@@ -123,9 +128,9 @@ class _AddIssueScreenState extends ConsumerState<AddIssueScreen> {
               children: [
                 Expanded(
                   child: GreenVoiceButton.outline(
-                    onTap: () {},
+                    onTap: !addIssueWatch.postAnonymously ? null : () {},
                     title: 'Post Anonymously',
-                    size: const Size(300, 120),
+                    size: const Size(300, 50),
                   ),
                 ),
                 const Gap(16),
@@ -133,7 +138,7 @@ class _AddIssueScreenState extends ConsumerState<AddIssueScreen> {
                   child: GreenVoiceButton.fill(
                     onTap: () {},
                     title: 'Post',
-                    size: const Size(300, 120),
+                    size: const Size(300, 50),
                   ),
                 )
               ],

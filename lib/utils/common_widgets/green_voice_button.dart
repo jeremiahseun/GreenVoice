@@ -4,7 +4,7 @@ import 'package:greenvoice/utils/styles/styles.dart';
 class GreenVoiceButton extends StatelessWidget {
   final Size size;
   final String title;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final Color? color;
   final Color textColor;
   final Color? outlineColor;
