@@ -37,7 +37,8 @@ class LocationButton extends StatelessWidget {
   final String address;
   final VoidCallback onLocationSelected;
 
-  const LocationButton({super.key, required this.onLocationSelected, required this.address});
+  const LocationButton(
+      {super.key, required this.onLocationSelected, required this.address});
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +55,7 @@ class LocationButton extends StatelessWidget {
           children: [
             const Icon(Icons.location_on, size: 20),
             const SizedBox(width: 8),
-            Text(address),
+            Expanded(child: Text(address)),
           ],
         ),
       ),
