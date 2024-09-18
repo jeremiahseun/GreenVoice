@@ -206,7 +206,6 @@ class _RegisterState extends ConsumerState<RegisterView> {
                                 firstName: nameController.text,
                                 lastName: lastNameController.text,
                                 phoneNumber: phoneNumber);
-
                         if (registerUser == true) {
                           SnackbarMessage.showSuccess(
                               message: 'Account created successfully',
