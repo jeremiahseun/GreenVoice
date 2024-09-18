@@ -109,8 +109,11 @@ PODS:
     - Mantle
     - SDWebImage
     - SDWebImageWebPCoder
+<<<<<<< HEAD
   - flutter_secure_storage (6.0.0):
     - Flutter
+=======
+>>>>>>> 4cb34ca (Android Fix)
   - fluttertoast (0.0.2):
     - Flutter
     - Toast
