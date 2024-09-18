@@ -3,6 +3,8 @@ import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greenvoice/src/services/firebase/firebase.dart';
+import 'package:greenvoice/src/services/local_storage/storage_services.dart';
+import 'package:greenvoice/src/services/local_storage/storagekeys.dart';
 import 'package:greenvoice/utils/helpers/greenvoice_notifier.dart';
 
 final loginNotifierProvider =
@@ -12,6 +14,9 @@ class LoginScreenNotifier extends GreenVoiceNotifier {
   final FirebaseAuthService firebaseAuthService = FirebaseAuthService();
   final FirebaseFirestoreService firebaseFirestoreService =
       FirebaseFirestoreService();
+
+  final StorageService storageService = StorageService();
+
   bool isObscurePassword = false;
 
   void obscurePassword() {
@@ -26,16 +31,19 @@ class LoginScreenNotifier extends GreenVoiceNotifier {
     log('Triggering code');
     startLoading();
     try {
-      final registerUser = await firebaseAuthService.signInWithEmailAndPassword(
+      final loginUser = await firebaseAuthService.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
       stopLoading();
 
-      if (registerUser.$1 == true) {
+      if (loginUser.$1 == true) {
+        log('${loginUser.$3} USERRHGUHFYGFYG');
         log(' Sign IN successful');
+
+        storageService.writeSecureData(key: Storagekeys.userId, value: '');
       } else {
-        log(registerUser.$2);
+        log(loginUser.$2);
       }
       return true;
     } catch (e) {
