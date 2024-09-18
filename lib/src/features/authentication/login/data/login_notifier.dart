@@ -36,16 +36,15 @@ class LoginScreenNotifier extends GreenVoiceNotifier {
         password: password,
       );
       stopLoading();
-
       if (loginUser.$1 == true) {
         log('${loginUser.$3} USERRHGUHFYGFYG');
-        log(' Sign IN successful');
-
-        storageService.writeSecureData(key: Storagekeys.userId, value: '');
+        final String userId = loginUser.$3?.user?.uid ?? '';
+        storageService.writeSecureData(key: Storagekeys.userId, value: userId);
+        return true;
       } else {
         log(loginUser.$2);
+        return false;
       }
-      return true;
     } catch (e) {
       log('Something went wrong $e');
       stopLoading();
