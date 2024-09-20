@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
@@ -100,11 +101,13 @@ class AdaptiveImageGrid extends StatelessWidget {
           Expanded(
             child: Row(
               children: [
-                Expanded(child: InkWell(
+                Expanded(
+                    child: InkWell(
                         onTap: () => onTap(0),
                         child: _buildImageContainer(images[0], size))),
                 const Gap(10),
-                Expanded(child: InkWell(
+                Expanded(
+                    child: InkWell(
                         onTap: () => onTap(1),
                         child: _buildImageContainer(images[1], size))),
               ],
@@ -114,11 +117,13 @@ class AdaptiveImageGrid extends StatelessWidget {
           Expanded(
             child: Row(
               children: [
-                Expanded(child: InkWell(
+                Expanded(
+                    child: InkWell(
                         onTap: () => onTap(2),
                         child: _buildImageContainer(images[2], size))),
                 const Gap(10),
-                Expanded(child: InkWell(
+                Expanded(
+                    child: InkWell(
                         onTap: () => onTap(3),
                         child: _buildImageContainer(images[3], size))),
               ],
@@ -208,6 +213,8 @@ class AdaptiveImageGrid extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: CachedNetworkImage(
           imageUrl: imageUrl,
+          useOldImageOnUrlChange: true,
+          cacheKey: kIsWeb ? null : 'greenvoice-cache-key',
           fit: BoxFit.cover,
           progressIndicatorBuilder: (context, url, downloadProgress) =>
               const Center(child: CircularProgressIndicator.adaptive()),

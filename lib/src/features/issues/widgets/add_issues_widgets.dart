@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
@@ -102,7 +103,10 @@ class ImageGrid extends StatelessWidget {
         }
         return InkWell(
             onTap: () => onImageRemove(index),
-            child: ImageTile(image: images[index]));
+            child: Visibility(
+                visible: !kIsWeb,
+                replacement: ImageTileWeb(image: images[index]),
+                child: ImageTile(image: images[index])));
       },
     );
   }
@@ -119,6 +123,23 @@ class ImageTile extends StatelessWidget {
       borderRadius: BorderRadius.circular(8),
       child: Image.file(
         image,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+}
+
+class ImageTileWeb extends StatelessWidget {
+  final File image;
+
+  const ImageTileWeb({super.key, required this.image});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: Image.network(
+        image.path,
         fit: BoxFit.cover,
       ),
     );

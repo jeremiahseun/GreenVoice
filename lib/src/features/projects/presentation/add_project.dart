@@ -125,7 +125,7 @@ class _AddIssueScreenState extends ConsumerState<AddProjectScreen> {
                     ref.read(addProjectProvider).setProposedDate(value),
               ),
               const Gap(16),
-              Text('Project Description', style: AppStyles.blackBold18),
+              Text('Proposed Amount', style: AppStyles.blackBold18),
               const Gap(8),
               CustomTextField(
                 controller: _amountController,

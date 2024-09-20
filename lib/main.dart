@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,8 +20,10 @@ void main() async {
   runApp(const ProviderScope(child: GreenVoice()));
 
   Animate.restartOnHotReload = true;
-  MapboxOptions.setAccessToken(
-      "pk.eyJ1IjoiamVyZW1pYWhzZXVuIiwiYSI6ImNtMHU2NHllNjB1MG8ybHI1ZzRpMDR1bGYifQ.srO22bCjZuGdApdDXdooSg");
+  if (!kIsWeb) {
+    MapboxOptions.setAccessToken(
+        "pk.eyJ1IjoiamVyZW1pYWhzZXVuIiwiYSI6ImNtMHU2NHllNjB1MG8ybHI1ZzRpMDR1bGYifQ.srO22bCjZuGdApdDXdooSg");
+  }
 }
 
 class GreenVoice extends StatelessWidget {
@@ -61,5 +64,5 @@ class GreenVoice extends StatelessWidget {
  * - ADD ISSUE
  * - LIST ALL PROJECTS
  * - ADD PROJECT
- * 
+ *
  */

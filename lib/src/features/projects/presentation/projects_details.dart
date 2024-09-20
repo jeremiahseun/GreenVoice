@@ -7,6 +7,7 @@ import 'package:greenvoice/src/features/projects/data/projects_provider.dart';
 import 'package:greenvoice/utils/common_widgets/data_box.dart';
 import 'package:greenvoice/utils/common_widgets/fullscreen_carousel_image.dart';
 import 'package:greenvoice/utils/common_widgets/green_voice_button.dart';
+import 'package:greenvoice/utils/common_widgets/snackbar_message.dart';
 import 'package:greenvoice/utils/helpers/date_formatter.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 
@@ -149,6 +150,14 @@ class _ProjectDetailsViewState extends ConsumerState<ProjectDetailsView> {
                                         true
                                     ? null
                                     : () async {
+                                        if (ref.read(userProvider).value ==
+                                            null) {
+                                          SnackbarMessage.showInfo(
+                                              context: context,
+                                              message:
+                                                  "You need to be logged in so that you can vote");
+                                          return;
+                                        }
                                         isLikeLoadingState.value = true;
                                         await ref
                                             .read(oneProjectProvider.notifier)

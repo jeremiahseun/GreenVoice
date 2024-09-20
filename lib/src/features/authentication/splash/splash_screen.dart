@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
@@ -21,13 +22,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    DeepLinking.initUniLinks(context);
+    if (!kIsWeb) {
+      DeepLinking.initUniLinks(context);
+    }
     ref.read(userProvider.notifier).getCurrentUser();
   }
 
   @override
   void dispose() {
-    DeepLinking.dispose();
+    if (!kIsWeb) {
+      DeepLinking.dispose();
+    }
     super.dispose();
   }
 
