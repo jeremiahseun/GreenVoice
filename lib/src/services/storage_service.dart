@@ -1,4 +1,3 @@
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -9,22 +8,22 @@ class StorageService {
 
   //? CRUD OPERATIONS FOR SHARED PREFERENCES
   //* READING DATA
-  Future<int> readIntData({required String key}) async {
+  Future<int?> readIntData({required String key}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getInt(key) ?? 0;
   }
 
-  Future<double> readDoubleData({required String key}) async {
+  Future<double?> readDoubleData({required String key}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getDouble(key) ?? 0.0;
   }
 
-  Future<String> readStringData({required String key}) async {
+  Future<String?> readStringData({required String key}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(key) ?? '';
   }
 
-  Future<bool> readBoolData({required String key}) async {
+  Future<bool?> readBoolData({required String key}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool(key) ?? false;
   }
@@ -64,7 +63,7 @@ class StorageService {
   }
 
   //* READING SECURE DATA
-  Future<String> readSecureData({required String key}) async {
+  Future<String?> readSecureData({required String key}) async {
     final data = await storage.read(key: key);
 
     return data ?? '';

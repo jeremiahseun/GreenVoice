@@ -2,7 +2,9 @@
 import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:greenvoice/src/models/user/user_model.dart';
 import 'package:greenvoice/src/services/firebase/firebase.dart';
+import 'package:greenvoice/src/services/isar_storage.dart';
 import 'package:greenvoice/src/services/storage_service.dart';
 import 'package:greenvoice/utils/constants/storage_keys.dart';
 import 'package:greenvoice/utils/helpers/greenvoice_notifier.dart';
@@ -18,6 +20,7 @@ class LoginScreenNotifier extends GreenVoiceNotifier {
       FirebaseFirestoreService();
 
   final StorageService storageService = StorageService();
+  final IsarStorageService _isarStorageService = IsarStorageService();
 
   bool isObscurePassword = false;
 
@@ -39,17 +42,23 @@ class LoginScreenNotifier extends GreenVoiceNotifier {
       );
       stopLoading();
       if (loginUser.$1 == true) {
-        log('${loginUser.$3} USERRHGUHFYGFYG');
         final String userId = loginUser.$3?.user?.uid ?? '';
         await storageService.writeSecureData(
-            key: StorageKeys.userId, value: userId);
+          key: StorageKeys.userId,
+          value: userId,
+        );
+        // final UserModel userModel = UserModel(
+        //     uid: loginUser.$3?.user?.uid ?? '',
+        //     email: loginUser.$3?.user?.email ?? '',
+        //     firstName: loginUser.$3?.user?.displayName ?? '',
+        //     photo: loginUser.$3?.user?.photoURL);
+
+        // await _isarStorageService.writeUserDB(userModel);
         return true;
       } else {
-        log(loginUser.$2);
         return false;
       }
     } catch (e) {
-      log('Something went wrong $e');
       stopLoading();
       return false;
     }

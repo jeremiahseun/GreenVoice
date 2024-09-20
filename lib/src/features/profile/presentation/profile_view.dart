@@ -1,7 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import 'package:greenvoice/core/routes/app_router.dart';
+import 'package:greenvoice/core/routes/routes.dart';
 import 'package:greenvoice/src/models/issue/issue_model.dart';
 import 'package:greenvoice/utils/common_widgets/green_voice_button.dart';
 import 'package:greenvoice/utils/helpers/date_formatter.dart';
@@ -93,7 +96,12 @@ class LoggedInProfile extends ConsumerWidget {
                   const Gap(20),
                   const VotingHistory(),
                   const Gap(50),
-                  GreenVoiceButton.red(onTap: () {}, title: 'Log out'),
+                  GreenVoiceButton.red(
+                      onTap: () async {
+                        await FirebaseAuth.instance.signOut();
+                        context.go(NavigateToPage.login);
+                      },
+                      title: 'Log out'),
                   const Gap(50),
                 ],
               ),

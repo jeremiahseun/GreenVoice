@@ -1,4 +1,9 @@
+import 'package:isar/isar.dart';
+part 'user_model.g.dart';
+
+@collection
 class UserModel {
+    Id id = 1;
   final String uid;
   final String? email;
   final String? firstName;

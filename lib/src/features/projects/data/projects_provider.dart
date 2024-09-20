@@ -94,7 +94,8 @@ class AddProjectProvider extends GreenVoiceNotifier {
     startLoading();
 
     //* Get the current user ID
-    final userId = await storageService.readSecureData(key: StorageKeys.userId);
+    final userId =
+        await storageService.readSecureData(key: StorageKeys.userId) ?? '';
     final username =
         await storageService.readSecureData(key: StorageKeys.username);
     final userPicture =
@@ -140,8 +141,8 @@ class AddProjectProvider extends GreenVoiceNotifier {
         updatedAt: DateTime.now(),
         images: imagesList.$3,
         createdByUserId: userId,
-        createdByUserName: username,
-        createdByUserPicture: userPicture,
+        createdByUserName: username ?? '',
+        createdByUserPicture: userPicture ?? '',
         comments: [],
         shares: []));
     stopLoading();
@@ -229,7 +230,7 @@ class OneProjectProvider extends StateNotifier<AsyncValue<ProjectModel>> {
 
   Future<bool> likeAndUnlikeProject({required String projectId}) async {
     final userId = await storage.readSecureData(key: StorageKeys.userId);
-    final res = await firestore.likeAndUnlikeProject(projectId, userId);
+    final res = await firestore.likeAndUnlikeProject(projectId, userId ?? '');
     log("Liking project response ${res.$2}");
     if (res.$1) {
       await getOneProject(projectId, force: true);

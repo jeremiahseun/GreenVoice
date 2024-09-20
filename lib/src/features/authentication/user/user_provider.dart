@@ -24,7 +24,8 @@ class UserProvider extends StateNotifier<AsyncValue<UserModel?>> {
     log("Getting current user");
     state = const AsyncValue.loading();
     try {
-      final userId = await storage.readSecureData(key: StorageKeys.userId);
+      final userId =
+          await storage.readSecureData(key: StorageKeys.userId) ?? '';
       if (userId.isEmpty) {
         log("User is null");
         return null;
