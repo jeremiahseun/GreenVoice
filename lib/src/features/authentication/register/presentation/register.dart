@@ -210,7 +210,7 @@ class _RegisterState extends ConsumerState<RegisterView> {
                               message: 'Account created successfully',
                               context: context);
 
-                          context.push(NavigateToPage.login);
+                          context.push(NavigateToPage.home);
                         } else {
                           SnackbarMessage.showError(
                               context: context, message: registerUser.$2);

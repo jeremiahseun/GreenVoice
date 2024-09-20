@@ -29,7 +29,7 @@ class LoginScreenNotifier extends GreenVoiceNotifier {
     notifyListeners();
   }
 
-  Future<bool> loginGreenVoiceUser({
+  Future<(bool status, String message)> loginGreenVoiceUser({
     required String email,
     required String password,
   }) async {
@@ -43,24 +43,23 @@ class LoginScreenNotifier extends GreenVoiceNotifier {
       stopLoading();
       if (loginUser.$1 == true) {
         final String userId = loginUser.$3?.user?.uid ?? '';
-        await storageService.writeSecureData(
-          key: StorageKeys.userId,
-          value: userId,
-        );
-        // final UserModel userModel = UserModel(
+
+          // final UserModel userModel = UserModel(
         //     uid: loginUser.$3?.user?.uid ?? '',
         //     email: loginUser.$3?.user?.email ?? '',
         //     firstName: loginUser.$3?.user?.displayName ?? '',
         //     photo: loginUser.$3?.user?.photoURL);
 
         // await _isarStorageService.writeUserDB(userModel);
-        return true;
+        await storageService.writeSecureData(
+            key: StorageKeys.userId, value: userId);
+        return (true, 'Login Successful');
       } else {
-        return false;
+        return (false, loginUser.$2);
       }
     } catch (e) {
       stopLoading();
-      return false;
+      return (false, 'An error occured: $e');
     }
   }
 }
