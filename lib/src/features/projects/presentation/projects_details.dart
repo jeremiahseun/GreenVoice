@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:greenvoice/src/features/authentication/user/user_provider.dart';
 import 'package:greenvoice/src/features/issues/widgets/adaptive_images.dart';
 import 'package:greenvoice/src/features/projects/data/projects_provider.dart';
+import 'package:greenvoice/src/services/branch_deeplink_service.dart';
 import 'package:greenvoice/utils/common_widgets/data_box.dart';
 import 'package:greenvoice/utils/common_widgets/fullscreen_carousel_image.dart';
 import 'package:greenvoice/utils/common_widgets/green_voice_button.dart';
@@ -41,6 +42,16 @@ class _ProjectDetailsViewState extends ConsumerState<ProjectDetailsView> {
               loading: () => '...'),
           style: AppStyles.blackBold18,
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: () async {
+              await BranchDeeplinkService.shareProject(
+                ref.watch(oneProjectProvider).value!,
+              );
+            },
+          ),
+        ],
       ),
       body: ref.watch(oneProjectProvider).when(
           data: (data) {
@@ -162,6 +173,7 @@ class _ProjectDetailsViewState extends ConsumerState<ProjectDetailsView> {
                                         await ref
                                             .read(oneProjectProvider.notifier)
                                             .likeAndUnlikeProject(
+                                                context: context,
                                                 projectId: project.id);
                                         isLikeLoadingState.value = false;
                                       },

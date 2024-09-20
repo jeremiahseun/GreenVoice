@@ -2,10 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:greenvoice/core/routes/app_router.dart';
 import 'package:greenvoice/core/locator.dart';
+import 'package:greenvoice/core/routes/app_router.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
@@ -17,6 +18,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await FlutterBranchSdk.init(enableLogging: true, disableTracking: false);
   runApp(const ProviderScope(child: GreenVoice()));
 
   Animate.restartOnHotReload = true;
