@@ -1,1 +1,46 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"greenvoiceapp","appId":"1:870660907182:android:0340cfe22f5aa962354d3f","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"greenvoiceapp","appId":"1:870660907182:ios:a645648fa7337b8e354d3f","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"greenvoiceapp","configurations":{"ios":"1:870660907182:ios:a645648fa7337b8e354d3f"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "greenvoiceapp",
+          "appId": "1:870660907182:android:0340cfe22f5aa962354d3f",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "greenvoiceapp",
+          "appId": "1:870660907182:ios:a645648fa7337b8e354d3f",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "greenvoiceapp",
+          "configurations": {
+            "ios": "1:870660907182:ios:a645648fa7337b8e354d3f"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "source": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "frameworksBackend": {
+      "region": "us-east1"
+    }
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "frameworksBackend": {
+    "region": "us-east1"
+  }
+}
