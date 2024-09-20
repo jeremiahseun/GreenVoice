@@ -110,7 +110,7 @@ class AddProjectProvider extends GreenVoiceNotifier {
       return false;
     }
     //* Upload Images first
-    final imagesList = await firebaseStorage.uploadIssuePicture(
+    final imagesList = await firebaseStorage.uploadProjectPicture(
         image: images,
         uploadProgress: (progress) {
           setUploadState(progress);
