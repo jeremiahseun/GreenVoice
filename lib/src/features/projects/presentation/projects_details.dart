@@ -1,128 +1,198 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import 'package:greenvoice/src/features/authentication/user/user_provider.dart';
+import 'package:greenvoice/src/features/issues/widgets/adaptive_images.dart';
+import 'package:greenvoice/src/features/projects/data/projects_provider.dart';
 import 'package:greenvoice/utils/common_widgets/data_box.dart';
+import 'package:greenvoice/utils/common_widgets/fullscreen_carousel_image.dart';
 import 'package:greenvoice/utils/common_widgets/green_voice_button.dart';
+import 'package:greenvoice/utils/helpers/date_formatter.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 
-class ProjectDetailsView extends ConsumerWidget {
-  const ProjectDetailsView({super.key});
+class ProjectDetailsView extends ConsumerStatefulWidget {
+  final String id;
+  const ProjectDetailsView({super.key, required this.id});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ProjectDetailsView> createState() => _ProjectDetailsViewState();
+}
+
+class _ProjectDetailsViewState extends ConsumerState<ProjectDetailsView> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((time) {
+      ref.read(oneProjectProvider.notifier).getOneProject(widget.id);
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isLikeLoadingState = ValueNotifier<bool>(false);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Project',
+          ref.watch(oneProjectProvider).when(
+              data: (data) => data.title,
+              error: (e, s) => '',
+              loading: () => '...'),
           style: AppStyles.blackBold18,
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: 200,
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/food.jpg'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(15.0),
+      body: ref.watch(oneProjectProvider).when(
+          data: (data) {
+            final project = data;
+            final daysRemaining =
+                project.proposedDate.difference(DateTime.now()).inDays;
+            return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Community Garden',
-                    style: AppStyles.blackBold22,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 1.0),
+                    child: AdaptiveImageGrid(
+                      images: project.images,
+                      onTap: (index) => showImageCarousel(
+                          context, project.images,
+                          initialIndex: index),
+                    ),
                   ),
-                  const Gap(15),
-                  Text(
-                    'We need to build a garden so we can enjoy healthy foods like this. How far, Eljoy you no reason am?',
-                    style: AppStyles.blackSemi17,
-                  ),
-                  const Gap(25),
-                  const Row(
-                    children: [
-                      Expanded(child: DataBox(title: 'Votes', data: '6,000')),
-                      Gap(10),
-                      Expanded(child: DataBox(title: 'Days Left', data: '60')),
-                    ],
-                  ),
-                  const Gap(15.0),
-                  const DataBox(
-                    title: 'Funding',
-                    data: '\$60',
-                    isLargeBox: true,
-                  ),
-                  const Gap(10),
-                  ListTile(
-                    contentPadding: const EdgeInsets.all(0),
-                    leading: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: AppColors.lightPrimaryColor,
-                          borderRadius: BorderRadius.circular(8),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          project.title,
+                          style: AppStyles.blackBold22,
                         ),
-                        child: const Icon(Icons.calendar_month)),
-                    title: Text(
-                      'Voting Ends in 60 days',
-                      style: AppStyles.blackBold16,
-                    ),
-                    subtitle: Text(
-                      'Dec 10, 2020',
-                      style: AppStyles.blackNormal14,
-                    ),
-                    trailing: SizedBox(
-                      width: 120.0,
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 90,
-                            child: LinearProgressIndicator(
-                              value: 0.6,
-                              backgroundColor: AppColors.lightPrimaryColor,
-                              color: AppColors.primaryColor,
+                        const Gap(15),
+                        Text(
+                          project.description,
+                          style: AppStyles.blackSemi17,
+                        ),
+                        const Gap(25),
+                        Row(
+                          children: [
+                            Expanded(
+                                child: DataBox(
+                                    title: 'Votes',
+                                    data: project.votes.length.toString())),
+                            const Gap(10),
+                            Expanded(
+                                child: DataBox(
+                                    title: 'Days Left',
+                                    data: daysRemaining.toString())),
+                          ],
+                        ),
+                        const Gap(15.0),
+                        DataBox(
+                          title: 'Funding',
+                          data: project.amountNeeded,
+                          isLargeBox: true,
+                        ),
+                        const Gap(10),
+                        ListTile(
+                          contentPadding: const EdgeInsets.all(0),
+                          leading: Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: AppColors.lightPrimaryColor,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(Icons.calendar_month)),
+                          title: Text(
+                            'Voting Ends in ${daysRemaining.toString()} days',
+                            style: AppStyles.blackBold16,
+                          ),
+                          subtitle: Text(
+                            DateFormatter.formatDate(project.proposedDate),
+                            style: AppStyles.blackNormal14,
+                          ),
+                          trailing: SizedBox(
+                            width: 120.0,
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 90,
+                                  child: LinearProgressIndicator(
+                                    value: daysRemaining / 100,
+                                    backgroundColor:
+                                        AppColors.lightPrimaryColor,
+                                    color: AppColors.primaryColor,
+                                  ),
+                                ),
+                                const Gap(10),
+                                Text(
+                                  '$daysRemaining',
+                                  style: AppStyles.blackNormal12,
+                                )
+                              ],
                             ),
                           ),
-                          const Gap(10),
-                          Text(
-                            '60',
-                            style: AppStyles.blackNormal12,
-                          )
-                        ],
-                      ),
+                        ),
+                        const Gap(40.0),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: GreenVoiceButton.fill(
+                                onTap: ref
+                                            .watch(oneProjectProvider)
+                                            .value
+                                            ?.votes
+                                            .contains(ref
+                                                .read(userProvider)
+                                                .value
+                                                ?.uid) ==
+                                        true
+                                    ? null
+                                    : () async {
+                                        isLikeLoadingState.value = true;
+                                        await ref
+                                            .read(oneProjectProvider.notifier)
+                                            .likeAndUnlikeProject(
+                                                projectId: project.id);
+                                        isLikeLoadingState.value = false;
+                                      },
+                                isLoading: isLikeLoadingState.value == true,
+                                title: ref
+                                            .watch(oneProjectProvider)
+                                            .value
+                                            ?.votes
+                                            .contains(ref
+                                                .read(userProvider)
+                                                .value
+                                                ?.uid) ==
+                                        true
+                                    ? "Voted"
+                                    : "Vote",
+                              ),
+                            ),
+                            const Gap(15.0),
+                            Expanded(
+                              child: GreenVoiceButton.outline(
+                                onTap: () {},
+                                title: "Share",
+                              ),
+                            )
+                          ],
+                        ),
+                        const Gap(30.0),
+                      ],
                     ),
-                  ),
-                  const Gap(40.0),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: GreenVoiceButton.fill(
-                          onTap: () {},
-                          title: "Vote",
-                        ),
-                      ),
-                      const Gap(15.0),
-                      Expanded(
-                        child: GreenVoiceButton.outline(
-                          onTap: () {},
-                          title: "Share",
-                        ),
-                      )
-                    ],
-                  ),
-                  const Gap(30.0),
+                  )
                 ],
               ),
-            )
-          ],
-        ),
-      ),
+            );
+          },
+          error: (error, trace) => Center(
+                child: Text(error.toString()),
+              ),
+          loading: () => const Center(
+                child: CircularProgressIndicator.adaptive(),
+              )),
     );
   }
 }

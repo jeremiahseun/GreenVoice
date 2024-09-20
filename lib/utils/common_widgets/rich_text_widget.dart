@@ -6,10 +6,12 @@ class RichTextWidget extends StatelessWidget {
       {super.key,
       required this.text,
       required this.subText,
-      required this.ontap});
+      this.subtextColor = AppColors.primaryColor,
+      this.ontap});
   final String text;
   final String subText;
-  final VoidCallback ontap;
+  final Color subtextColor;
+  final VoidCallback? ontap;
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +24,7 @@ class RichTextWidget extends StatelessWidget {
           children: <TextSpan>[
             TextSpan(
               text: subText,
-              style:
-                  AppStyles.blackBold14.copyWith(color: AppColors.primaryColor),
+              style: AppStyles.blackBold14.copyWith(color: subtextColor),
             ),
           ],
         ),

@@ -3,14 +3,16 @@ import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greenvoice/src/services/firebase/firebase.dart';
-import 'package:greenvoice/src/services/local_storage/storage_services.dart';
-import 'package:greenvoice/src/services/local_storage/storagekeys.dart';
+import 'package:greenvoice/src/services/storage_service.dart';
+import 'package:greenvoice/utils/constants/storage_keys.dart';
 import 'package:greenvoice/utils/helpers/greenvoice_notifier.dart';
 
 final loginNotifierProvider =
-    ChangeNotifierProvider.autoDispose((ref) => LoginScreenNotifier());
+    ChangeNotifierProvider.autoDispose((ref) => LoginScreenNotifier(ref));
 
 class LoginScreenNotifier extends GreenVoiceNotifier {
+  Ref ref;
+  LoginScreenNotifier(this.ref);
   final FirebaseAuthService firebaseAuthService = FirebaseAuthService();
   final FirebaseFirestoreService firebaseFirestoreService =
       FirebaseFirestoreService();
@@ -39,7 +41,8 @@ class LoginScreenNotifier extends GreenVoiceNotifier {
       if (loginUser.$1 == true) {
         log('${loginUser.$3} USERRHGUHFYGFYG');
         final String userId = loginUser.$3?.user?.uid ?? '';
-        storageService.writeSecureData(key: Storagekeys.userId, value: userId);
+        await storageService.writeSecureData(
+            key: StorageKeys.userId, value: userId);
         return true;
       } else {
         log(loginUser.$2);

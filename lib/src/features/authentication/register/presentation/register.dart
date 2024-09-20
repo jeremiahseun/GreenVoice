@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:greenvoice/core/routes/app_router.dart';
 import 'package:greenvoice/core/routes/routes.dart';
-import 'package:greenvoice/src/features/authentication/login/presentation/login.dart';
 import 'package:greenvoice/src/features/authentication/register/data/register_notifier.dart';
 import 'package:greenvoice/utils/common_widgets/custom_button.dart';
 import 'package:greenvoice/utils/common_widgets/custom_textfield.dart';
@@ -39,7 +38,7 @@ class _RegisterState extends ConsumerState<RegisterView> {
     final registerState = ref.watch(registerNotifierProvider);
     return DefaultScaffold(
       safeAreaTop: true,
-      isBusy: registerState.isLoading ? true : false,
+      appBar: AppBar(),
       body: SingleChildScrollView(
         child: Container(
             alignment: Alignment.center,
@@ -49,10 +48,9 @@ class _RegisterState extends ConsumerState<RegisterView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Gap(40),
                   const TitleWidget(
                       title: 'Welcome to GreenVoice',
-                      subTitle: 'Kindly Register your account',
+                      subTitle: 'Register your account',
                       isLargerTitle: true,
                       doesHaveSubtitle: true),
                   const Gap(50),
@@ -189,6 +187,7 @@ class _RegisterState extends ConsumerState<RegisterView> {
                   const Gap(50),
                   CustomButton(
                     text: 'Register',
+                    isLoading: registerState.isLoading,
                     isBigButton: true,
                     onTap: () async {
                       if (passwordController.text != confirmController.text) {
@@ -206,7 +205,7 @@ class _RegisterState extends ConsumerState<RegisterView> {
                                 firstName: nameController.text,
                                 lastName: lastNameController.text,
                                 phoneNumber: phoneNumber);
-                        if (registerUser == true) {
+                        if (registerUser.$1 == true) {
                           SnackbarMessage.showSuccess(
                               message: 'Account created successfully',
                               context: context);
@@ -214,7 +213,7 @@ class _RegisterState extends ConsumerState<RegisterView> {
                           context.push(NavigateToPage.login);
                         } else {
                           SnackbarMessage.showError(
-                              context: context, message: 'Login failed');
+                              context: context, message: registerUser.$2);
                         }
                       }
                     },
@@ -223,16 +222,13 @@ class _RegisterState extends ConsumerState<RegisterView> {
                   Center(
                     child: RichTextWidget(
                       ontap: () {
-                        // context.push(NavigateToPage.login);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const LoginView()));
+                        context.replace(NavigateToPage.login);
                       },
                       text: 'Already have an account? ',
                       subText: 'Login',
                     ),
                   ),
+                  const Gap(30)
                 ],
               ),
             )),

@@ -8,10 +8,10 @@ class CustomButton extends StatelessWidget {
       required this.isBigButton,
       this.isFilledButton = false,
       this.isLoading = false,
-      required this.onTap});
+      this.onTap});
   final String text;
   final bool isFilledButton;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final bool isBigButton;
   final bool isLoading;
   @override

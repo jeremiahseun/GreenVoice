@@ -138,9 +138,8 @@ class MapProvider extends ChangeNotifier {
       // Create a point annotation options
       for (var i = 0; i < data.length; i++) {
         final issue = data[i];
-        final point = Point(
-            coordinates: Position(
-                double.parse(issue.longitude), double.parse(issue.latitude)));
+        final point =
+            Point(coordinates: Position(issue.longitude, issue.latitude));
 
         // Add the point to the list of points for camera bounds
         points.add(point);
@@ -206,9 +205,7 @@ class MapProvider extends ChangeNotifier {
 
   void _moveCamera(IssueModel issue) {
     final cameraOptions = CameraOptions(
-      center: Point(
-          coordinates: Position(
-              double.parse(issue.longitude), double.parse(issue.latitude))),
+      center: Point(coordinates: Position(issue.longitude, issue.latitude)),
       zoom: 15.0,
     );
     mapboxMap?.flyTo(cameraOptions, MapAnimationOptions(duration: 500));
@@ -217,9 +214,8 @@ class MapProvider extends ChangeNotifier {
   void onAnnotationClick(PointAnnotation annotation) {
     final clickedIssue = ref.read(issuesProvider).value?.firstWhere(
           (issue) =>
-              issue.longitude ==
-                  annotation.geometry.coordinates[0].toString() &&
-              issue.latitude == annotation.geometry.coordinates[1].toString(),
+              issue.longitude == annotation.geometry.coordinates[0] &&
+              issue.latitude == annotation.geometry.coordinates[1],
         );
 
     if (clickedIssue != null) {

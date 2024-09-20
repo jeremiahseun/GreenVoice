@@ -18,9 +18,9 @@ import 'package:greenvoice/src/features/issues/presentation/issue_description.da
 import 'package:greenvoice/src/features/issues/presentation/issues_home.dart';
 import 'package:greenvoice/src/features/issues/presentation/maps/map_screen.dart';
 import 'package:greenvoice/src/features/profile/presentation/profile_view.dart';
+import 'package:greenvoice/src/features/projects/presentation/add_project.dart';
 import 'package:greenvoice/src/features/projects/presentation/projects.dart';
 import 'package:greenvoice/src/features/projects/presentation/projects_details.dart';
-import 'package:greenvoice/src/models/issue/issue_model.dart';
 
 export 'package:go_router/go_router.dart';
 
@@ -78,9 +78,13 @@ class GreenVoiceRoutes {
               builder: (context, state) => const IssuesView(),
               routes: [
                 GoRoute(
+                  path: AppRoutes.addIssue,
+                  builder: (context, state) => const AddIssueScreen(),
+                ),
+                GoRoute(
                   path: AppRoutes.issueDetails,
                   builder: (context, state) => IssueDetailScreen(
-                    arguments: state.extra as IssueDetailArguments,
+                    id: state.pathParameters['issueId'] ?? '',
                   ),
                 ),
               ]),
@@ -89,27 +93,24 @@ class GreenVoiceRoutes {
             builder: (context, state) => MapScreen(),
           ),
           GoRoute(
-            path: AppRoutes.projects,
-            builder: (context, state) => const ProjectHome(),
-          ),
-          GoRoute(
-              path: AppRoutes.projectDetails,
-              builder: (context, state) => const ProjectDetailsView(),
-              routes: const []),
+              path: AppRoutes.projects,
+              builder: (context, state) => const ProjectHome(),
+              routes: [
+                GoRoute(
+                  path: AppRoutes.projectDetails,
+                  builder: (context, state) => ProjectDetailsView(
+                    id: state.pathParameters['projectId'] ?? '',
+                  ),
+                ),
+                GoRoute(
+                  path: AppRoutes.addProject,
+                  builder: (context, state) => const AddProjectScreen(),
+                ),
+              ]),
           GoRoute(
               path: AppRoutes.profile,
               builder: (context, state) => const ProfileView(),
               routes: const []),
-          GoRoute(
-            path: AppRoutes.addIssue,
-            builder: (context, state) => const AddIssueScreen(),
-          ),
         ]),
   ]);
-}
-
-class IssueDetailArguments {
-  final IssueModel issue;
-
-  IssueDetailArguments({required this.issue});
 }
