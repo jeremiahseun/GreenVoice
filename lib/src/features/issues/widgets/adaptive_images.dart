@@ -1,13 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 
 class AdaptiveImageGrid extends StatelessWidget {
   final List<String> images;
+  final void Function(int index) onTap;
   final Size size;
 
   const AdaptiveImageGrid(
-      {super.key, required this.images, this.size = const Size(400, 400)});
+      {super.key,
+      required this.images,
+      required this.onTap,
+      this.size = const Size(400, 400)});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +36,8 @@ class AdaptiveImageGrid extends StatelessWidget {
   Widget _buildSingleImage() {
     return AspectRatio(
       aspectRatio: 1,
-      child: _buildImageContainer(images[0], size),
+      child: InkWell(
+          onTap: () => onTap(0), child: _buildImageContainer(images[0], size)),
     );
   }
 
@@ -40,9 +46,15 @@ class AdaptiveImageGrid extends StatelessWidget {
       aspectRatio: 2,
       child: Row(
         children: [
-          Expanded(child: _buildImageContainer(images[0], size)),
-          const SizedBox(width: 10),
-          Expanded(child: _buildImageContainer(images[1], size)),
+          Expanded(
+              child: InkWell(
+                  onTap: () => onTap(0),
+                  child: _buildImageContainer(images[0], size))),
+          const Gap(10),
+          Expanded(
+              child: InkWell(
+                  onTap: () => onTap(1),
+                  child: _buildImageContainer(images[1], size))),
         ],
       ),
     );
@@ -55,15 +67,23 @@ class AdaptiveImageGrid extends StatelessWidget {
         children: [
           Expanded(
             flex: 2,
-            child: _buildImageContainer(images[0], size),
+            child: InkWell(
+                onTap: () => onTap(0),
+                child: _buildImageContainer(images[0], size)),
           ),
-          const SizedBox(width: 10),
+          const Gap(10),
           Expanded(
             child: Column(
               children: [
-                Expanded(child: _buildImageContainer(images[1], size)),
-                const SizedBox(height: 5),
-                Expanded(child: _buildImageContainer(images[2], size)),
+                Expanded(
+                    child: InkWell(
+                        onTap: () => onTap(1),
+                        child: _buildImageContainer(images[1], size))),
+                const Gap(5),
+                Expanded(
+                    child: InkWell(
+                        onTap: () => onTap(2),
+                        child: _buildImageContainer(images[2], size))),
               ],
             ),
           ),
@@ -80,19 +100,27 @@ class AdaptiveImageGrid extends StatelessWidget {
           Expanded(
             child: Row(
               children: [
-                Expanded(child: _buildImageContainer(images[0], size)),
-                const SizedBox(width: 10),
-                Expanded(child: _buildImageContainer(images[1], size)),
+                Expanded(child: InkWell(
+                        onTap: () => onTap(0),
+                        child: _buildImageContainer(images[0], size))),
+                const Gap(10),
+                Expanded(child: InkWell(
+                        onTap: () => onTap(1),
+                        child: _buildImageContainer(images[1], size))),
               ],
             ),
           ),
-          const SizedBox(height: 5),
+          const Gap(5),
           Expanded(
             child: Row(
               children: [
-                Expanded(child: _buildImageContainer(images[2], size)),
-                const SizedBox(width: 10),
-                Expanded(child: _buildImageContainer(images[3], size)),
+                Expanded(child: InkWell(
+                        onTap: () => onTap(2),
+                        child: _buildImageContainer(images[2], size))),
+                const Gap(10),
+                Expanded(child: InkWell(
+                        onTap: () => onTap(3),
+                        child: _buildImageContainer(images[3], size))),
               ],
             ),
           ),
@@ -110,25 +138,39 @@ class AdaptiveImageGrid extends StatelessWidget {
           Expanded(
             child: Row(
               children: [
-                Expanded(child: _buildImageContainer(images[0], size)),
-                const SizedBox(width: 10),
-                Expanded(child: _buildImageContainer(images[1], size)),
+                Expanded(
+                    child: InkWell(
+                        onTap: () => onTap(0),
+                        child: _buildImageContainer(images[0], size))),
+                const Gap(10),
+                Expanded(
+                    child: InkWell(
+                        onTap: () => onTap(1),
+                        child: _buildImageContainer(images[1], size))),
               ],
             ),
           ),
-          const SizedBox(height: 5),
+          const Gap(5),
           Expanded(
             child: Row(
               children: [
-                Expanded(child: _buildImageContainer(images[2], size)),
-                const SizedBox(width: 10),
-                Expanded(child: _buildImageContainer(images[3], size)),
-                const SizedBox(width: 10),
+                Expanded(
+                    child: InkWell(
+                        onTap: () => onTap(2),
+                        child: _buildImageContainer(images[2], size))),
+                const Gap(10),
+                Expanded(
+                    child: InkWell(
+                        onTap: () => onTap(3),
+                        child: _buildImageContainer(images[3], size))),
+                const Gap(10),
                 Expanded(
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      _buildImageContainer(images[4], size),
+                      InkWell(
+                          onTap: () => onTap(4),
+                          child: _buildImageContainer(images[4], size)),
                       if (images.length > 5)
                         Container(
                           color: Colors.black.withOpacity(0.6),
@@ -168,10 +210,7 @@ class AdaptiveImageGrid extends StatelessWidget {
           imageUrl: imageUrl,
           fit: BoxFit.cover,
           progressIndicatorBuilder: (context, url, downloadProgress) =>
-              const Center(
-                  child: CircularProgressIndicator.adaptive(
-                    
-          )),
+              const Center(child: CircularProgressIndicator.adaptive()),
           errorWidget: (context, url, error) => const Center(
               child: Icon(
             Icons.error,

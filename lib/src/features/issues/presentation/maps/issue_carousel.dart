@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:greenvoice/src/features/issues/presentation/maps/widgets/expanded_view.dart';
 import 'package:greenvoice/src/models/issue/issue_model.dart';
 
@@ -140,7 +141,7 @@ class _IssueCarouselState extends State<IssueCarousel>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    issue.title ?? "",
+                    issue.title,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: isActive ? 18 : 16,
@@ -148,9 +149,9 @@ class _IssueCarouselState extends State<IssueCarousel>
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 10),
+                  const Gap(10),
                   Text(
-                    issue.description ?? "",
+                    issue.description,
                     style: TextStyle(fontSize: isActive ? 14 : 12),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

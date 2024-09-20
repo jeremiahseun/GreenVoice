@@ -1,12 +1,13 @@
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:greenvoice/core/routes/app_router.dart';
 import 'package:greenvoice/core/routes/routes.dart';
-import 'package:greenvoice/utils/common_widgets/project_stats.dart';
-import 'package:greenvoice/utils/common_widgets/rich_text_widget.dart';
+import 'package:greenvoice/src/features/issues/widgets/issue_loading.dart';
+import 'package:greenvoice/src/features/projects/data/projects_provider.dart';
+import 'package:greenvoice/src/features/projects/widgets/project_widget.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class ProjectHome extends ConsumerStatefulWidget {
   const ProjectHome({super.key});
@@ -17,6 +18,14 @@ class ProjectHome extends ConsumerStatefulWidget {
 
 class _ProjectScreenState extends ConsumerState<ProjectHome> {
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(projectsProvider.notifier).getAllProjects();
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
@@ -25,21 +34,13 @@ class _ProjectScreenState extends ConsumerState<ProjectHome> {
             SliverAppBar(
               expandedHeight: 100,
               pinned: true,
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 10.0),
-                  child: IconButton(
-                    icon: const Icon(EvaIcons.search),
-                    onPressed: () {},
-                  ),
-                ),
-              ],
               flexibleSpace: FlexibleSpaceBar(
                 stretchModes: const [
                   StretchMode.blurBackground,
                   StretchMode.zoomBackground,
                   StretchMode.fadeTitle,
                 ],
+                centerTitle: true,
                 title: Text(
                   'Proposed Projects',
                   style: AppStyles.blackBold18,
@@ -48,137 +49,42 @@ class _ProjectScreenState extends ConsumerState<ProjectHome> {
             ),
             SliverPadding(
               padding: const EdgeInsets.all(16.0),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    return Column(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                             context.push(NavigateToPage.projectDetails);
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: AppColors.whiteColor,
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Color(0xfff2efed),
-                                  blurRadius: 15,
-                                  spreadRadius: 1,
-                                  offset: Offset(0, 10),
-                                ),
-                              ],
-                            ),
-                            height: 390,
-                            width: double.infinity,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  height: 200,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    image: const DecorationImage(
-                                      image:
-                                          AssetImage('assets/images/food.jpg'),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                const Gap(10),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Gap(5),
-                                      Text(
-                                        'Build a new public Restaurant',
-                                        style: AppStyles.blackBold18,
-                                      ),
-                                      const Gap(5),
-                                      const Text(
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 4,
-                                        'Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias, dolorum, doloribus sunt dicta, officia voluptatibus libero necessitatibus natus impedit quam ullam assumenda? Id atque iste consectetur. Commodi odit ab saepe!',
-                                      ),
-                                      const Gap(10),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          RichTextWidget(
-                                            ontap: () {},
-                                            text: 'Status:',
-                                            subText: ' Open for Voting',
-                                          ),
-                                          InkWell(
-                                            onTap: () {},
-                                            child: Container(
-                                              alignment: Alignment.center,
-                                              width: 70,
-                                              height: 30,
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  color:
-                                                      AppColors.primaryColor),
-                                              child: Text(
-                                                'Vote',
-                                                style: AppStyles.blackBold12
-                                                    .copyWith(
-                                                  color: AppColors.whiteColor,
-                                                ),
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                        const Gap(20),
-                        const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ProjectStats(
-                              data: '30',
-                              icon: Icon(
-                                Icons.arrow_upward,
-                              ),
-                            ),
-                            ProjectStats(
-                              data: '30',
-                              icon: Icon(
-                                Icons.message_outlined,
-                              ),
-                            ),
-                            ProjectStats(
-                              data: '30',
-                              icon: Icon(
-                                Icons.stacked_line_chart_sharp,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const Gap(25),
-                      ],
-                    );
-                  },
-                  childCount: 5,
-                ),
-              ),
+              sliver: ref.watch(projectsProvider).when(
+                  data: (data) => SliverList.separated(
+                        itemCount: data.length,
+                        separatorBuilder: (context, index) => const Gap(10),
+                        itemBuilder: (context, index) {
+                          final project = data[index];
+                          return ProjectCard(
+                            project: project,
+                            onComment: () {},
+                            onLike: () {},
+                            onShare: () {},
+                            onClickProject: () => context.push(
+                                "${NavigateToPage.projectDetails}/${project.id}"),
+                          );
+                        },
+                      ),
+                  error: (e, s) => SliverToBoxAdapter(
+                        child: Center(child: Text(e.toString())),
+                      ),
+                  loading: () => const SliverSkeletonizer(
+                        child: IssueLoadingWidget(),
+                      )),
             ),
+            const SliverGap(60)
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.push(NavigateToPage.addProject),
+        isExtended: true,
+        label: Text(
+          'Create a new project',
+          style: AppStyles.blackBold14.copyWith(color: AppColors.whiteColor),
+        ),
+        icon: const Icon(Icons.add, color: AppColors.whiteColor),
+        backgroundColor: AppColors.primaryColor,
       ),
     );
   }

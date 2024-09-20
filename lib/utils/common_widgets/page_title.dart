@@ -25,12 +25,12 @@ class TitleWidget extends StatelessWidget {
                 title,
                 style: isLargerTitle
                     ? AppStyles.blackBold24
-                    : AppStyles.blackBold14,
+                    : AppStyles.blackBold18,
               ),
               const Gap(5),
               Text(
                 subTitle,
-                style: AppStyles.blackNormal12,
+                style: AppStyles.blackNormal16,
               ),
             ],
           )

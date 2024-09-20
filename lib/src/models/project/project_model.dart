@@ -2,10 +2,10 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-
 import 'package:greenvoice/src/models/socials/comment.dart';
 
 class ProjectModel {
+  final String id;
   final String title;
   final String description;
   final List<String> images;
@@ -18,13 +18,14 @@ class ProjectModel {
   final String createdByUserId;
   final String createdByUserName;
   final String createdByUserPicture;
-  final DateTime createdBy;
-  final DateTime updatedBy;
+  final DateTime createdAt;
+  final DateTime updatedAt;
   final ProjectStatus status;
   final List<CommentModel> comments;
   final List<String> likes;
   final List<String> shares;
   ProjectModel({
+    required this.id,
     required this.title,
     required this.description,
     required this.images,
@@ -37,8 +38,8 @@ class ProjectModel {
     required this.createdByUserId,
     required this.createdByUserName,
     required this.createdByUserPicture,
-    required this.createdBy,
-    required this.updatedBy,
+    required this.createdAt,
+    required this.updatedAt,
     required this.status,
     required this.comments,
     required this.likes,
@@ -46,6 +47,7 @@ class ProjectModel {
   });
 
   ProjectModel copyWith({
+    String? id,
     String? title,
     String? description,
     List<String>? images,
@@ -58,14 +60,15 @@ class ProjectModel {
     String? createdByUserId,
     String? createdByUserName,
     String? createdByUserPicture,
-    DateTime? createdBy,
-    DateTime? updatedBy,
+    DateTime? createdAt,
+    DateTime? updatedAt,
     ProjectStatus? status,
     List<CommentModel>? comments,
     List<String>? likes,
     List<String>? shares,
   }) {
     return ProjectModel(
+      id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
       images: images ?? this.images,
@@ -78,8 +81,8 @@ class ProjectModel {
       createdByUserId: createdByUserId ?? this.createdByUserId,
       createdByUserName: createdByUserName ?? this.createdByUserName,
       createdByUserPicture: createdByUserPicture ?? this.createdByUserPicture,
-      createdBy: createdBy ?? this.createdBy,
-      updatedBy: updatedBy ?? this.updatedBy,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
       status: status ?? this.status,
       comments: comments ?? this.comments,
       likes: likes ?? this.likes,
@@ -89,6 +92,7 @@ class ProjectModel {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'id': id,
       'title': title,
       'description': description,
       'images': images,
@@ -101,8 +105,8 @@ class ProjectModel {
       'createdByUserId': createdByUserId,
       'createdByUserName': createdByUserName,
       'createdByUserPicture': createdByUserPicture,
-      'createdBy': createdBy.millisecondsSinceEpoch,
-      'updatedBy': updatedBy.millisecondsSinceEpoch,
+      'createdAt': createdAt.millisecondsSinceEpoch,
+      'updatedAt': updatedAt.millisecondsSinceEpoch,
       'status': status.name,
       'comments': comments.map((x) => x.toMap()).toList(),
       'likes': likes,
@@ -110,83 +114,90 @@ class ProjectModel {
     };
   }
 
-  factory ProjectModel.fromMap(Map<String, dynamic> map) {
+  factory ProjectModel.fromMap(Map<String, dynamic>? map) {
     return ProjectModel(
-      title: map['title'] as String,
-      description: map['description'] as String,
-      images: List<String>.from((map['images'] as List<String>)),
-      votes: List<String>.from((map['votes'] as List<String>)),
-      proposedDate: DateTime.fromMillisecondsSinceEpoch(map['proposedDate'] as int),
-      amountNeeded: map['amountNeeded'] as String,
-      location: map['location'] as String,
-      latitude: map['latitude'] as double,
-      longitude: map['longitude'] as double,
-      createdByUserId: map['createdByUserId'] as String,
-      createdByUserName: map['createdByUserName'] as String,
-      createdByUserPicture: map['createdByUserPicture'] as String,
-      createdBy: DateTime.fromMillisecondsSinceEpoch(map['createdBy'] as int),
-      updatedBy: DateTime.fromMillisecondsSinceEpoch(map['updatedBy'] as int),
-      status: ProjectStatus.values.byName(map['status'] as String),
-      comments: List<CommentModel>.from((map['comments'] as List<int>).map<CommentModel>((x) => CommentModel.fromMap(x as Map<String,dynamic>),),),
-      likes: List<String>.from((map['likes'] as List<String>)),
-      shares: List<String>.from((map['shares'] as List<String>)),
+      id: map?['id'] ?? '',
+      title: map?['title'] ?? '',
+      description: map?['description'] ?? '',
+      images: List<String>.from((map?['images'] ?? [])),
+      votes: List<String>.from((map?['votes'] ?? [])),
+      proposedDate: DateTime.fromMillisecondsSinceEpoch(map?['proposedDate']),
+      amountNeeded: map?['amountNeeded'] ?? '',
+      location: map?['location'] ?? '',
+      latitude: map?['latitude'],
+      longitude: map?['longitude'],
+      createdByUserId: map?['createdByUserId'] ?? '',
+      createdByUserName: map?['createdByUserName'] ?? '',
+      createdByUserPicture: map?['createdByUserPicture'] ?? '',
+      createdAt: DateTime.fromMillisecondsSinceEpoch(map?['createdAt']),
+      updatedAt: DateTime.fromMillisecondsSinceEpoch(map?['updatedAt']),
+      status: ProjectStatus.values.byName(map?['status'] ?? ''),
+      comments: List<CommentModel>.from(
+        (map?['comments']).map<CommentModel>(
+          (x) => CommentModel.fromMap(x as Map<String, dynamic>),
+        ),
+      ),
+      likes: List<String>.from((map?['likes'] ?? [])),
+      shares: List<String>.from((map?['shares'] ?? [])),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory ProjectModel.fromJson(String source) => ProjectModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory ProjectModel.fromJson(String source) =>
+      ProjectModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
-    return 'ProjectModel(title: $title, description: $description, images: $images, votes: $votes, proposedDate: $proposedDate, amountNeeded: $amountNeeded, location: $location, latitude: $latitude, longitude: $longitude, createdByUserId: $createdByUserId, createdByUserName: $createdByUserName, createdByUserPicture: $createdByUserPicture, createdBy: $createdBy, updatedBy: $updatedBy, status: $status, comments: $comments, likes: $likes, shares: $shares)';
+    return 'ProjectModel(id: $id, title: $title, description: $description, images: $images, votes: $votes, proposedDate: $proposedDate, amountNeeded: $amountNeeded, location: $location, latitude: $latitude, longitude: $longitude, createdByUserId: $createdByUserId, createdByUserName: $createdByUserName, createdByUserPicture: $createdByUserPicture, createdAt: $createdAt, updatedAt: $updatedAt, status: $status, comments: $comments, likes: $likes, shares: $shares)';
   }
 
   @override
   bool operator ==(covariant ProjectModel other) {
     if (identical(this, other)) return true;
 
-    return
-      other.title == title &&
-      other.description == description &&
-      listEquals(other.images, images) &&
-      listEquals(other.votes, votes) &&
-      other.proposedDate == proposedDate &&
-      other.amountNeeded == amountNeeded &&
-      other.location == location &&
-      other.latitude == latitude &&
-      other.longitude == longitude &&
-      other.createdByUserId == createdByUserId &&
-      other.createdByUserName == createdByUserName &&
-      other.createdByUserPicture == createdByUserPicture &&
-      other.createdBy == createdBy &&
-      other.updatedBy == updatedBy &&
-      other.status == status &&
-      listEquals(other.comments, comments) &&
-      listEquals(other.likes, likes) &&
-      listEquals(other.shares, shares);
+    return other.id == id &&
+        other.title == title &&
+        other.description == description &&
+        listEquals(other.images, images) &&
+        listEquals(other.votes, votes) &&
+        other.proposedDate == proposedDate &&
+        other.amountNeeded == amountNeeded &&
+        other.location == location &&
+        other.latitude == latitude &&
+        other.longitude == longitude &&
+        other.createdByUserId == createdByUserId &&
+        other.createdByUserName == createdByUserName &&
+        other.createdByUserPicture == createdByUserPicture &&
+        other.createdAt == createdAt &&
+        other.updatedAt == updatedAt &&
+        other.status == status &&
+        listEquals(other.comments, comments) &&
+        listEquals(other.likes, likes) &&
+        listEquals(other.shares, shares);
   }
 
   @override
   int get hashCode {
-    return title.hashCode ^
-      description.hashCode ^
-      images.hashCode ^
-      votes.hashCode ^
-      proposedDate.hashCode ^
-      amountNeeded.hashCode ^
-      location.hashCode ^
-      latitude.hashCode ^
-      longitude.hashCode ^
-      createdByUserId.hashCode ^
-      createdByUserName.hashCode ^
-      createdByUserPicture.hashCode ^
-      createdBy.hashCode ^
-      updatedBy.hashCode ^
-      status.hashCode ^
-      comments.hashCode ^
-      likes.hashCode ^
-      shares.hashCode;
+    return id.hashCode ^
+        title.hashCode ^
+        description.hashCode ^
+        images.hashCode ^
+        votes.hashCode ^
+        proposedDate.hashCode ^
+        amountNeeded.hashCode ^
+        location.hashCode ^
+        latitude.hashCode ^
+        longitude.hashCode ^
+        createdByUserId.hashCode ^
+        createdByUserName.hashCode ^
+        createdByUserPicture.hashCode ^
+        createdAt.hashCode ^
+        updatedAt.hashCode ^
+        status.hashCode ^
+        comments.hashCode ^
+        likes.hashCode ^
+        shares.hashCode;
   }
 }
 
