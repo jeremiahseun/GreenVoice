@@ -5,6 +5,8 @@ class AppColors {
   static const Color primaryColor = Color(0xff187330);
   static Color lightPrimaryColor = const Color(0xff187330).withOpacity(.1);
   static const Color greenColor = Colors.green;
+  static const Color yellowColor = Colors.yellow;
+  static const Color orangeColor = Colors.deepOrange;
   static const Color toastBackground = Color(0xfffffcfc);
   static const Color redColor = Colors.red;
   static const Color whiteColor = Colors.white;

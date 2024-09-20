@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:greenvoice/core/deep_link.dart';
-import 'package:greenvoice/src/features/authentication/login/presentation/login.dart';
+import 'package:greenvoice/src/features/authentication/user/user_provider.dart';
 import 'package:greenvoice/src/features/bottom_navigation/presentation/bottom_navigation.dart';
 import 'package:greenvoice/src/services/firebase/auth.dart';
+import 'package:greenvoice/utils/styles/styles.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -20,7 +21,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    DeepLinking.initUniLinks();
+    DeepLinking.initUniLinks(context);
+    ref.read(userProvider.notifier).getCurrentUser();
   }
 
   @override
@@ -36,13 +38,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           .authStateChanges(), // Checks the auth state of the user
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
-          if (snapshot.hasData) {
-            // User is logged in
-            return HomeScreen(); // Replace with your home screen
-          } else {
-            // User is not logged in
-            return const LoginView(); // Replace with your login screen
-          }
+          return HomeScreen();
         } else {
           // Still waiting for authentication state
           return const SplashLoading(); // Replace with a loading or splash screen
@@ -58,6 +54,7 @@ class SplashLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
+      backgroundColor: AppColors.primaryColor,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

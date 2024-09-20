@@ -2,11 +2,13 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:greenvoice/src/models/issue/issue_model.dart';
+import 'package:greenvoice/src/models/project/project_model.dart';
 import 'package:greenvoice/src/models/user/user_model.dart';
 
 class FirestoreStrings {
   static const String users = "users";
   static const String issues = "issues";
+  static const String projects = "projects";
 }
 
 class FirebaseFirestoreService {
@@ -135,7 +137,7 @@ class FirebaseFirestoreService {
   }
 
   //* Like an issue
-  Future<(bool status, String message)> likeIssue(
+  Future<(bool status, String message)> likeAndUnlikeIssue(
       String issueId, String userId) async {
     try {
       final docRef = db.collection(FirestoreStrings.issues).doc(issueId);
@@ -144,7 +146,13 @@ class FirebaseFirestoreService {
       if (docSnapshot.exists && docSnapshot.data() != null) {
         final issue = IssueModel.fromMap(docSnapshot.data()!);
         final updatedVotes = issue.votes;
-
+        if (updatedVotes.contains(userId)) {
+          //* It means the user has already voted.
+          updatedVotes.remove(userId);
+        } else {
+          //* It means the user has not voted
+          updatedVotes.add(userId);
+        }
         await docRef.update({'votes': updatedVotes});
         return (true, "Issue liked successfully");
       } else {
@@ -167,6 +175,86 @@ class FirebaseFirestoreService {
       return (true, "Issue resolved successfully");
     } catch (e) {
       log("Error resolving issue: $e");
+      return (false, "$e");
+    }
+  }
+
+  //? PROJECTS
+  //* Get a Project
+  Future<(bool status, String message, ProjectModel? project)> getProject(
+      String projectId) async {
+    try {
+      final snapshot =
+          await db.collection(FirestoreStrings.projects).doc(projectId).get();
+      if (snapshot.exists && snapshot.data() != null) {
+        final project = ProjectModel.fromMap(snapshot.data()!);
+        return (true, "Project gotten successfully", project);
+      } else {
+        return (false, "Project not found", null);
+      }
+    } catch (e) {
+      log("Error getting project: $e");
+      return (false, "$e", null);
+    }
+  }
+
+  //* Get all projects
+  Future<(bool status, String message, List<ProjectModel>? projects)>
+      getAllProjects() async {
+    try {
+      final snapshot = await db.collection(FirestoreStrings.projects).get();
+      if (snapshot.docs.isNotEmpty) {
+        final projects = snapshot.docs
+            .map((doc) => ProjectModel.fromMap(doc.data()))
+            .toList();
+        return (true, "Projects gotten successfully", projects);
+      } else {
+        return (false, "No project found", null);
+      }
+    } catch (e) {
+      log("Error getting Project: $e");
+      return (false, "$e", null);
+    }
+  }
+
+  //* Create a new project
+  Future<(bool status, String message)> createProject(
+      ProjectModel project) async {
+    try {
+      final docRef =
+          await db.collection(FirestoreStrings.projects).add(project.toMap());
+      await docRef.update({'id': docRef.id});
+      return (true, "Project created successfully");
+    } catch (e) {
+      log("Error creating project: $e");
+      return (false, "$e");
+    }
+  }
+
+  //* Like a project
+  Future<(bool status, String message)> likeAndUnlikeProject(
+      String projectId, String userId) async {
+    try {
+      final docRef = db.collection(FirestoreStrings.projects).doc(projectId);
+      final docSnapshot = await docRef.get();
+
+      if (docSnapshot.exists && docSnapshot.data() != null) {
+        final issue = ProjectModel.fromMap(docSnapshot.data()!);
+        final updatedVotes = issue.votes;
+        if (updatedVotes.contains(userId)) {
+          //* It means the user has already voted.
+          updatedVotes.remove(userId);
+        } else {
+          //* It means the user has not voted
+          updatedVotes.add(userId);
+        }
+        await docRef.update({'votes': updatedVotes});
+        return (true, "Project liked successfully");
+      } else {
+        return (false, "Project not found");
+      }
+    } catch (e) {
+      log("Error liking project: $e");
       return (false, "$e");
     }
   }

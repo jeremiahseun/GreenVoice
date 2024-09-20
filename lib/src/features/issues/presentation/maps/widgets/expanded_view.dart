@@ -18,7 +18,7 @@ class IssuesExpandedView extends ConsumerWidget {
           children: [
             const Gap(50),
             AppBar(
-              title: Text(issue.title ?? ""),
+              title: Text(issue.title),
               leading: IconButton(
                 icon: const Icon(Icons.close),
                 onPressed: onPressed,
@@ -31,10 +31,10 @@ class IssuesExpandedView extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      issue.description ?? "",
+                      issue.description,
                       style: const TextStyle(fontSize: 16),
                     ),
-                    const SizedBox(height: 20),
+                    const Gap(20),
                     // Add more details about the issue here
                   ],
                 ),

@@ -1,25 +1,35 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:gap/gap.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
   final int maxLines;
+  final List<TextInputFormatter>? inputFormatters;
+  final TextInputType keyboardType;
+  final String? Function(String? value)? validator;
 
-  const CustomTextField({
-    super.key,
-    required this.controller,
-    required this.hint,
-    this.maxLines = 1,
-  });
+  const CustomTextField(
+      {super.key,
+      required this.controller,
+      required this.hint,
+      this.inputFormatters,
+      this.maxLines = 1,
+      this.keyboardType = TextInputType.text,
+      this.validator});
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
+      inputFormatters: inputFormatters,
       controller: controller,
       maxLines: maxLines,
+      keyboardType: keyboardType,
+      validator: validator,
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
@@ -45,7 +55,7 @@ class LocationButton extends StatelessWidget {
     return InkWell(
       onTap: onLocationSelected,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: AppColors.lightPrimaryColor,
           borderRadius: BorderRadius.circular(8),
@@ -54,7 +64,7 @@ class LocationButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(Icons.location_on, size: 20),
-            const SizedBox(width: 8),
+            const Gap(8),
             Expanded(child: Text(address)),
           ],
         ),
@@ -66,11 +76,13 @@ class LocationButton extends StatelessWidget {
 class ImageGrid extends StatelessWidget {
   final List<File> images;
   final VoidCallback onImageAdded;
+  final void Function(int index) onImageRemove;
 
   const ImageGrid({
     super.key,
     required this.images,
     required this.onImageAdded,
+    required this.onImageRemove,
   });
 
   @override
@@ -88,7 +100,9 @@ class ImageGrid extends StatelessWidget {
         if (index == images.length) {
           return AddPhotoButton(onPressed: onImageAdded);
         }
-        return ImageTile(image: images[index]);
+        return InkWell(
+            onTap: () => onImageRemove(index),
+            child: ImageTile(image: images[index]));
       },
     );
   }

@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greenvoice/core/locator.dart';
-import 'package:greenvoice/src/models/issue/issue_model.dart';
+import 'package:greenvoice/src/models/project/project_model.dart';
 import 'package:greenvoice/src/services/firebase/firebase.dart';
 import 'package:greenvoice/src/services/image_service.dart';
 import 'package:greenvoice/src/services/storage_service.dart';
@@ -12,37 +12,44 @@ import 'package:greenvoice/utils/common_widgets/snackbar_message.dart';
 import 'package:greenvoice/utils/constants/storage_keys.dart';
 import 'package:greenvoice/utils/helpers/greenvoice_notifier.dart';
 
-final issuesProvider =
-    StateNotifierProvider<IssuesProvider, AsyncValue<List<IssueModel>>>(
-        (ref) => IssuesProvider(ref));
+final projectsProvider =
+    StateNotifierProvider<ProjectsProvider, AsyncValue<List<ProjectModel>>>(
+        (ref) => ProjectsProvider(ref));
 
-final oneIssueProvider =
-    StateNotifierProvider<OneIssueProvider, AsyncValue<IssueModel>>(
-        (ref) => OneIssueProvider(ref));
+final oneProjectProvider =
+    StateNotifierProvider<OneProjectProvider, AsyncValue<ProjectModel>>(
+        (ref) => OneProjectProvider(ref));
 
-final addIssueProvider =
-    ChangeNotifierProvider.autoDispose((ref) => AddIssueProvider(ref));
+final addProjectProvider =
+    ChangeNotifierProvider.autoDispose((ref) => AddProjectProvider(ref));
 
-class AddIssueProvider extends GreenVoiceNotifier {
+class AddProjectProvider extends GreenVoiceNotifier {
   final firebaseFirestore = locator<FirebaseFirestoreService>();
   final firebaseStorage = locator<FirebaseStorageService>();
   final storageService = locator<StorageService>();
-  AddIssueProvider(this.ref);
+  AddProjectProvider(this.ref);
   Ref ref;
   double latitude = 0.0;
   double longitude = 0.0;
   int uploadState = 0;
+  ProjectStatus projectStatus = ProjectStatus.open;
   String address = '';
   List<File> images = [];
-  bool postAnonymously = false;
+  DateTime proposedDate = DateTime.now();
 
   void disposeItems() {
     latitude = 0.0;
     longitude = 0.0;
     address = '';
     images = [];
-    postAnonymously = false;
     uploadState = 0;
+    proposedDate = DateTime.now();
+    projectStatus = ProjectStatus.open;
+  }
+
+  void setProjectStatus(ProjectStatus status) {
+    projectStatus = status;
+    notifyListeners();
   }
 
   void removeImage(int index) {
@@ -50,8 +57,8 @@ class AddIssueProvider extends GreenVoiceNotifier {
     notifyListeners();
   }
 
-  void setPostAnonymous(bool value) {
-    postAnonymously = value;
+  void setProposedDate(DateTime date) {
+    proposedDate = date;
     notifyListeners();
   }
 
@@ -78,10 +85,10 @@ class AddIssueProvider extends GreenVoiceNotifier {
     notifyListeners();
   }
 
-  Future<bool> addIssue(
+  Future<bool> addProject(
       {required String title,
       required String description,
-      required bool isAnonymous,
+      required String amountNeeded,
       required BuildContext context}) async {
     if (isLoading) return false;
     startLoading();
@@ -117,30 +124,31 @@ class AddIssueProvider extends GreenVoiceNotifier {
           message: 'Unable to upload images. ${imagesList.$2}');
       return false;
     }
-    final res = await firebaseFirestore.createIssue(IssueModel(
+    final res = await firebaseFirestore.createProject(ProjectModel(
         id: DateTime.now().toIso8601String(),
-        isAnonymous: isAnonymous,
+        proposedDate: proposedDate,
+        amountNeeded: amountNeeded,
+        status: projectStatus,
+        likes: [],
         title: title,
         description: description,
         location: address,
         latitude: latitude,
         longitude: longitude,
         votes: [],
-        isResolved: false,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
         images: imagesList.$3,
         createdByUserId: userId,
         createdByUserName: username,
         createdByUserPicture: userPicture,
-        category: 'category',
         comments: [],
         shares: []));
     stopLoading();
     if (res.$1) {
       if (!context.mounted) return false;
       SnackbarMessage.showSuccess(
-          context: context, message: 'Issue uploaded successfully.');
+          context: context, message: 'Project uploaded successfully.');
       return true;
     }
     if (!context.mounted) return false;
@@ -149,16 +157,16 @@ class AddIssueProvider extends GreenVoiceNotifier {
   }
 }
 
-class IssuesProvider extends StateNotifier<AsyncValue<List<IssueModel>>> {
-  IssuesProvider(this.ref) : super(const AsyncValue.loading());
+class ProjectsProvider extends StateNotifier<AsyncValue<List<ProjectModel>>> {
+  ProjectsProvider(this.ref) : super(const AsyncValue.loading());
   final firestore = locator<FirebaseFirestoreService>();
 
   Ref ref;
 
-  Future<void> getAllIssues() async {
+  Future<void> getAllProjects() async {
     try {
       state = const AsyncValue.loading();
-      final res = await firestore.getAllIssues();
+      final res = await firestore.getAllProjects();
       if (res.$1) {
         if (res.$3 != null) {
           state = AsyncValue.data(res.$3!);
@@ -172,39 +180,39 @@ class IssuesProvider extends StateNotifier<AsyncValue<List<IssueModel>>> {
   }
 }
 
-class OneIssueProvider extends StateNotifier<AsyncValue<IssueModel>> {
-  OneIssueProvider(this.ref) : super(const AsyncValue.loading());
+class OneProjectProvider extends StateNotifier<AsyncValue<ProjectModel>> {
+  OneProjectProvider(this.ref) : super(const AsyncValue.loading());
   final firestore = locator<FirebaseFirestoreService>();
   final storage = locator<StorageService>();
 
   Ref ref;
 
-  Future<void> getOneIssues(String issueId, {bool force = false}) async {
+  Future<void> getOneProject(String projectId, {bool force = false}) async {
     try {
       state = const AsyncValue.loading();
       if (force) {
         //* Fetch from Firebase server
-        final res = await firestore.getIssue(issueId);
+        final res = await firestore.getProject(projectId);
         if (res.$1) {
           if (res.$3 != null) {
             state = AsyncValue.data(res.$3!);
             //* If successful, save to cache
             //! If it fails, don't kill the app.
-            saveToCache(res.$3!, issueId);
+            saveToCache(res.$3!, projectId);
           }
         } else {
           state = AsyncValue.error(res.$2, StackTrace.current);
         }
       } else {
         //* User cached state or fetch depending on the state.
-        final getIssue = ref.read(issuesProvider).value?.firstWhere(
-              (issue) => issue.id == issueId,
-              orElse: () => IssueModel.fromMap({'id': ''}),
+        final getProject = ref.read(projectsProvider).value?.firstWhere(
+              (project) => project.id == projectId,
+              orElse: () => ProjectModel.fromMap({'id': ''}),
             );
-        if (getIssue?.id != null && getIssue!.id.isNotEmpty) {
-          state = AsyncValue.data(getIssue);
+        if (getProject?.id != null && getProject!.id.isNotEmpty) {
+          state = AsyncValue.data(getProject);
         } else {
-          final res = await firestore.getIssue(issueId);
+          final res = await firestore.getProject(projectId);
           if (res.$1) {
             if (res.$3 != null) {
               state = AsyncValue.data(res.$3!);
@@ -219,32 +227,33 @@ class OneIssueProvider extends StateNotifier<AsyncValue<IssueModel>> {
     }
   }
 
-  Future<bool> likeAndUnlikeIssue({required String issueId}) async {
+  Future<bool> likeAndUnlikeProject({required String projectId}) async {
     final userId = await storage.readSecureData(key: StorageKeys.userId);
-    final res = await firestore.likeAndUnlikeIssue(issueId, userId);
-    log("Liking issue response ${res.$2}");
+    final res = await firestore.likeAndUnlikeProject(projectId, userId);
+    log("Liking project response ${res.$2}");
     if (res.$1) {
-      await getOneIssues(issueId, force: true);
+      await getOneProject(projectId, force: true);
     }
     return res.$1;
   }
 
-  void saveToCache(IssueModel model, String issueId) {
+  void saveToCache(ProjectModel model, String projectId) {
     try {
-      final getIssue = ref.read(issuesProvider).value?.firstWhere(
-            (issue) => issue.id == issueId,
-            orElse: () => IssueModel.fromMap({'id': ''}),
+      final getProject = ref.read(projectsProvider).value?.firstWhere(
+            (proj) => proj.id == projectId,
+            orElse: () => ProjectModel.fromMap({'id': ''}),
           );
-      if (getIssue?.id != null && getIssue!.id.isNotEmpty) {
-        final copiedIssue = model;
-        final issueIndex = ref.read(issuesProvider).value?.indexOf(getIssue);
+      if (getProject?.id != null && getProject!.id.isNotEmpty) {
+        final copiedProject = model;
+        final projectIndex =
+            ref.read(projectsProvider).value?.indexOf(getProject);
         ref
-            .read(issuesProvider)
+            .read(projectsProvider)
             .value
-            ?.replaceRange(issueIndex!, issueIndex + 1, [copiedIssue]);
+            ?.replaceRange(projectIndex!, projectIndex + 1, [copiedProject]);
       }
     } catch (e) {
-      log("It failed while saving the issue to cache: ${e.toString()}");
+      log("It failed while saving the project to cache: ${e.toString()}");
     }
   }
 }

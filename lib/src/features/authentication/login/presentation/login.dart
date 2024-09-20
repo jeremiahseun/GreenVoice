@@ -29,7 +29,7 @@ class _LoginScreenState extends ConsumerState<LoginView> {
   Widget build(BuildContext context) {
     final loginState = ref.watch(loginNotifierProvider);
     return DefaultScaffold(
-      isBusy: loginState.isLoading ? true : false,
+      appBar: AppBar(),
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -38,7 +38,6 @@ class _LoginScreenState extends ConsumerState<LoginView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Gap(40),
                 const TitleWidget(
                   title: 'Welcome to GreenVoice',
                   subTitle: 'Kindly login in',
@@ -86,19 +85,20 @@ class _LoginScreenState extends ConsumerState<LoginView> {
                   },
                   keyboardType: TextInputType.emailAddress,
                 ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: RichTextWidget(
-                    ontap: () {
-                      context.push(NavigateToPage.forgotPassword);
-                    },
-                    text: '',
-                    subText: 'Forgot Password?',
-                  ),
-                ),
+                // Align(
+                //   alignment: Alignment.centerRight,
+                //   child: RichTextWidget(
+                //     ontap: () {
+                //       context.push(NavigateToPage.forgotPassword);
+                //     },
+                //     text: '',
+                //     subText: 'Forgot Password?',
+                //   ),
+                // ),
                 const Gap(40),
                 CustomButton(
                   text: 'Login',
+                  isLoading: loginState.isLoading,
                   isBigButton: true,
                   onTap: () async {
                     if (formKey.currentState!.validate()) {
@@ -123,7 +123,7 @@ class _LoginScreenState extends ConsumerState<LoginView> {
                 Center(
                   child: RichTextWidget(
                     ontap: () {
-                      context.push(NavigateToPage.register);
+                      context.replace(NavigateToPage.register);
                     },
                     text: 'Don\'t have an account? ',
                     subText: 'Register',

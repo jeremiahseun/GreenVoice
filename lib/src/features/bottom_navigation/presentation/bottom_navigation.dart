@@ -1,3 +1,4 @@
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greenvoice/src/features/bottom_navigation/data/bottom_navigation_notifier.dart';
@@ -29,8 +30,10 @@ class HomeScreen extends ConsumerWidget {
           ref.read(bottomNavigationProvider.notifier).setIndex(index);
         },
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Projects'),
+          BottomNavigationBarItem(
+              icon: Icon(EvaIcons.globe2Outline), label: 'Home'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.compost_sharp), label: 'Projects'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),

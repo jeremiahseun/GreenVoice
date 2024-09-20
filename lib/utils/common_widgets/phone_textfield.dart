@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
-
 import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:intl_phone_field/phone_number.dart';
@@ -43,10 +42,10 @@ class PhoneField extends StatelessWidget {
             controller: controller,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             disableLengthCheck: true,
-            showCountryFlag: false,
-            showDropdownIcon: true,
+            showCountryFlag: true,
+            showDropdownIcon: false,
             decoration: InputDecoration(
-              hintText: '01234454664*',
+              hintText: '0803*****26',
               contentPadding: const EdgeInsets.all(10),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
