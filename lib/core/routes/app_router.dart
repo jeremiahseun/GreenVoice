@@ -22,95 +22,101 @@ import 'package:greenvoice/src/features/projects/presentation/add_project.dart';
 import 'package:greenvoice/src/features/projects/presentation/projects.dart';
 import 'package:greenvoice/src/features/projects/presentation/projects_details.dart';
 
+import 'page_not_found.dart';
+
 export 'package:go_router/go_router.dart';
 
 final greenVoice = locator<GoRouter>();
 
 class GreenVoiceRoutes {
-  final greenVoiceRouter = GoRouter(debugLogDiagnostics: true, routes: [
-    GoRoute(
-      path: AppRoutes.splash,
-      builder: (context, state) => SplashScreen(),
-    ),
-    GoRoute(
-      path: AppRoutes.onboarding,
-      builder: (context, state) => OnboardingView(),
-    ),
-    GoRoute(
-      path: AppRoutes.login,
-      builder: (context, state) => LoginView(),
-    ),
-    GoRoute(
-      path: AppRoutes.register,
-      builder: (context, state) => const RegisterView(),
-    ),
-    GoRoute(
-      path: AppRoutes.forgotPassword,
-      builder: (context, state) => const ForgotPasswordView(),
-    ),
-    GoRoute(
-      path: AppRoutes.resetPassword,
-      builder: (context, state) => const ResetPassword(),
-    ),
-    GoRoute(
-        path: AppRoutes.home,
-        pageBuilder: (BuildContext context, GoRouterState state) {
-          log("Loading screen with state ${state.fullPath}");
-          return CustomTransitionPage(
-            key: state.pageKey,
-            child: HomeScreen(),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) =>
-                FadeTransition(
-              opacity:
-                  CurveTween(curve: Curves.easeInOutQuart).animate(animation),
-              child: child,
-            ),
-          );
-        },
-        routes: [
-          GoRoute(
-              path: AppRoutes.issues,
-              builder: (context, state) => const IssuesView(),
-              routes: [
-                GoRoute(
-                  path: AppRoutes.addIssue,
-                  builder: (context, state) => const AddIssueScreen(),
-                ),
-                GoRoute(
-                  path: AppRoutes.issueDetails,
-                  builder: (context, state) => IssueDetailScreen(
-                    id: state.pathParameters['issueId'] ?? '',
-                  ),
-                ),
-              ]),
-          GoRoute(
-            path: AppRoutes.mapView,
-            builder: (context, state) => MapScreen(),
+  final greenVoiceRouter = GoRouter(
+      errorBuilder: (context, state) => NotFoundScreen(
+            onGoHome: () => context.go('/home'),
           ),
-          GoRoute(
-              path: AppRoutes.projects,
-              builder: (context, state) => const ProjectHome(),
-              routes: [
-                GoRoute(
-                  path: AppRoutes.projectDetails,
-                  builder: (context, state) => ProjectDetailsView(
-                    id: state.pathParameters['projectId'] ?? '',
-                  ),
+      routes: [
+        GoRoute(
+          path: AppRoutes.splash,
+          builder: (context, state) => SplashScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.onboarding,
+          builder: (context, state) => OnboardingView(),
+        ),
+        GoRoute(
+          path: AppRoutes.login,
+          builder: (context, state) => LoginView(),
+        ),
+        GoRoute(
+          path: AppRoutes.register,
+          builder: (context, state) => const RegisterView(),
+        ),
+        GoRoute(
+          path: AppRoutes.forgotPassword,
+          builder: (context, state) => const ForgotPasswordView(),
+        ),
+        GoRoute(
+          path: AppRoutes.resetPassword,
+          builder: (context, state) => const ResetPassword(),
+        ),
+        GoRoute(
+            path: AppRoutes.home,
+            pageBuilder: (BuildContext context, GoRouterState state) {
+              log("Loading screen with state ${state.fullPath}");
+              return CustomTransitionPage(
+                key: state.pageKey,
+                child: HomeScreen(),
+                transitionsBuilder: (
+                  context,
+                  animation,
+                  secondaryAnimation,
+                  child,
+                ) =>
+                    FadeTransition(
+                  opacity: CurveTween(curve: Curves.easeInOutQuart)
+                      .animate(animation),
+                  child: child,
                 ),
-                GoRoute(
-                  path: AppRoutes.addProject,
-                  builder: (context, state) => const AddProjectScreen(),
-                ),
-              ]),
-          GoRoute(
-              path: AppRoutes.profile,
-              builder: (context, state) => const ProfileView(),
-              routes: const []),
-        ]),
-  ]);
+              );
+            },
+            routes: [
+              GoRoute(
+                  path: AppRoutes.issues,
+                  builder: (context, state) => const IssuesView(),
+                  routes: [
+                    GoRoute(
+                      path: AppRoutes.addIssue,
+                      builder: (context, state) => const AddIssueScreen(),
+                    ),
+                    GoRoute(
+                      path: AppRoutes.issueDetails,
+                      builder: (context, state) => IssueDetailScreen(
+                        id: state.pathParameters['issueId'] ?? '',
+                      ),
+                    ),
+                  ]),
+              GoRoute(
+                path: AppRoutes.mapView,
+                builder: (context, state) => MapScreen(),
+              ),
+              GoRoute(
+                  path: AppRoutes.projects,
+                  builder: (context, state) => const ProjectHome(),
+                  routes: [
+                    GoRoute(
+                      path: AppRoutes.projectDetails,
+                      builder: (context, state) => ProjectDetailsView(
+                        id: state.pathParameters['projectId'] ?? '',
+                      ),
+                    ),
+                    GoRoute(
+                      path: AppRoutes.addProject,
+                      builder: (context, state) => const AddProjectScreen(),
+                    ),
+                  ]),
+              GoRoute(
+                  path: AppRoutes.profile,
+                  builder: (context, state) => const ProfileView(),
+                  routes: const []),
+            ]),
+      ]);
 }

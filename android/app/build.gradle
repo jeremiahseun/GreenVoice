@@ -55,6 +55,20 @@ android {
     }
 }
 
+dependencies {
+    // Your existing dependencies
+
+    // Branch Android SDK dependencies
+    implementation 'io.branch.sdk.android:library:5.12.2'
+    implementation 'store.galaxy.samsung.installreferrer:samsung_galaxystore_install_referrer:4.0.0'
+//    implementation 'com.google.android.gms:play-services-ads-identifier:18.1.0'
+
+    // Alternatively, for AAID:
+    // implementation 'com.google.android.gms:play-services-ads:17.2.0'
+
+    // Other dependencies your app might have
+}
+
 flutter {
     source = "../.."
 }

@@ -160,6 +160,9 @@ class FirebaseFirestoreService {
       }
     } catch (e) {
       log("Error liking issue: $e");
+      if (e.toString().contains("permission")) {
+        return (false, "You need to be logged in before you can vote.");
+      }
       return (false, "$e");
     }
   }
@@ -255,6 +258,9 @@ class FirebaseFirestoreService {
       }
     } catch (e) {
       log("Error liking project: $e");
+      if (e.toString().contains("permission")) {
+        return (false, "You need to be logged in before you can vote.");
+      }
       return (false, "$e");
     }
   }

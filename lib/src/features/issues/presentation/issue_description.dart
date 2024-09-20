@@ -6,6 +6,7 @@ import 'package:greenvoice/src/features/issues/data/issues_provider.dart';
 import 'package:greenvoice/src/features/issues/widgets/adaptive_images.dart';
 import 'package:greenvoice/src/features/issues/widgets/info_row.dart';
 import 'package:greenvoice/src/features/issues/widgets/status_chip.dart';
+import 'package:greenvoice/src/services/branch_deeplink_service.dart';
 import 'package:greenvoice/utils/common_widgets/custom_button.dart';
 import 'package:greenvoice/utils/common_widgets/fullscreen_carousel_image.dart';
 import 'package:greenvoice/utils/helpers/date_formatter.dart';
@@ -39,8 +40,10 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
           actions: [
             IconButton(
               icon: const Icon(Icons.share),
-              onPressed: () {
-                // Implement share functionality
+              onPressed: () async {
+               await BranchDeeplinkService.shareIssue(
+                  ref.watch(oneIssueProvider).value!,
+                );
               },
             ),
           ],
