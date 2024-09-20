@@ -227,12 +227,16 @@ class OneProjectProvider extends StateNotifier<AsyncValue<ProjectModel>> {
     }
   }
 
-  Future<bool> likeAndUnlikeProject({required String projectId}) async {
+  Future<bool> likeAndUnlikeProject(
+      {required String projectId, required BuildContext context}) async {
     final userId = await storage.readSecureData(key: StorageKeys.userId);
     final res = await firestore.likeAndUnlikeProject(projectId, userId);
     log("Liking project response ${res.$2}");
     if (res.$1) {
       await getOneProject(projectId, force: true);
+    } else {
+      if (!context.mounted) return false;
+      SnackbarMessage.showError(context: context, message: res.$2);
     }
     return res.$1;
   }
