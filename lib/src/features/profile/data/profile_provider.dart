@@ -143,5 +143,8 @@ class ProfileProvider extends GreenVoiceNotifier {
 
   Future exitApp() async {
     await firebaseAuthService.signOut();
+    isarStorageService.clearDB();
+    storageService.clearAll();
+    storageService.clearAllSecure();
   }
 }

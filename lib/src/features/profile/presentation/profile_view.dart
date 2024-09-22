@@ -107,10 +107,9 @@ class _LoggedInProfileState extends ConsumerState<LoggedInProfile> {
                   ProfileHeader(
                     firstName: profile.firstName ?? '',
                     lastName: profile.lastName ?? '',
-                    location: "Epe Lagos",
                     image: profile.imageUrls,
                     edit: () {
-                      context.go(
+                      context.push(
                         NavigateToPage.editProfile,
                         extra: EditProfileArgument(
                           firstName: profile.firstName ?? '',
@@ -146,16 +145,16 @@ class _LoggedInProfileState extends ConsumerState<LoggedInProfile> {
 class ProfileHeader extends StatelessWidget {
   final String firstName;
   final String lastName;
-  final String location;
+
   final String? image;
-  final Function()? edit;
-  const ProfileHeader(
-      {super.key,
-      required this.firstName,
-      required this.lastName,
-      this.image,
-      this.edit,
-      required this.location});
+  final void Function()? edit;
+  const ProfileHeader({
+    super.key,
+    required this.firstName,
+    required this.lastName,
+    this.image,
+    this.edit,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -189,10 +188,6 @@ class ProfileHeader extends StatelessWidget {
                   color: AppColors.redColor,
                 ))
           ],
-        ),
-        Text(
-          location,
-          style: AppStyles.blackNormal16.copyWith(color: AppColors.greyColor),
         ),
       ],
     );

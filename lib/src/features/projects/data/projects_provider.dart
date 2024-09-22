@@ -99,7 +99,7 @@ class AddProjectProvider extends GreenVoiceNotifier {
         await storageService.readSecureData(key: StorageKeys.username);
     final userPicture =
         await storageService.readSecureData(key: StorageKeys.userPicture);
-    if (userId!.isEmpty) {
+    if (userId.isEmpty) {
       stopLoading();
       if (!context.mounted) return false;
       SnackbarMessage.showError(

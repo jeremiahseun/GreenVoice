@@ -1,6 +1,3 @@
-import 'dart:developer';
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,7 +6,6 @@ import 'package:greenvoice/core/routes/app_router.dart';
 import 'package:greenvoice/src/features/issues/widgets/add_issues_widgets.dart';
 import 'package:greenvoice/src/features/profile/data/profile_provider.dart';
 import 'package:greenvoice/utils/common_widgets/custom_button.dart';
-import 'package:greenvoice/utils/common_widgets/green_voice_button.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 
 class EditProfile extends ConsumerStatefulWidget {
@@ -36,6 +32,15 @@ class _EditProfileState extends ConsumerState<EditProfile> {
     emailAddress.text = widget.editProfileArgument.email;
     imageUrl = widget.editProfileArgument.image;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    firstName.dispose();
+    lastName.dispose();
+    emailAddress.dispose();
+
+    super.dispose();
   }
 
   @override
