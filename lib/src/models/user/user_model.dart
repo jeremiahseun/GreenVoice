@@ -3,20 +3,21 @@ part 'user_model.g.dart';
 
 @collection
 class UserModel {
-    Id id = 1;
+  Id id = 1;
   final String uid;
   final String? email;
   final String? firstName;
   final String? lastName;
   final String? photo;
+  final String? phoneNumber;
 
-  UserModel({
-    required this.uid,
-    this.email,
-    this.firstName,
-    this.lastName,
-    this.photo,
-  });
+  UserModel(
+      {required this.uid,
+      this.email,
+      this.firstName,
+      this.lastName,
+      this.photo,
+      this.phoneNumber});
 
   factory UserModel.fromMap(Map<String, dynamic>? map) {
     return UserModel(
@@ -25,6 +26,7 @@ class UserModel {
       firstName: map?['firstName'] ?? "",
       lastName: map?['lastName'] ?? "",
       photo: map?['photo'] ?? "",
+      phoneNumber: map?['phoneNumber'] ?? "",
     );
   }
 
@@ -35,6 +37,7 @@ class UserModel {
       'firstName': firstName,
       'lastName': lastName,
       'photo': photo,
+      'phoneNumber': phoneNumber
     };
   }
 }

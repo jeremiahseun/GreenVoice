@@ -15,6 +15,8 @@ class HomeScreen extends ConsumerWidget {
 
   HomeScreen({super.key});
 
+
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = ref.watch(bottomNavigationProvider);

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:greenvoice/core/routes/app_router.dart';
 import 'package:greenvoice/core/routes/routes.dart';
+import 'package:greenvoice/src/features/profile/presentation/data/profile_provider.dart';
 import 'package:greenvoice/src/models/issue/issue_model.dart';
 import 'package:greenvoice/utils/common_widgets/green_voice_button.dart';
 import 'package:greenvoice/utils/helpers/date_formatter.dart';
@@ -64,11 +67,28 @@ class LoginPrompt extends StatelessWidget {
   }
 }
 
-class LoggedInProfile extends ConsumerWidget {
+class LoggedInProfile extends ConsumerStatefulWidget {
   const LoggedInProfile({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _LoggedInProfileState();
+}
+
+class _LoggedInProfileState extends ConsumerState<LoggedInProfile> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(profileProvider.notifier).getUserDetailsFromDb();
+    });
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final profile = ref.watch(profileProvider);
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -86,10 +106,22 @@ class LoggedInProfile extends ConsumerWidget {
             sliver: SliverToBoxAdapter(
               child: Column(
                 children: [
-                  const ProfileHeader(
-                    firstName: "Samuel",
-                    lastName: "Adelaja",
+                  ProfileHeader(
+                    firstName: profile.firstName ?? '',
+                    lastName: profile.lastName ?? '',
                     location: "Epe Lagos",
+                    image: profile.imageUrls,
+                    edit: () {
+                      context.go(
+                        NavigateToPage.editProfile,
+                        extra: EditProfileArgument(
+                          firstName: profile.firstName ?? '',
+                          lastName: profile.lastName ?? '',
+                          email: profile.email ?? '',
+                          image: profile.imageUrls ?? '',
+                        ),
+                      );
+                    },
                   ),
                   const Gap(20),
                   const IssuesReported(issues: []),
@@ -98,7 +130,7 @@ class LoggedInProfile extends ConsumerWidget {
                   const Gap(50),
                   GreenVoiceButton.red(
                       onTap: () async {
-                        await FirebaseAuth.instance.signOut();
+                        ref.read(profileProvider.notifier).exitApp();
                         context.go(NavigateToPage.login);
                       },
                       title: 'Log out'),
@@ -118,11 +150,13 @@ class ProfileHeader extends StatelessWidget {
   final String lastName;
   final String location;
   final String? image;
+  final Function()? edit;
   const ProfileHeader(
       {super.key,
       required this.firstName,
       required this.lastName,
       this.image,
+      this.edit,
       required this.location});
 
   @override
@@ -142,9 +176,21 @@ class ProfileHeader extends StatelessWidget {
               color: AppColors.primaryColor),
         ),
         const Gap(10),
-        Text(
-          '$firstName, ${lastName.split('').first.toUpperCase()}',
-          style: AppStyles.blackBold24,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '$firstName, ${lastName.split('').first.toUpperCase()}',
+              style: AppStyles.blackBold24,
+            ),
+            IconButton(
+                onPressed: edit,
+                icon: const Icon(
+                  Icons.edit_outlined,
+                  size: 20,
+                  color: AppColors.redColor,
+                ))
+          ],
         ),
         Text(
           location,

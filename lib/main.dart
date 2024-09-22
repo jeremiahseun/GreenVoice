@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:greenvoice/core/locator.dart';
 import 'package:greenvoice/core/routes/app_router.dart';
+import 'package:greenvoice/src/services/isar_storage.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
@@ -26,6 +27,7 @@ void main() async {
     MapboxOptions.setAccessToken(
         "pk.eyJ1IjoiamVyZW1pYWhzZXVuIiwiYSI6ImNtMHU2NHllNjB1MG8ybHI1ZzRpMDR1bGYifQ.srO22bCjZuGdApdDXdooSg");
   }
+  await IsarStorageService.initialize();
 }
 
 class GreenVoice extends StatelessWidget {
