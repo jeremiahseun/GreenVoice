@@ -98,10 +98,8 @@ class ProfileProvider extends GreenVoiceNotifier {
           );
           return false;
         }
-
         finalImageUrl = userImage.$3 ?? imageUrl;
       }
-
       final userData = UserModel(
         uid: userId,
         firstName: firstName,
