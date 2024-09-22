@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
@@ -104,9 +105,11 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                           image: DecorationImage(
                             image: profile.images == null
                                 ? CachedNetworkImageProvider(imageUrl ?? '')
-                                : FileImage(
-                                    profile.images!,
-                                  ),
+                                : kIsWeb
+                                    ? NetworkImage(profile.images!.path)
+                                    : FileImage(
+                                        profile.images!,
+                                      ),
                             fit: BoxFit.cover,
                           ),
                           color: AppColors.lightPrimaryColor,
