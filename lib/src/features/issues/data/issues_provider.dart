@@ -92,7 +92,7 @@ class AddIssueProvider extends GreenVoiceNotifier {
         await storageService.readSecureData(key: StorageKeys.username);
     final userPicture =
         await storageService.readSecureData(key: StorageKeys.userPicture);
-    if (userId.isEmpty) {
+    if (userId!.isEmpty) {
       stopLoading();
       if (!context.mounted) return false;
       SnackbarMessage.showError(
@@ -131,8 +131,8 @@ class AddIssueProvider extends GreenVoiceNotifier {
         updatedAt: DateTime.now(),
         images: imagesList.$3,
         createdByUserId: userId,
-        createdByUserName: username,
-        createdByUserPicture: userPicture,
+        createdByUserName: username ?? '',
+        createdByUserPicture: userPicture ?? '',
         category: 'category',
         comments: [],
         shares: []));
@@ -221,7 +221,7 @@ class OneIssueProvider extends StateNotifier<AsyncValue<IssueModel>> {
 
   Future<bool> likeAndUnlikeIssue({required String issueId}) async {
     final userId = await storage.readSecureData(key: StorageKeys.userId);
-    final res = await firestore.likeAndUnlikeIssue(issueId, userId);
+    final res = await firestore.likeAndUnlikeIssue(issueId, userId ?? '');
     log("Liking issue response ${res.$2}");
     if (res.$1) {
       await getOneIssues(issueId, force: true);

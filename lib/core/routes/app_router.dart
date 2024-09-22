@@ -17,6 +17,7 @@ import 'package:greenvoice/src/features/issues/presentation/add_issue.dart';
 import 'package:greenvoice/src/features/issues/presentation/issue_description.dart';
 import 'package:greenvoice/src/features/issues/presentation/issues_home.dart';
 import 'package:greenvoice/src/features/issues/presentation/maps/map_screen.dart';
+import 'package:greenvoice/src/features/profile/data/edit_profile.dart';
 import 'package:greenvoice/src/features/profile/presentation/profile_view.dart';
 import 'package:greenvoice/src/features/projects/presentation/add_project.dart';
 import 'package:greenvoice/src/features/projects/presentation/projects.dart';
@@ -116,7 +117,29 @@ class GreenVoiceRoutes {
               GoRoute(
                   path: AppRoutes.profile,
                   builder: (context, state) => const ProfileView(),
-                  routes: const []),
+                  routes:  [
+                     GoRoute(
+                      path: AppRoutes.editProfile,
+                      builder: (context, state) => EditProfile(
+                        editProfileArgument: state.extra as EditProfileArgument,
+                      ),
+                    ),
+                  ]),
             ]),
       ]);
+}
+
+
+class EditProfileArgument {
+  String firstName;
+  String lastName;
+  String email;
+  String image;
+
+  EditProfileArgument({
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+    required this.image
+  });
 }

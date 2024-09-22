@@ -99,7 +99,7 @@ class AddProjectProvider extends GreenVoiceNotifier {
         await storageService.readSecureData(key: StorageKeys.username);
     final userPicture =
         await storageService.readSecureData(key: StorageKeys.userPicture);
-    if (userId.isEmpty) {
+    if (userId!.isEmpty) {
       stopLoading();
       if (!context.mounted) return false;
       SnackbarMessage.showError(
@@ -140,8 +140,8 @@ class AddProjectProvider extends GreenVoiceNotifier {
         updatedAt: DateTime.now(),
         images: imagesList.$3,
         createdByUserId: userId,
-        createdByUserName: username,
-        createdByUserPicture: userPicture,
+        createdByUserName: username ?? '',
+        createdByUserPicture: userPicture ?? '',
         comments: [],
         shares: []));
     stopLoading();
@@ -230,7 +230,7 @@ class OneProjectProvider extends StateNotifier<AsyncValue<ProjectModel>> {
   Future<bool> likeAndUnlikeProject(
       {required String projectId, required BuildContext context}) async {
     final userId = await storage.readSecureData(key: StorageKeys.userId);
-    final res = await firestore.likeAndUnlikeProject(projectId, userId);
+    final res = await firestore.likeAndUnlikeProject(projectId, userId ?? '');
     log("Liking project response ${res.$2}");
     if (res.$1) {
       await getOneProject(projectId, force: true);

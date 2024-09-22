@@ -107,13 +107,13 @@ class _LoginScreenState extends ConsumerState<LoginView> {
                           .loginGreenVoiceUser(
                               email: emailController.text.trim(),
                               password: passwordController.text.trim());
-                      if (loginUser == true) {
+                      if (loginUser.$1 == true) {
                         SnackbarMessage.showSuccess(
                             context: context, message: 'Login successful');
                         context.go(NavigateToPage.home);
                       } else {
                         SnackbarMessage.showError(
-                            context: context, message: 'Login failed');
+                            context: context, message: loginUser.$2);
                       }
                     }
                   },
