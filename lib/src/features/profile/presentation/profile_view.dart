@@ -7,10 +7,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:greenvoice/core/routes/app_router.dart';
 import 'package:greenvoice/core/routes/routes.dart';
-<<<<<<< HEAD
+
 import 'package:greenvoice/src/features/profile/presentation/data/profile_provider.dart';
-=======
->>>>>>> 7945b7f (fixes)
+
+import 'package:greenvoice/src/features/profile/presentation/data/profile_provider.dart';
+
 import 'package:greenvoice/src/models/issue/issue_model.dart';
 import 'package:greenvoice/utils/common_widgets/green_voice_button.dart';
 import 'package:greenvoice/utils/helpers/date_formatter.dart';
