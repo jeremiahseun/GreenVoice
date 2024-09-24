@@ -56,19 +56,21 @@ class LoginPrompt extends ConsumerWidget {
         onRefresh: () async {
           ref.read(userProfileProvider.notifier).getCurrentUserProfile();
         },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Login to report issues and create community projects',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18),
-            ),
-            const Gap(20),
-            GreenVoiceButton.outline(
-                onTap: () => context.push(NavigateToPage.login),
-                title: "Login"),
-          ],
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Login to report issues and create community projects',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18),
+              ),
+              const Gap(20),
+              GreenVoiceButton.outline(
+                  onTap: () => context.push(NavigateToPage.login),
+                  title: "Login"),
+            ],
+          ),
         ),
       ),
     );

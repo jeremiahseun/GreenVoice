@@ -146,7 +146,7 @@ class MapProvider extends ChangeNotifier {
         options.add(PointAnnotationOptions(
           geometry: point,
           image: image,
-          iconSize: .3,
+          iconSize: .25,
           textField: data[i].title,
           textOffset: [0.0, -3.0],
           textColor: AppColors.primaryColor.value,

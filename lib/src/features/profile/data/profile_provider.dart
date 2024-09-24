@@ -2,6 +2,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greenvoice/core/locator.dart';
@@ -40,7 +41,10 @@ class UserProfileProvider extends StateNotifier<AsyncValue<UserModel?>> {
     //* Get the current user from the backend
     try {
       final upstreamUser = await _getUserDetails();
-      if (upstreamUser) {
+      if (kIsWeb) {
+        state = AsyncValue.data(upstreamUser.$2);
+      }
+      if (upstreamUser.$1) {
         final savedDBUser = await _getUserDetailsFromDb();
         if (savedDBUser == null) {
           state = AsyncValue.error("No user", StackTrace.current);
@@ -60,22 +64,25 @@ class UserProfileProvider extends StateNotifier<AsyncValue<UserModel?>> {
     return details;
   }
 
-  Future<bool> _getUserDetails() async {
+  Future<(bool, UserModel?)> _getUserDetails() async {
     final userId = await storageService.readSecureData(key: StorageKeys.userId);
     if (userId == null) {
-      return false;
+      return (false, null);
     }
     try {
       final getUser = await firebaseFirestore.getUser(userId);
       if (getUser.$1 && getUser.$3 != null) {
+        if (kIsWeb) {
+          return (true, getUser.$3);
+        }
         await isarStorageService.writeUserDB(getUser.$3!);
-        return true;
+        return (true, getUser.$3);
       } else {
-        return false;
+        return (false, null);
       }
     } catch (e) {
       log('An error occured: $e');
-      return false;
+      return (false, null);
     }
   }
 }
@@ -161,7 +168,9 @@ class ProfileProvider extends GreenVoiceNotifier {
           message: 'Profile edited successfully.',
         );
         context.pop();
-        await isarStorageService.writeUserDB(userData);
+        if (!kIsWeb) {
+          await isarStorageService.writeUserDB(userData);
+        }
 
         ref.read(userProfileProvider.notifier).getCurrentUserProfile();
         return true;

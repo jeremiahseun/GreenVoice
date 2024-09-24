@@ -21,7 +21,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await FlutterBranchSdk.init(enableLogging: true, disableTracking: false);
-  await IsarStorageService.initialize();
+  if (!kIsWeb) {
+    await IsarStorageService.initialize();
+  }
   runApp(const ProviderScope(child: GreenVoice()));
 
   Animate.restartOnHotReload = true;

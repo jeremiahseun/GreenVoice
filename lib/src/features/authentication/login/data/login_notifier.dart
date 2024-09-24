@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greenvoice/core/locator.dart';
 import 'package:greenvoice/src/models/user/user_model.dart';
@@ -54,7 +55,9 @@ class LoginScreenNotifier extends GreenVoiceNotifier {
             lastName: nameParts[1],
             photo: loginUser.$3?.user?.photoURL);
 
-        await isarStorageService.writeUserDB(userModel);
+        if (!kIsWeb) {
+          await isarStorageService.writeUserDB(userModel);
+        }
         await storageService.writeSecureData(
             key: StorageKeys.userId, value: userId);
         return (true, 'Login Successful');
