@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:developer';
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -17,6 +16,69 @@ import 'package:greenvoice/utils/constants/storage_keys.dart';
 import 'package:greenvoice/utils/helpers/greenvoice_notifier.dart';
 
 final profileProvider = ChangeNotifierProvider((ref) => ProfileProvider(ref));
+
+final userProfileProvider =
+    StateNotifierProvider<UserProfileProvider, AsyncValue<UserModel?>>(
+        (ref) => UserProfileProvider(ref));
+
+class UserProfileProvider extends StateNotifier<AsyncValue<UserModel?>> {
+  UserProfileProvider(this.ref) : super(const AsyncValue.loading());
+
+  Ref ref;
+  final firebaseFirestore = locator<FirebaseFirestoreService>();
+  final isarStorageService = locator<IsarStorageService>();
+  final storageService = locator<StorageService>();
+
+  Future<List<Map<String, dynamic>>?> getVotingHistory(
+      {required String userId}) async {
+    return null;
+  }
+
+  Future<void> getCurrentUserProfile() async {
+    state = const AsyncValue.loading();
+
+    //* Get the current user from the backend
+    try {
+      final upstreamUser = await _getUserDetails();
+      if (upstreamUser) {
+        final savedDBUser = await _getUserDetailsFromDb();
+        if (savedDBUser == null) {
+          state = AsyncValue.error("No user", StackTrace.current);
+        } else {
+          state = AsyncValue.data(savedDBUser);
+        }
+      } else {
+        state = AsyncValue.error("No user", StackTrace.current);
+      }
+    } catch (e) {
+      state = AsyncValue.error(e.toString(), StackTrace.current);
+    }
+  }
+
+  Future<UserModel?> _getUserDetailsFromDb() async {
+    final details = await isarStorageService.readUserDB();
+    return details;
+  }
+
+  Future<bool> _getUserDetails() async {
+    final userId = await storageService.readSecureData(key: StorageKeys.userId);
+    if (userId == null) {
+      return false;
+    }
+    try {
+      final getUser = await firebaseFirestore.getUser(userId);
+      if (getUser.$1 && getUser.$3 != null) {
+        await isarStorageService.writeUserDB(getUser.$3!);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      log('An error occured: $e');
+      return false;
+    }
+  }
+}
 
 class ProfileProvider extends GreenVoiceNotifier {
   final firebaseFirestore = locator<FirebaseFirestoreService>();
@@ -37,35 +99,6 @@ class ProfileProvider extends GreenVoiceNotifier {
     this.ref,
   );
 
-  Future<void> getUserDetailsFromDb() async {
-    final details = await isarStorageService.readUserDB();
-    firstName = details?.firstName ?? '';
-    lastName = details?.lastName ?? '';
-    email = details?.email ?? '';
-    phoneNumber = details?.phoneNumber ?? '';
-    imageUrls = details?.photo ?? '';
-    notifyListeners();
-  }
-
-  Future<void> getUserDetails() async {
-    final userId = await storageService.readSecureData(key: StorageKeys.userId);
-    try {
-      final getUser = await firebaseFirestore.getUser(userId);
-      if (getUser.$1) {
-        userData = getUser.$3 ?? UserModel(uid: userId);
-        firstName = userData.firstName;
-        lastName = userData.lastName;
-        imageUrls = userData.photo ?? '';
-        phoneNumber = userData.phoneNumber ?? '';
-        email = userData.email ?? '';
-        await isarStorageService.writeUserDB(userData);
-        notifyListeners();
-      }
-    } catch (e) {
-      log('An error occured: $e');
-    }
-  }
-
   Future<void> pickImage(bool isFromGallery) async {
     final res = await ImageService().pickmage(isGallery: isFromGallery);
     if (res != null) {
@@ -79,14 +112,21 @@ class ProfileProvider extends GreenVoiceNotifier {
     required String lastName,
     required String phoneNumber,
     required String email,
-    required String imageUrl, // Current image URL is passed here
+    String? imageUrl, // Current image URL is passed here
     required BuildContext context,
   }) async {
     final userId = await storageService.readSecureData(key: StorageKeys.userId);
-
+    if (userId == null) {
+      if (!context.mounted) return false;
+      SnackbarMessage.showInfo(
+          context: context,
+          message:
+              "Looks like you are not logged in. Please try again while logged in.");
+      return false;
+    }
     try {
       startLoading();
-      String finalImageUrl = imageUrl;
+      String finalImageUrl = imageUrl ?? '';
       if (images != null) {
         final userImage = await firebaseStorage.uploadUserPicture(
             image: images!, userId: userId, username: firstName);
@@ -107,7 +147,7 @@ class ProfileProvider extends GreenVoiceNotifier {
         firstName: firstName,
         lastName: lastName,
         phoneNumber: phoneNumber,
-        photo: imageUrls ?? finalImageUrl,
+        photo: finalImageUrl,
         email: email,
       );
 
@@ -122,13 +162,8 @@ class ProfileProvider extends GreenVoiceNotifier {
         );
         context.pop();
         await isarStorageService.writeUserDB(userData);
-        firstName = userData.firstName ?? '';
-        lastName = userData.lastName ?? '';
-        email = userData.email ?? '';
-        imageUrls = userData.photo ?? '';
-        phoneNumber = userData.phoneNumber ?? '';
-        getUserDetailsFromDb();
-        notifyListeners();
+
+        ref.read(userProfileProvider.notifier).getCurrentUserProfile();
         return true;
       } else {
         stopLoading();

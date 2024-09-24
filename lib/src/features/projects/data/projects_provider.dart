@@ -96,10 +96,10 @@ class AddProjectProvider extends GreenVoiceNotifier {
     //* Get the current user ID
     final userId = await storageService.readSecureData(key: StorageKeys.userId);
     final username =
-        await storageService.readSecureData(key: StorageKeys.username);
+        await storageService.readSecureData(key: StorageKeys.username) ?? "";
     final userPicture =
-        await storageService.readSecureData(key: StorageKeys.userPicture);
-    if (userId.isEmpty) {
+        await storageService.readSecureData(key: StorageKeys.userPicture) ?? "";
+    if (userId == null) {
       stopLoading();
       if (!context.mounted) return false;
       SnackbarMessage.showError(
@@ -230,6 +230,14 @@ class OneProjectProvider extends StateNotifier<AsyncValue<ProjectModel>> {
   Future<bool> likeAndUnlikeProject(
       {required String projectId, required BuildContext context}) async {
     final userId = await storage.readSecureData(key: StorageKeys.userId);
+    if (userId == null) {
+      if (!context.mounted) return false;
+      SnackbarMessage.showInfo(
+          context: context,
+          message:
+              "Looks like you are not logged in. Please try again while logged in.");
+      return false;
+    }
     final res = await firestore.likeAndUnlikeProject(projectId, userId);
     log("Liking project response ${res.$2}");
     if (res.$1) {

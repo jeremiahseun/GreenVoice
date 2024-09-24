@@ -7,8 +7,8 @@ import 'package:greenvoice/src/features/issues/widgets/adaptive_images.dart';
 import 'package:greenvoice/src/features/issues/widgets/info_row.dart';
 import 'package:greenvoice/src/features/issues/widgets/status_chip.dart';
 import 'package:greenvoice/src/services/branch_deeplink_service.dart';
-import 'package:greenvoice/utils/common_widgets/custom_button.dart';
 import 'package:greenvoice/utils/common_widgets/fullscreen_carousel_image.dart';
+import 'package:greenvoice/utils/common_widgets/vote_button.dart';
 import 'package:greenvoice/utils/helpers/date_formatter.dart';
 
 class IssueDetailScreen extends ConsumerStatefulWidget {
@@ -41,7 +41,7 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
             IconButton(
               icon: const Icon(Icons.share),
               onPressed: () async {
-               await BranchDeeplinkService.shareIssue(
+                await BranchDeeplinkService.shareIssue(
                   ref.watch(oneIssueProvider).value!,
                 );
               },
@@ -99,6 +99,13 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                           const Gap(16),
+                          InfoRow(
+                              icon: Icons.how_to_vote_rounded,
+                              text: issue.votes.isEmpty
+                                  ? "No Votes"
+                                  : issue.votes.length == 1
+                                      ? "1 person voted"
+                                      : "${issue.votes.length} people voted"),
                           InfoRow(icon: Icons.category, text: issue.category),
                           Visibility(
                             visible: !issue.isAnonymous,
@@ -106,52 +113,54 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
                                 icon: Icons.person, text: 'Anonymous Post'),
                             child: InfoRow(
                                 icon: Icons.person,
-                                text:
-                                    'Posted by ${issue.createdByUserName.split(" ").first}'),
+                                text: issue.createdByUserName
+                                        .split(" ")
+                                        .first
+                                        .isNotEmpty
+                                    ? 'Posted by ${issue.createdByUserName.split(" ").first}'
+                                    : "Posted by a GreenVoice user"),
                           ),
                           InfoRow(
                             icon: Icons.access_time,
                             text:
-                                'Created: ${DateFormatter.formatDate(issue.createdAt)}',
+                                'Issue created on ${DateFormatter.formatDate(issue.createdAt)}',
                           ),
                           InfoRow(
                             icon: Icons.update,
                             text:
-                                'Updated: ${DateFormatter.formatDate(issue.updatedAt)}',
+                                'Last Update was ${DateFormatter.formatDate(issue.updatedAt)}',
                           ),
                           const Gap(16),
-                          CustomButton(
-                              onTap: ref
-                                          .watch(oneIssueProvider)
-                                          .value
-                                          ?.votes
-                                          .contains(ref
-                                              .read(userProvider)
-                                              .value
-                                              ?.uid) ==
-                                      true
-                                  ? null
-                                  : () async {
-                                      isLikeLoadingState.value = true;
-                                      await ref
-                                          .read(oneIssueProvider.notifier)
-                                          .likeAndUnlikeIssue(
-                                              issueId: issue.id);
-                                      isLikeLoadingState.value = false;
-                                    },
-                              isLoading: isLikeLoadingState.value == true,
-                              text: ref
-                                          .watch(oneIssueProvider)
-                                          .value
-                                          ?.votes
-                                          .contains(ref
-                                              .read(userProvider)
-                                              .value
-                                              ?.uid) ==
-                                      true
-                                  ? "Voted ${issue.votes.length}"
-                                  : "Vote ${issue.votes.length}",
-                              isBigButton: true),
+                          AnimatedVoteButton(
+                            isVoted: ref
+                                    .watch(oneIssueProvider)
+                                    .value
+                                    ?.votes
+                                    .contains(
+                                      ref.read(userProvider).value?.uid,
+                                    ) ==
+                                true,
+                            isLoading: isLikeLoadingState.value,
+                            onTap: () async {
+                              if (ref
+                                      .watch(oneIssueProvider)
+                                      .value
+                                      ?.votes
+                                      .contains(
+                                        ref.read(userProvider).value?.uid,
+                                      ) !=
+                                  true) {
+                                isLikeLoadingState.value = true;
+                                await ref
+                                    .read(oneIssueProvider.notifier)
+                                    .likeAndUnlikeIssue(
+                                      context: context,
+                                      issueId: issue.id,
+                                    );
+                                isLikeLoadingState.value = false;
+                              }
+                            },
+                          )
                         ],
                       ),
                     ),

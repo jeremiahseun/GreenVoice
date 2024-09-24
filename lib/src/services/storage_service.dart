@@ -10,22 +10,22 @@ class StorageService {
   //* READING DATA
   Future<int?> readIntData({required String key}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getInt(key) ?? 0;
+    return prefs.getInt(key);
   }
 
   Future<double?> readDoubleData({required String key}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getDouble(key) ?? 0.0;
+    return prefs.getDouble(key);
   }
 
   Future<String?> readStringData({required String key}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(key) ?? '';
+    return prefs.getString(key);
   }
 
-  Future<bool> readBoolData({required String key}) async {
+  Future<bool?> readBoolData({required String key}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(key) ?? false;
+    return prefs.getBool(key);
   }
 
   //* WRITING DATA
@@ -63,9 +63,9 @@ class StorageService {
   }
 
   //* READING SECURE DATA
-  Future<String> readSecureData({required String key}) async {
+  Future<String?> readSecureData({required String key}) async {
     final data = await storage.read(key: key);
 
-    return data ?? '';
+    return data;
   }
 }

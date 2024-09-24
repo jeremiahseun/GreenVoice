@@ -21,6 +21,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await FlutterBranchSdk.init(enableLogging: true, disableTracking: false);
+  await IsarStorageService.initialize();
   runApp(const ProviderScope(child: GreenVoice()));
 
   Animate.restartOnHotReload = true;
@@ -28,7 +29,6 @@ void main() async {
     MapboxOptions.setAccessToken(
         "pk.eyJ1IjoiamVyZW1pYWhzZXVuIiwiYSI6ImNtMHU2NHllNjB1MG8ybHI1ZzRpMDR1bGYifQ.srO22bCjZuGdApdDXdooSg");
   }
-  await IsarStorageService.initialize();
 }
 
 class GreenVoice extends StatelessWidget {
