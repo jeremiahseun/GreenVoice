@@ -128,7 +128,7 @@ class FirebaseFirestoreService {
       await db
           .collection(FirestoreStrings.issues)
           .doc(issue.id)
-          .update(issue.toMap());
+          .update(issue.toMap().putIfAbsent('updatedAt', () => DateTime.now()));
       return (true, "Issue updated successfully");
     } catch (e) {
       log("Error updating issue: $e");
@@ -153,7 +153,8 @@ class FirebaseFirestoreService {
           //* It means the user has not voted
           updatedVotes.add(userId);
         }
-        await docRef.update({'votes': updatedVotes});
+        await docRef
+            .update({'votes': updatedVotes, 'updatedAt': DateTime.now()});
         return (true, "Issue liked successfully");
       } else {
         return (false, "Issue not found");

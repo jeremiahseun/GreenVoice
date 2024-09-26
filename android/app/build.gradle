@@ -67,6 +67,8 @@ dependencies {
     // implementation 'com.google.android.gms:play-services-ads:17.2.0'
 
     // Other dependencies your app might have
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.25' // For GIF animation
+    implementation 'androidx.appcompat:appcompat:1.7.0' // Required for backward compatibility
 }
 
 flutter {

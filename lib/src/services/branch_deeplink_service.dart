@@ -75,10 +75,14 @@ class BranchDeeplinkService {
             androidMessageTitle: 'Share Issue: ${issue.title}',
             androidSharingTitle: 'Spread the word about this issue');
       } else {
-        await showNativeShareSheet(response.result, issue.title);
+        await showNativeShareSheet(response.result, issue.title,
+            description:
+                'Check out this important issue: ${issue.title}. Your input could make a difference!');
       }
     } else {
-      await showNativeShareSheet(response.result, issue.title);
+      await showNativeShareSheet(response.result, issue.title,
+          description:
+              'Check out this important issue: ${issue.title}. Your input could make a difference!');
     }
   }
 
@@ -100,14 +104,19 @@ class BranchDeeplinkService {
             androidMessageTitle: 'Project Invitation: ${project.title}',
             androidSharingTitle: 'Share Professional Opportunity');
       } else {
-        await showNativeShareSheet(response.result, project.title);
+        await showNativeShareSheet(response.result, project.title,
+            description:
+                "I'd like to invite you to contribute to ${project.title}. Your expertise would be valuable.");
       }
     } else {
-      await showNativeShareSheet(response.result, project.title);
+      await showNativeShareSheet(response.result, project.title,
+          description:
+              "I'd like to invite you to contribute to ${project.title}. Your expertise would be valuable.");
     }
   }
 
-  static Future<void> showNativeShareSheet(String link, String title) async {
-    await Share.share('Check out this post => $link', subject: title);
+  static Future<void> showNativeShareSheet(String link, String title,
+      {required String description}) async {
+    await Share.share('$description\n$link', subject: title);
   }
 }

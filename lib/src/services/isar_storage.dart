@@ -16,6 +16,8 @@ class IsarStorageService {
   }
 
   Future<UserModel?> readUserDB() async {
+    final userDB = await isar.userModels.count();
+    if (userDB == 0) return null;
     final user = await isar.userModels.get(1);
     return user;
   }

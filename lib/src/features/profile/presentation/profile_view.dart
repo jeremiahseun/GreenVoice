@@ -10,6 +10,8 @@ import 'package:greenvoice/utils/common_widgets/green_voice_button.dart';
 import 'package:greenvoice/utils/helpers/date_formatter.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 
+import 'profile_loading.dart';
+
 final isLoggedInProvider = StateProvider<bool>((ref) => false);
 
 class ProfileView extends ConsumerStatefulWidget {
@@ -23,8 +25,7 @@ class _ProfileScreenState extends ConsumerState<ProfileView> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(profileProvider.notifier).getUserDetailsFromDb();
-      ref.read(profileProvider.notifier).getUserDetails();
+      ref.read(userProfileProvider.notifier).getCurrentUserProfile();
     });
 
     super.initState();
@@ -32,111 +33,129 @@ class _ProfileScreenState extends ConsumerState<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
-    bool isLoggedIn = true;
-
-    return Visibility(
-      visible: isLoggedIn,
-      replacement: const LoginPrompt(),
-      child: const LoggedInProfile(),
-    );
+    return ref.watch(userProfileProvider).when(data: (data) {
+      return const LoggedInProfile();
+    }, error: (err, _) {
+      return const LoginPrompt();
+    }, loading: () {
+      return const ProfileLoadingWidget();
+    });
   }
 }
 
-class LoginPrompt extends StatelessWidget {
+class LoginPrompt extends ConsumerWidget {
   const LoginPrompt({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(context, ref) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Login to report issues and create community projects',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18),
-            ),
-            const Gap(20),
-            ElevatedButton(
-              onPressed: () {
-                // Implement login logic here
-              },
-              child: const Text('Login'),
-            ),
-          ],
+      body: RefreshIndicator.adaptive(
+        onRefresh: () async {
+          ref.read(userProfileProvider.notifier).getCurrentUserProfile();
+        },
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Login to report issues and create community projects',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18),
+              ),
+              const Gap(20),
+              GreenVoiceButton.outline(
+                  onTap: () => context.push(NavigateToPage.login),
+                  title: "Login"),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class LoggedInProfile extends ConsumerStatefulWidget {
+class LoggedInProfile extends ConsumerWidget {
   const LoggedInProfile({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      _LoggedInProfileState();
-}
-
-class _LoggedInProfileState extends ConsumerState<LoggedInProfile> {
-  @override
-  Widget build(BuildContext context) {
-    final profile = ref.watch(profileProvider);
-
+  Widget build(context, ref) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 50,
-            title: Text(
-              'Profile',
-              style: AppStyles.blackBold18,
-            ),
-            pinned: true,
-            centerTitle: true,
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.all(16.0),
-            sliver: SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  ProfileHeader(
-                    firstName: profile.firstName ?? '',
-                    lastName: profile.lastName ?? '',
-                    image: profile.imageUrls,
-                    edit: () {
-                      context.push(
-                        NavigateToPage.editProfile,
-                        extra: EditProfileArgument(
-                          firstName: profile.firstName ?? '',
-                          lastName: profile.lastName ?? '',
-                          email: profile.email ?? '',
-                          image: profile.imageUrls ?? '',
-                        ),
-                      );
-                    },
-                  ),
-                  const Gap(20),
-                  const IssuesReported(issues: []),
-                  const Gap(20),
-                  const VotingHistory(),
-                  const Gap(50),
-                  GreenVoiceButton.red(
-                      onTap: () async {
-                        ref.read(profileProvider.notifier).exitApp();
-                        context.go(NavigateToPage.login);
-                      },
-                      title: 'Log out'),
-                  const Gap(50),
-                ],
+      body: RefreshIndicator.adaptive(
+        onRefresh: () async {
+          ref.read(userProfileProvider.notifier).getCurrentUserProfile();
+        },
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 50,
+              title: Text(
+                'Profile',
+                style: AppStyles.blackBold18,
               ),
+              pinned: true,
+              centerTitle: true,
             ),
-          )
-        ],
+            SliverPadding(
+              padding: const EdgeInsets.all(16.0),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    ref.watch(userProfileProvider).when(
+                          loading: () =>
+                              const CircularProgressIndicator.adaptive(),
+                          error: (error, _) {
+                            return const SizedBox();
+                          },
+                          data: (profile) => ProfileHeader(
+                            firstName: profile?.firstName ?? '',
+                            lastName: profile?.lastName ?? '',
+                            image: profile?.photo,
+                            edit: () {
+                              context.push(
+                                NavigateToPage.editProfile,
+                                extra: EditProfileArgument(
+                                  firstName: profile?.firstName ?? '',
+                                  lastName: profile?.lastName ?? '',
+                                  email: profile?.email ?? '',
+                                  image: profile?.photo ?? '',
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                    const Gap(20),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child:
+                          Text('Issues Reported', style: AppStyles.blackBold20),
+                    ),
+                    const Gap(20),
+                    Text('Coming soon...', style: AppStyles.blackNormal14),
+                    const Gap(20),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child:
+                          Text('Voting History', style: AppStyles.blackBold20),
+                    ),
+                    const Gap(20),
+                    Text('Coming soon...', style: AppStyles.blackNormal14),
+                    const Gap(50),
+                    GreenVoiceButton.red(
+                        onTap: () async {
+                          ref.read(profileProvider.notifier).exitApp();
+                          context.go(NavigateToPage.login);
+                        },
+                        title: 'Log out'),
+                    const Gap(50),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -294,20 +313,45 @@ class IssueItem extends StatelessWidget {
 }
 
 class VotingHistory extends StatelessWidget {
-  const VotingHistory({super.key});
+  final List<Map<String, dynamic>> votes;
+
+  const VotingHistory({super.key, required this.votes});
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Voting History',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        Gap(10),
-        VoteItem(
-            title: 'Vote for the new park location', date: 'Voted on Jan 7'),
-        VoteItem(
-            title: 'Vote for the new library design', date: 'Voted on Dec 23'),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Voting History',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Visibility(
+              visible: votes.isNotEmpty,
+              child: Text("${votes.length}", style: AppStyles.blackBold20),
+            )
+          ],
+        ),
+        const Gap(10),
+        Column(
+            children: votes
+                .map((vote) => InkWell(
+                      onTap: () {
+                        if (vote['isIssues'] as bool) {
+                          context.push(
+                              "${NavigateToPage.issueDetails}/${vote['id']}");
+                        } else {
+                          context.push(
+                              "${NavigateToPage.projectDetails}/${vote['id']}");
+                        }
+                      },
+                      child: VoteItem(
+                          title: vote['title'],
+                          date: 'Voted on ${vote['date']}'),
+                    ))
+                .take(3)
+                .toList())
       ],
     );
   }

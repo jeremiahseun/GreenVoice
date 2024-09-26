@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greenvoice/core/locator.dart';
 import 'package:greenvoice/src/models/issue/issue_model.dart';
@@ -89,10 +90,10 @@ class AddIssueProvider extends GreenVoiceNotifier {
     //* Get the current user ID
     final userId = await storageService.readSecureData(key: StorageKeys.userId);
     final username =
-        await storageService.readSecureData(key: StorageKeys.username);
+        await storageService.readSecureData(key: StorageKeys.username) ?? "";
     final userPicture =
-        await storageService.readSecureData(key: StorageKeys.userPicture);
-    if (userId.isEmpty) {
+        await storageService.readSecureData(key: StorageKeys.userPicture) ?? "";
+    if (userId == null) {
       stopLoading();
       if (!context.mounted) return false;
       SnackbarMessage.showError(
@@ -131,8 +132,8 @@ class AddIssueProvider extends GreenVoiceNotifier {
         updatedAt: DateTime.now(),
         images: imagesList.$3,
         createdByUserId: userId,
-        createdByUserName: username ?? '',
-        createdByUserPicture: userPicture ?? '',
+        createdByUserName: username,
+        createdByUserPicture: userPicture,
         category: 'category',
         comments: [],
         shares: []));
@@ -219,12 +220,24 @@ class OneIssueProvider extends StateNotifier<AsyncValue<IssueModel>> {
     }
   }
 
-  Future<bool> likeAndUnlikeIssue({required String issueId}) async {
+  Future<bool> likeAndUnlikeIssue(
+      {required String issueId, required BuildContext context}) async {
     final userId = await storage.readSecureData(key: StorageKeys.userId);
-    final res = await firestore.likeAndUnlikeIssue(issueId, userId ?? '');
-    log("Liking issue response ${res.$2}");
+    if (userId == null) {
+      if (!context.mounted) return false;
+      SnackbarMessage.showInfo(
+          context: context,
+          message:
+              "Looks like you are not logged in. Please try again while logged in.");
+      return false;
+    }
+    final res = await firestore.likeAndUnlikeIssue(issueId, userId);
+    log("Liking issue response ${res.$1} ${res.$2}");
     if (res.$1) {
       await getOneIssues(issueId, force: true);
+    } else {
+      if (!context.mounted) return false;
+      SnackbarMessage.showInfo(context: context, message: res.$2);
     }
     return res.$1;
   }

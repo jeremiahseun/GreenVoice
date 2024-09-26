@@ -50,7 +50,6 @@ class _EditProfileState extends ConsumerState<EditProfile> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        automaticallyImplyLeading: false,
         title: Text(
           'Edit Profile',
           style: AppStyles.blackBold18,
@@ -137,6 +136,12 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                           child: CustomTextField(
                               hint: 'First name',
                               controller: firstName,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Enter First Name';
+                                }
+                                return null;
+                              },
                               keyboardType: TextInputType.name),
                         ),
                         const Gap(10),
@@ -144,6 +149,12 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                           child: CustomTextField(
                               hint: 'Last Name',
                               controller: lastName,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Enter Last Name';
+                                }
+                                return null;
+                              },
                               keyboardType: TextInputType.name),
                         ),
                       ],
@@ -152,13 +163,31 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                     CustomTextField(
                         hint: 'Email Address',
                         controller: emailAddress,
+                        validator: (value) {
+                          final emailRegex = RegExp(
+                              r'^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+                          if (!emailRegex.hasMatch(value ?? '')) {
+                            return 'Enter a valid email Address';
+                          }
+                          return null;
+                        },
                         readOnly: true,
-                        keyboardType: TextInputType.name),
+                        keyboardType: TextInputType.emailAddress),
                     const Gap(20),
                     CustomTextField(
-                        hint: 'Phone number',
+                        hint: 'Phone number (Starts with 0**)',
                         controller: phoneNumber,
-                        keyboardType: TextInputType.name),
+                        maxLength: 11,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter Phone Number';
+                          }
+                          if (value.length < 11) {
+                            return 'Enter a valid phone number';
+                          }
+                          return null;
+                        },
+                        keyboardType: TextInputType.phone),
                     const Gap(150),
                     CustomButton(
                       isBigButton: true,
@@ -166,15 +195,17 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                       text: 'Save',
                       isLoading: profile.isLoading,
                       onTap: () async {
-                        await ref
-                            .read(profileProvider.notifier)
-                            .editUserProfile(
-                                imageUrl: '',
-                                firstName: firstName.text,
-                                lastName: lastName.text,
-                                phoneNumber: phoneNumber.text,
-                                email: emailAddress.text,
-                                context: context);
+                        if (formKey.currentState!.validate()) {
+                          await ref
+                              .read(profileProvider.notifier)
+                              .editUserProfile(
+                                  imageUrl: imageUrl,
+                                  firstName: firstName.text,
+                                  lastName: lastName.text,
+                                  phoneNumber: phoneNumber.text,
+                                  email: emailAddress.text,
+                                  context: context);
+                        }
                       },
                     )
                   ],

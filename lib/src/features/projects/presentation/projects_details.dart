@@ -194,7 +194,10 @@ class _ProjectDetailsViewState extends ConsumerState<ProjectDetailsView> {
                             const Gap(15.0),
                             Expanded(
                               child: GreenVoiceButton.outline(
-                                onTap: () {},
+                                onTap: () async =>
+                                    await BranchDeeplinkService.shareProject(
+                                  ref.watch(oneProjectProvider).value!,
+                                ),
                                 title: "Share",
                               ),
                             )
