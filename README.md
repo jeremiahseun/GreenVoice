@@ -65,7 +65,7 @@ GreenVoice is a cross-platform civic engagement application developed during the
 
 ## 🤝 Contributing
 
-We welcome contributions to GreenVoice! Please check out our [Contributing Guidelines](CONTRIBUTING.md) for details on how to get started.
+We do not welcome contributions to GreenVoice for now.
 
 ## 📜 License
 
@@ -74,7 +74,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - Thanks to the FlutterBytes hackathon organizers for the opportunity.
-- Shoutout to our amazing team members: [@jeremiahseun, @DestinyOgbonna]
+- Shoutout to our amazing team members: [[Jeremiah Erinola](https://github.com/jeremiahseun), [Destiny Ogbonna](https://github.com/DestinyOgbonna)]
 
 ## 📞 Contact
 
