@@ -1,12 +1,12 @@
 # GreenVoice 🌿🔊
 
-![GreenVoice Logo](path/to/logo.png)
+![GreenVoice Logo](https://github.com/user-attachments/assets/5b4ecca6-1848-4abf-8c98-cc630668847d)
 
 ## Empowering Sustainable Communities through Civic Engagement
 
-GreenVoice is a cross-platform civic engagement application developed during the FlutterBytes hackathon. Our mission is to bridge the gap between citizens and local governments, fostering sustainable community development through active participation and transparent communication.
+GreenVoice is a cross-platform civic engagement application developed during the FlutterBytes hackathon. We aim to bridge the gap between citizens and local governments, fostering sustainable community development through active participation and transparent communication.
 
-[![Flutter Version](https://img.shields.io/badge/Flutter-3.10.0-blue.svg)](https://flutter.dev/)
+[![Flutter Version](https://img.shields.io/badge/Flutter-3.24.3-blue.svg)](https://flutter.dev/)
 [![Dart Version](https://img.shields.io/badge/Dart-3.0.0-blue.svg)](https://dart.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -25,30 +25,21 @@ GreenVoice is a cross-platform civic engagement application developed during the
 
 - Flutter SDK (v3.10.0 or later)
 - Dart SDK (v3.0.0 or later)
-- Firebase account and project set up
+- Firebase account and project set-up
 
 ### Installation
 
 1. Clone the repository:
    ```
-   git clone https://github.com/jeremiahseun/greenvoice.git
+   git clone https://github.com/jeremiahseun/GreenVoice.git
    ```
 
-2. Navigate to the project directory:
-   ```
-   cd greenvoice
-   ```
-
-3. Install dependencies:
+2. Install dependencies:
    ```
    flutter pub get
    ```
 
-4. Set up Firebase:
-   - Add your `google-services.json` (for Android) and `GoogleService-Info.plist` (for iOS) to the respective directories.
-   - Configure Firebase in your Flutter app as per the [official documentation](https://firebase.flutter.dev/docs/overview).
-
-5. Run the app:
+3. Run the app:
    ```
    flutter run
    ```
@@ -65,7 +56,7 @@ GreenVoice is a cross-platform civic engagement application developed during the
 
 ## 🤝 Contributing
 
-We do not welcome contributions to GreenVoice for now.
+We do not welcome contributions to GreenVoice at this time.
 
 ## 📜 License
 
@@ -78,7 +69,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact
 
-For any queries or suggestions, please reach out to us at [seunjeremiah@gmail.com].
+For any queries or suggestions, please contact us at [seunjeremiah@gmail.com].
 
 ---
 
