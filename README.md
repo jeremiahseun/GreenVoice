@@ -7,7 +7,7 @@
 GreenVoice is a cross-platform civic engagement application developed during the FlutterBytes hackathon. We aim to bridge the gap between citizens and local governments, fostering sustainable community development through active participation and transparent communication.
 
 [![Flutter Version](https://img.shields.io/badge/Flutter-3.24.3-blue.svg)](https://flutter.dev/)
-[![Dart Version](https://img.shields.io/badge/Dart-3.0.0-blue.svg)](https://dart.dev/)
+[![Dart Version](https://img.shields.io/badge/Dart-3.5.3-blue.svg)](https://dart.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## 🌟 Features
@@ -30,16 +30,19 @@ GreenVoice is a cross-platform civic engagement application developed during the
 ### Installation
 
 1. Clone the repository:
+
    ```
    git clone https://github.com/jeremiahseun/GreenVoice.git
    ```
 
 2. Install dependencies:
+
    ```
    flutter pub get
    ```
 
 3. Run the app:
+
    ```
    flutter run
    ```
