@@ -35,9 +35,8 @@ class FirebaseStorageService {
       for (var i = 0; i < image.length; i++) {
         final element = image[i];
         uploadProgress(i + 1);
-        final passportRef = storage
-            .ref()
-            .child('issues/$folderPath/${DateTime.now().microsecondsSinceEpoch}.jpg');
+        final passportRef = storage.ref().child(
+            'issues/$folderPath/${DateTime.now().microsecondsSinceEpoch}.jpg');
         await passportRef.putFile(element);
         final pictureUrl = await passportRef.getDownloadURL();
         imagesUrl.add(pictureUrl);
@@ -51,20 +50,20 @@ class FirebaseStorageService {
   }
 
 //* Upload projects
-  Future<(bool status, String? message, List<String> path)> uploadProjectPicture(
-      {required List<File> image,
-      required String userId,
-      required String folderPath,
-      required Function(int) uploadProgress}) async {
+  Future<(bool status, String? message, List<String> path)>
+      uploadProjectPicture(
+          {required List<File> image,
+          required String userId,
+          required String folderPath,
+          required Function(int) uploadProgress}) async {
     try {
       List<String> imagesUrl = [];
 
       for (var i = 0; i < image.length; i++) {
         final element = image[i];
         uploadProgress(i + 1);
-        final passportRef = storage
-            .ref()
-            .child('projects/$folderPath/${DateTime.now().microsecondsSinceEpoch}.jpg');
+        final passportRef = storage.ref().child(
+            'projects/$folderPath/${DateTime.now().microsecondsSinceEpoch}.jpg');
         await passportRef.putFile(element);
         final pictureUrl = await passportRef.getDownloadURL();
         imagesUrl.add(pictureUrl);

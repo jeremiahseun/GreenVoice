@@ -15,11 +15,7 @@ Future<void> setupLocator() async {
       () => FirebaseFirestoreService());
   locator.registerLazySingleton<FirebaseStorageService>(
       () => FirebaseStorageService());
-  locator.registerLazySingleton<LocationService>(
-      () => LocationService());
-  locator.registerLazySingleton<StorageService>(
-      () => StorageService());
-       locator.registerLazySingleton<IsarStorageService>(
-      () => IsarStorageService());
+  locator.registerLazySingleton<LocationService>(() => LocationService());
+  locator.registerLazySingleton<StorageService>(() => StorageService());
+  locator.registerLazySingleton<IsarStorageService>(() => IsarStorageService());
 }
-

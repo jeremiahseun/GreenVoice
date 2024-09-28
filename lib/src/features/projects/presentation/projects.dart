@@ -6,6 +6,7 @@ import 'package:greenvoice/core/routes/routes.dart';
 import 'package:greenvoice/src/features/issues/widgets/issue_loading.dart';
 import 'package:greenvoice/src/features/projects/data/projects_provider.dart';
 import 'package:greenvoice/src/features/projects/widgets/project_widget.dart';
+import 'package:greenvoice/utils/common_widgets/lottie_error_widgets.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -65,8 +66,19 @@ class _ProjectScreenState extends ConsumerState<ProjectHome> {
                           );
                         },
                       ),
-                  error: (e, s) => SliverToBoxAdapter(
-                        child: Center(child: Text(e.toString())),
+                  error: (err, s) => SliverToBoxAdapter(
+                        child: GreenVoiceErrorWidget(
+                          buttonText: "Try again",
+                          onGoHome: () => ref
+                              .read(projectsProvider.notifier)
+                              .getAllProjects(),
+                          title: err.toString().contains("timeout")
+                              ? "Network Timeout"
+                              : 'Oops! Unable to get projects',
+                          message: err.toString().contains("timeout")
+                              ? "Seems like the network is poor. Try again soon."
+                              : err.toString(),
+                        ),
                       ),
                   loading: () => const SliverSkeletonizer(
                         child: IssueLoadingWidget(),

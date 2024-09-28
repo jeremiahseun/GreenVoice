@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:greenvoice/core/deep_link.dart';
@@ -8,6 +9,7 @@ import 'package:greenvoice/src/features/authentication/user/user_provider.dart';
 import 'package:greenvoice/src/features/bottom_navigation/presentation/bottom_navigation.dart';
 import 'package:greenvoice/src/services/firebase/auth.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -23,6 +25,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   void initState() {
     super.initState();
     if (!kIsWeb) {
+      MapboxOptions.setAccessToken(dotenv.env['MAP_KEY']!);
       DeepLinking.initUniLinks(context);
     }
     ref.read(userProvider.notifier).getCurrentUser();

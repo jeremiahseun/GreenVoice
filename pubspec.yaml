@@ -19,6 +19,7 @@ dependencies:
     sdk: flutter
   flutter_animate: ^4.5.0
   flutter_branch_sdk: ^8.2.0
+  flutter_dotenv: ^5.1.0
   flutter_image_compress: ^2.3.0
   flutter_location_search:
     git:
@@ -57,10 +58,12 @@ dev_dependencies:
   isar_generator: ^3.1.0+1
 
 flutter_launcher_icons:
-  android: "launcher_icon"
+  android: true
   ios: true
   image_path: "assets/icons/app-icon.jpg"
-  min_sdk_android: 21 # android min sdk min:16, default 21
+  min_sdk_android: 21
+  adaptive_icon_background: "#FFFFF"
+  adaptive_icon_foreground: "assets/icons/app-icon.jpg"
   web:
     generate: true
     image_path: "assets/icons/app-icon.jpg"
@@ -72,3 +75,5 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/lotties/
+    - .env

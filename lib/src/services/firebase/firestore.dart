@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -95,7 +96,12 @@ class FirebaseFirestoreService {
   Future<(bool status, String message, List<IssueModel>? issues)>
       getAllIssues() async {
     try {
-      final snapshot = await db.collection(FirestoreStrings.issues).get();
+      final snapshot = await db
+          .collection(FirestoreStrings.issues)
+          .get()
+          .timeout(const Duration(seconds: 15),
+              onTimeout: () =>
+                  throw TimeoutException('Firestore connection timeout'));
       if (snapshot.docs.isNotEmpty) {
         final issues =
             snapshot.docs.map((doc) => IssueModel.fromMap(doc.data())).toList();
@@ -206,7 +212,10 @@ class FirebaseFirestoreService {
   Future<(bool status, String message, List<ProjectModel>? projects)>
       getAllProjects() async {
     try {
-      final snapshot = await db.collection(FirestoreStrings.projects).get();
+      final snapshot = await db.collection(FirestoreStrings.projects).get()
+          .timeout(const Duration(seconds: 15),
+              onTimeout: () =>
+                  throw TimeoutException('Firestore connection timeout'));
       if (snapshot.docs.isNotEmpty) {
         final projects = snapshot.docs
             .map((doc) => ProjectModel.fromMap(doc.data()))

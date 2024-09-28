@@ -103,9 +103,7 @@ class _AnimatedVoteButtonState extends State<AnimatedVoteButton>
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    widget.isVoted
-                        ? "Voted"
-                        : "Vote",
+                    widget.isVoted ? "Voted" : "Vote",
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

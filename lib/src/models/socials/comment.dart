@@ -53,7 +53,8 @@ class CommentModel {
 
   String toJson() => json.encode(toMap());
 
-  factory CommentModel.fromJson(String source) => CommentModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory CommentModel.fromJson(String source) =>
+      CommentModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -64,20 +65,19 @@ class CommentModel {
   bool operator ==(covariant CommentModel other) {
     if (identical(this, other)) return true;
 
-    return
-      other.id == id &&
-      other.userId == userId &&
-      other.userName == userName &&
-      other.userPicture == userPicture &&
-      other.message == message;
+    return other.id == id &&
+        other.userId == userId &&
+        other.userName == userName &&
+        other.userPicture == userPicture &&
+        other.message == message;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      userId.hashCode ^
-      userName.hashCode ^
-      userPicture.hashCode ^
-      message.hashCode;
+        userId.hashCode ^
+        userName.hashCode ^
+        userPicture.hashCode ^
+        message.hashCode;
   }
 }

@@ -117,8 +117,8 @@ class GreenVoiceRoutes {
               GoRoute(
                   path: AppRoutes.profile,
                   builder: (context, state) => const ProfileView(),
-                  routes:  [
-                     GoRoute(
+                  routes: [
+                    GoRoute(
                       path: AppRoutes.editProfile,
                       builder: (context, state) => EditProfile(
                         editProfileArgument: state.extra as EditProfileArgument,
@@ -129,17 +129,15 @@ class GreenVoiceRoutes {
       ]);
 }
 
-
 class EditProfileArgument {
   String firstName;
   String lastName;
   String email;
   String image;
 
-  EditProfileArgument({
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-    required this.image
-  });
+  EditProfileArgument(
+      {required this.firstName,
+      required this.lastName,
+      required this.email,
+      required this.image});
 }

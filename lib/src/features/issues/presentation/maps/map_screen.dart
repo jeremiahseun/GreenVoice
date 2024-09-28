@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greenvoice/src/features/issues/data/issues_provider.dart';
 import 'package:greenvoice/src/features/issues/data/map_provider.dart';
@@ -40,8 +41,8 @@ class _MapViewState extends ConsumerState<MapScreen> {
                   Expanded(
                     child: MapWidget(
                       styleUri:
-                          "mapbox://styles/jeremiahseun/cm0ud5srb00qo01qub70them8",
-                      onMapLoadedListener: (_) => mapRead.getCurrentLocation(),
+                        dotenv.env['MAP_STYLE']!,
+                      // onMapLoadedListener: (_) => mapRead.getCurrentLocation(),
                       onStyleLoadedListener: mapRead.onStyleLoaded,
                       key: const ValueKey("mapWidget"),
                       onMapCreated: mapRead.onMapCreated,
