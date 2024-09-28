@@ -27,7 +27,6 @@ class _MapViewState extends ConsumerState<MapScreen> {
   Widget build(BuildContext context) {
     final mapRead = ref.read(mapProvider.notifier);
     final mapWatch = ref.watch(mapProvider);
-    final issues = ref.watch(issuesProvider).value ?? [];
 
     return Scaffold(
       body: SafeArea(
@@ -40,8 +39,7 @@ class _MapViewState extends ConsumerState<MapScreen> {
                   if (mapWatch.isIssuesLoading) const LinearProgressIndicator(),
                   Expanded(
                     child: MapWidget(
-                      styleUri:
-                        dotenv.env['MAP_STYLE']!,
+                      styleUri: dotenv.env['MAP_STYLE']!,
                       // onMapLoadedListener: (_) => mapRead.getCurrentLocation(),
                       onStyleLoadedListener: mapRead.onStyleLoaded,
                       key: const ValueKey("mapWidget"),
@@ -69,7 +67,10 @@ class _MapViewState extends ConsumerState<MapScreen> {
               child: IssueCarousel(
                 isVisible: mapWatch.isCarouselVisible,
                 onToggleVisibility: mapRead.toggleCarouselVisibility,
-                issues: issues,
+                issues: ref.watch(issuesProvider).when(
+                    data: (data) => data,
+                    error: (_, s) => [],
+                    loading: () => []),
                 onIssueSelected: mapRead.selectIssue,
                 selectedIssueId: mapWatch.selectedIssue?.id,
               ),
