@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greenvoice/src/features/issues/data/issues_provider.dart';
 import 'package:greenvoice/src/features/issues/data/map_provider.dart';
@@ -26,7 +27,6 @@ class _MapViewState extends ConsumerState<MapScreen> {
   Widget build(BuildContext context) {
     final mapRead = ref.read(mapProvider.notifier);
     final mapWatch = ref.watch(mapProvider);
-    final issues = ref.watch(issuesProvider).value ?? [];
 
     return Scaffold(
       body: SafeArea(
@@ -39,9 +39,7 @@ class _MapViewState extends ConsumerState<MapScreen> {
                   if (mapWatch.isIssuesLoading) const LinearProgressIndicator(),
                   Expanded(
                     child: MapWidget(
-                      styleUri:
-                          "mapbox://styles/jeremiahseun/cm0ud5srb00qo01qub70them8",
-                      onMapLoadedListener: (_) => mapRead.getCurrentLocation(),
+                      styleUri: dotenv.env['MAP_STYLE']!,
                       onStyleLoadedListener: mapRead.onStyleLoaded,
                       key: const ValueKey("mapWidget"),
                       onMapCreated: mapRead.onMapCreated,
@@ -68,7 +66,10 @@ class _MapViewState extends ConsumerState<MapScreen> {
               child: IssueCarousel(
                 isVisible: mapWatch.isCarouselVisible,
                 onToggleVisibility: mapRead.toggleCarouselVisibility,
-                issues: issues,
+                issues: ref.watch(issuesProvider).when(
+                    data: (data) => data,
+                    error: (_, s) => [],
+                    loading: () => []),
                 onIssueSelected: mapRead.selectIssue,
                 selectedIssueId: mapWatch.selectedIssue?.id,
               ),

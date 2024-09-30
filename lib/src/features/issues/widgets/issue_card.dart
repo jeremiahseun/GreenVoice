@@ -41,7 +41,7 @@ class IssueCard extends StatelessWidget {
                 ),
                 Text(
                   issue.description,
-                maxLines: 4,
+                  maxLines: 4,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: Colors.grey[600]),
                 ),

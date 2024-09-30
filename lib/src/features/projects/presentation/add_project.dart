@@ -3,8 +3,8 @@ import 'package:flutter_location_search/flutter_location_search.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:greenvoice/core/routes/app_router.dart';
-import 'package:greenvoice/src/features/authentication/user/user_provider.dart';
 import 'package:greenvoice/src/features/issues/widgets/add_issues_widgets.dart';
+import 'package:greenvoice/src/features/profile/data/profile_provider.dart';
 import 'package:greenvoice/src/features/projects/data/projects_provider.dart';
 import 'package:greenvoice/src/features/projects/widgets/adaptive_date_picker.dart';
 import 'package:greenvoice/src/features/projects/widgets/project_status.dart';
@@ -137,7 +137,7 @@ class _AddIssueScreenState extends ConsumerState<AddProjectScreen> {
                     const TextInputType.numberWithOptions(decimal: true),
                 validator: (value) {
                   if (value == null) {
-                    return "You must provide the amount needed.";
+                    return "You must provide a proposed amount needed.";
                   }
                   return null;
                 },
@@ -186,8 +186,8 @@ class _AddIssueScreenState extends ConsumerState<AddProjectScreen> {
                   }),
               const Gap(24),
               Visibility(
-                  visible: ref.watch(userProvider).hasValue &&
-                      !ref.watch(userProvider).hasError,
+                  visible: ref.watch(userProfileProvider).hasValue &&
+                      !ref.watch(userProfileProvider).hasError,
                   replacement: const NotLoggedInWidget(),
                   child: Align(
                     alignment: Alignment.bottomCenter,

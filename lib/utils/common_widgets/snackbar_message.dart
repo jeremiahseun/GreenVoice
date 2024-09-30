@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 class SnackbarMessage {
   static void showError(
-      {required BuildContext context, required String message,
+      {required BuildContext context,
+      required String message,
       int seconds = 5}) {
     AnimatedSnackBar.rectangle('Oh Snap!', message,
             type: AnimatedSnackBarType.error,
@@ -28,7 +29,9 @@ class SnackbarMessage {
   }
 
   static void showInfo(
-      {required BuildContext context, required String message, int seconds = 5}) {
+      {required BuildContext context,
+      required String message,
+      int seconds = 5}) {
     AnimatedSnackBar.rectangle('Hey there!', message,
             type: AnimatedSnackBarType.info,
             mobileSnackBarPosition: MobileSnackBarPosition.bottom,

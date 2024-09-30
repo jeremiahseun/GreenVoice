@@ -169,6 +169,7 @@ class MapProvider extends ChangeNotifier {
     }, error: (err, trace) {
       isIssuesLoading = false;
       notifyListeners();
+      return;
     }, loading: () {
       isIssuesLoading = true;
       notifyListeners();

@@ -72,5 +72,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'greenvoiceapp.appspot.com',
     iosBundleId: 'com.greenvoice.app',
   );
-
 }

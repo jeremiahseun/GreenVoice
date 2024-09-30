@@ -8,6 +8,7 @@ import 'package:greenvoice/core/routes/routes.dart';
 import 'package:greenvoice/src/features/issues/data/issues_provider.dart';
 import 'package:greenvoice/src/features/issues/widgets/issue_card.dart';
 import 'package:greenvoice/src/features/issues/widgets/issue_loading.dart';
+import 'package:greenvoice/utils/common_widgets/lottie_error_widgets.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 
 class IssuesView extends ConsumerStatefulWidget {
@@ -66,6 +67,7 @@ class _IssuesViewState extends ConsumerState<IssuesView> {
               ),
             ),
           ),
+          //* TODO: ADD FILTER CATEGORY
           // const SliverPadding(
           //   padding: EdgeInsets.all(16.0),
           //   sliver: SliverToBoxAdapter(child: CategoryTabs()),
@@ -87,7 +89,17 @@ class _IssuesViewState extends ConsumerState<IssuesView> {
                       ),
                     ),
                 error: (err, trace) => SliverToBoxAdapter(
-                      child: Text(err.toString()),
+                      child: GreenVoiceErrorWidget(
+                        buttonText: "Try again",
+                        onGoHome: () =>
+                            ref.read(issuesProvider.notifier).getAllIssues(),
+                        title: err.toString().contains("timeout")
+                            ? "Network Timeout"
+                            : 'Oops! Unable to get issues',
+                        message: err.toString().contains("timeout")
+                            ? "Seems like the network is poor. Try again soon."
+                            : err.toString(),
+                      ),
                     ),
                 loading: () => const IssueLoadingWidget()),
           ),

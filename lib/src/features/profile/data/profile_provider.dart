@@ -12,6 +12,7 @@ import 'package:greenvoice/src/services/firebase/firebase.dart';
 import 'package:greenvoice/src/services/image_service.dart';
 import 'package:greenvoice/src/services/isar_storage.dart';
 import 'package:greenvoice/src/services/storage_service.dart';
+import 'package:greenvoice/src/services/web_service.dart';
 import 'package:greenvoice/utils/common_widgets/snackbar_message.dart';
 import 'package:greenvoice/utils/constants/storage_keys.dart';
 import 'package:greenvoice/utils/helpers/greenvoice_notifier.dart';
@@ -41,10 +42,11 @@ class UserProfileProvider extends StateNotifier<AsyncValue<UserModel?>> {
     //* Get the current user from the backend
     try {
       final upstreamUser = await _getUserDetails();
-      if (kIsWeb) {
-        state = AsyncValue.data(upstreamUser.$2);
-      }
       if (upstreamUser.$1) {
+        if (kIsWeb || kIsWasm) {
+          state = AsyncValue.data(upstreamUser.$2);
+          return;
+        }
         final savedDBUser = await _getUserDetailsFromDb();
         if (savedDBUser == null) {
           state = AsyncValue.error("No user", StackTrace.current);
@@ -65,14 +67,19 @@ class UserProfileProvider extends StateNotifier<AsyncValue<UserModel?>> {
   }
 
   Future<(bool, UserModel?)> _getUserDetails() async {
-    final userId = await storageService.readSecureData(key: StorageKeys.userId);
+    String? userId;
+    if (kIsWeb || kIsWasm) {
+      userId = WebService.readWebData(key: StorageKeys.userId);
+    } else {
+      userId = await storageService.readSecureData(key: StorageKeys.userId);
+    }
     if (userId == null) {
       return (false, null);
     }
     try {
       final getUser = await firebaseFirestore.getUser(userId);
       if (getUser.$1 && getUser.$3 != null) {
-        if (kIsWeb) {
+        if (kIsWeb || kIsWasm) {
           return (true, getUser.$3);
         }
         await isarStorageService.writeUserDB(getUser.$3!);

@@ -55,7 +55,7 @@ class GreenVoiceButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
         onPressed: onTap,
-        style: OutlinedButton.styleFrom(
+        style: ElevatedButton.styleFrom(
           side: isOutlined
               ? const BorderSide(
                   color: AppColors.primaryColor,
@@ -63,6 +63,7 @@ class GreenVoiceButton extends StatelessWidget {
                 )
               : null,
           fixedSize: size,
+          maximumSize: size,
           backgroundColor: color,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),

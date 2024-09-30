@@ -8,6 +8,7 @@ import 'package:greenvoice/src/models/user/user_model.dart';
 import 'package:greenvoice/src/services/firebase/firebase.dart';
 import 'package:greenvoice/src/services/isar_storage.dart';
 import 'package:greenvoice/src/services/storage_service.dart';
+import 'package:greenvoice/src/services/web_service.dart';
 import 'package:greenvoice/utils/constants/storage_keys.dart';
 import 'package:greenvoice/utils/helpers/greenvoice_notifier.dart';
 
@@ -55,11 +56,16 @@ class LoginScreenNotifier extends GreenVoiceNotifier {
             lastName: nameParts[1],
             photo: loginUser.$3?.user?.photoURL);
 
-        if (!kIsWeb) {
+        if (kIsWeb || kIsWasm) {
+          WebService.writeUserModelData(
+              userId: userId,
+              username: fullName,
+              picture: userModel.photo ?? "");
+        } else {
           await isarStorageService.writeUserDB(userModel);
+          await storageService.writeSecureData(
+              key: StorageKeys.userId, value: userId);
         }
-        await storageService.writeSecureData(
-            key: StorageKeys.userId, value: userId);
         return (true, 'Login Successful');
       } else {
         return (false, loginUser.$2);
