@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:greenvoice/src/features/authentication/user/user_provider.dart';
 import 'package:greenvoice/src/features/issues/data/issues_provider.dart';
+import 'package:greenvoice/src/features/issues/presentation/comments/comments_bottomsheet.dart';
 import 'package:greenvoice/src/features/issues/widgets/adaptive_images.dart';
 import 'package:greenvoice/src/features/issues/widgets/info_row.dart';
 import 'package:greenvoice/src/features/issues/widgets/status_chip.dart';
@@ -10,6 +11,7 @@ import 'package:greenvoice/src/services/branch_deeplink_service.dart';
 import 'package:greenvoice/utils/common_widgets/fullscreen_carousel_image.dart';
 import 'package:greenvoice/utils/common_widgets/vote_button.dart';
 import 'package:greenvoice/utils/helpers/date_formatter.dart';
+import 'package:greenvoice/utils/styles/styles.dart';
 
 class IssueDetailScreen extends ConsumerStatefulWidget {
   final String id;
@@ -131,6 +133,37 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
                                 'Last Update was ${DateFormatter.formatDate(issue.updatedAt)}',
                           ),
                           const Gap(16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Comments',
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                              GestureDetector(
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      builder: (context) {
+                                        return CommentBottomSheet(
+                                          issueID: issue.id,
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Text(
+                                    'View all Comments',
+                                    style: AppStyles.blackNormal10.copyWith(
+                                      color: AppColors.primaryColor,
+                                    ),
+                                  )),
+                            ],
+                          ),
+
+
+
+                          
+                          const Gap(26),
                           AnimatedVoteButton(
                             isVoted: ref
                                     .watch(oneIssueProvider)
@@ -160,7 +193,7 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
                                 isLikeLoadingState.value = false;
                               }
                             },
-                          )
+                          ),
                         ],
                       ),
                     ),

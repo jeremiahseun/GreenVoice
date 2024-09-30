@@ -4,12 +4,14 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:greenvoice/src/models/issue/issue_model.dart';
 import 'package:greenvoice/src/models/project/project_model.dart';
+import 'package:greenvoice/src/models/socials/comment.dart';
 import 'package:greenvoice/src/models/user/user_model.dart';
 
 class FirestoreStrings {
   static const String users = "users";
   static const String issues = "issues";
   static const String projects = "projects";
+  static const String userComments = 'userComments';
 }
 
 class FirebaseFirestoreService {
@@ -128,6 +130,38 @@ class FirebaseFirestoreService {
     }
   }
 
+  //* Create a comment
+  Future<(bool status, String message)> createComments(
+      CommentModel comments, String issueID, String messageID) async {
+    try {
+      await db
+          .collection(FirestoreStrings.issues)
+          .doc(issueID)
+          .collection(FirestoreStrings.userComments)
+          .doc(messageID)
+          .set(comments.toMap(), SetOptions(merge: true));
+
+      return (true, "Issue created successfully");
+    } catch (e) {
+      log("Error creating comments: $e");
+      return (false, "$e");
+    }
+  }
+
+//* GET COMMENTS
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getChatMessages(
+    String issueID,
+  ) async* {
+    final getMessages = db
+        .collection(FirestoreStrings.issues)
+        .doc(issueID)
+        .collection(FirestoreStrings.userComments)
+        .orderBy('createdAt', descending: false)
+        .snapshots();
+    yield* getMessages;
+  }
+
   //* Edit your issue
   Future<(bool status, String message)> updateIssue(IssueModel issue) async {
     try {
@@ -212,7 +246,9 @@ class FirebaseFirestoreService {
   Future<(bool status, String message, List<ProjectModel>? projects)>
       getAllProjects() async {
     try {
-      final snapshot = await db.collection(FirestoreStrings.projects).get()
+      final snapshot = await db
+          .collection(FirestoreStrings.projects)
+          .get()
           .timeout(const Duration(seconds: 15),
               onTimeout: () =>
                   throw TimeoutException('Firestore connection timeout'));

@@ -1,14 +1,18 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greenvoice/core/locator.dart';
 import 'package:greenvoice/src/models/issue/issue_model.dart';
+import 'package:greenvoice/src/models/socials/comment.dart';
 import 'package:greenvoice/src/services/firebase/firebase.dart';
 import 'package:greenvoice/src/services/image_service.dart';
 import 'package:greenvoice/src/services/storage_service.dart';
+import 'package:greenvoice/src/services/uuid.dart';
 import 'package:greenvoice/utils/common_widgets/snackbar_message.dart';
 import 'package:greenvoice/utils/constants/storage_keys.dart';
 import 'package:greenvoice/utils/helpers/greenvoice_notifier.dart';
@@ -147,6 +151,55 @@ class AddIssueProvider extends GreenVoiceNotifier {
     if (!context.mounted) return false;
     SnackbarMessage.showError(context: context, message: res.$2);
     return false;
+  }
+
+  ///******************CREATE AND ISSUE COMMENT ******************* */
+
+  Future<bool> sendUserComment({
+    required String issueID,
+    required String message,
+    required BuildContext context,
+  }) async {
+    final String uniqueMessageID = generateUniqueID();
+    try {
+      final userId =
+          await storageService.readSecureData(key: StorageKeys.userId);
+      final username =
+          await storageService.readSecureData(key: StorageKeys.username);
+      final userPicture =
+          await storageService.readSecureData(key: StorageKeys.userPicture);
+      final res = await firebaseFirestore.createComments(
+          CommentModel(
+              id: uniqueMessageID,
+              userId: userId ?? '',
+              userName: username ?? '',
+              userPicture: userPicture ?? '',
+              message: message,
+              createdAt: DateTime.now()),
+          issueID,
+          uniqueMessageID);
+      if (res.$1) {
+        if (!context.mounted) return false;
+        SnackbarMessage.showSuccess(
+            context: context, message: 'Comment added.');
+        return true;
+      } else {
+        if (!context.mounted) return false;
+        SnackbarMessage.showSuccess(
+            context: context, message: 'Comment failed');
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  //Get iserComments
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getComments(
+      {required String issueID}) async* {
+    final messages = firebaseFirestore.getChatMessages(issueID);
+    yield* messages;
   }
 }
 
