@@ -98,6 +98,7 @@ class FirebaseFirestoreService {
     try {
       final snapshot = await db
           .collection(FirestoreStrings.issues)
+          .orderBy('createdAt', descending: true)
           .get()
           .timeout(const Duration(seconds: 15),
               onTimeout: () =>
@@ -212,7 +213,10 @@ class FirebaseFirestoreService {
   Future<(bool status, String message, List<ProjectModel>? projects)>
       getAllProjects() async {
     try {
-      final snapshot = await db.collection(FirestoreStrings.projects).get()
+      final snapshot = await db
+          .collection(FirestoreStrings.projects)
+          .orderBy('createdAt', descending: true)
+          .get()
           .timeout(const Duration(seconds: 15),
               onTimeout: () =>
                   throw TimeoutException('Firestore connection timeout'));
