@@ -25,6 +25,10 @@ class _ProfileScreenState extends ConsumerState<ProfileView> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (ref.read(userProfileProvider).hasValue &&
+          ref.read(userProfileProvider).value != null) {
+        return;
+      }
       ref.read(userProfileProvider.notifier).getCurrentUserProfile();
     });
 
