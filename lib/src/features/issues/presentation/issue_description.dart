@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:greenvoice/src/features/authentication/user/user_provider.dart';
@@ -164,7 +165,7 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
                         ],
                       ),
                     ),
-                  ],
+                  ].animate(interval: 200.ms).fadeIn().moveY(begin: 10, end: 0),
                 ),
               );
             },
