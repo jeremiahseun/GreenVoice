@@ -40,7 +40,6 @@ class _MapViewState extends ConsumerState<MapScreen> {
                   Expanded(
                     child: MapWidget(
                       styleUri: dotenv.env['MAP_STYLE']!,
-                      // onMapLoadedListener: (_) => mapRead.getCurrentLocation(),
                       onStyleLoadedListener: mapRead.onStyleLoaded,
                       key: const ValueKey("mapWidget"),
                       onMapCreated: mapRead.onMapCreated,

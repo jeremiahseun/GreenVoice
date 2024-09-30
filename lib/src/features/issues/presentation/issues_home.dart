@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:greenvoice/core/routes/app_router.dart';
-import 'package:greenvoice/core/routes/page_not_found.dart';
 import 'package:greenvoice/core/routes/routes.dart';
 import 'package:greenvoice/src/features/issues/data/issues_provider.dart';
 import 'package:greenvoice/src/features/issues/widgets/issue_card.dart';
