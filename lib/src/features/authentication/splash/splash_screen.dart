@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -54,18 +53,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       return const SplashLoading();
     }
 
-    // Once loading is done, handle auth state
-    return StreamBuilder<User?>(
-      stream: firebaseAuthService
-          .authStateChanges(), // Checks the auth state of the user
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.active) {
-          return HomeScreen();
-        } else {
-          return const SplashLoading(); // Still waiting for the authentication state
-        }
-      },
-    );
+    // Once loading is done, go home
+    return HomeScreen();
   }
 }
 
