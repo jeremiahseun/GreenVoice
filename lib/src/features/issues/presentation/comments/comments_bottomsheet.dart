@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -65,7 +66,8 @@ class _CommentBottomSheetState extends ConsumerState<CommentBottomSheet> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      commentData['userName'] ?? 'Unknown User',
+                                      commentData['userName'] ??
+                                          'A GreenVoice User',
                                       style: const TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
@@ -115,9 +117,9 @@ class _CommentBottomSheetState extends ConsumerState<CommentBottomSheet> {
                   child: Row(
                     children: [
                       const CircleAvatar(
-                        backgroundColor: Colors.grey,
                         radius: 20,
-                        // backgroundImage: NetworkImage(userData.avatarUrl ?? 'https://example.com/default-avatar.jpg'),
+                        backgroundImage: CachedNetworkImageProvider(
+                            'https://example.com/default-avatar.jpg'),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
@@ -131,9 +133,9 @@ class _CommentBottomSheetState extends ConsumerState<CommentBottomSheet> {
                                 Icons.send,
                                 color: AppColors.primaryColor,
                               ),
-                              onPressed: () {
+                              onPressed: () async {
                                 if (commentController.text.isNotEmpty) {
-                                  ref
+                                  await ref
                                       .read(addIssueProvider.notifier)
                                       .sendUserComment(
                                         issueID: widget.issueID,

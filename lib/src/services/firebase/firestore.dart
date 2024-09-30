@@ -123,7 +123,7 @@ class FirebaseFirestoreService {
       final docRef =
           await db.collection(FirestoreStrings.issues).add(issue.toMap());
       await docRef.update({'id': docRef.id});
-      return (true, "Issue created successfully");
+      return (true, "Comment created successfully");
     } catch (e) {
       log("Error creating issue: $e");
       return (false, "$e");

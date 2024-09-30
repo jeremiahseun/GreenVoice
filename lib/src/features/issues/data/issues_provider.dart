@@ -185,8 +185,7 @@ class AddIssueProvider extends GreenVoiceNotifier {
         return true;
       } else {
         if (!context.mounted) return false;
-        SnackbarMessage.showSuccess(
-            context: context, message: 'Comment failed');
+        SnackbarMessage.showSuccess(context: context, message: res.$2);
         return false;
       }
     } catch (e) {
