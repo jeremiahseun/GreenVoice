@@ -18,7 +18,11 @@ class IssuesView extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _IssuesViewState();
 }
 
-class _IssuesViewState extends ConsumerState<IssuesView> {
+class _IssuesViewState extends ConsumerState<IssuesView>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   bool isExtended = true;
   late ScrollController _scrollController;
 
@@ -26,6 +30,10 @@ class _IssuesViewState extends ConsumerState<IssuesView> {
   void initState() {
     _scrollController = ScrollController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (ref.read(issuesProvider).hasValue &&
+          ref.read(issuesProvider).value != null) {
+        return;
+      }
       ref.read(issuesProvider.notifier).getAllIssues();
     });
     super.initState();
@@ -33,6 +41,7 @@ class _IssuesViewState extends ConsumerState<IssuesView> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: CustomScrollView(
         controller: _scrollController,
