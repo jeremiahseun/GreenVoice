@@ -43,77 +43,80 @@ class _IssuesViewState extends ConsumerState<IssuesView>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      body: CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 100,
-            pinned: true,
-            backgroundColor: Theme.of(context).colorScheme.surface,
-            shadowColor: Colors.transparent,
-            actions: [
-              Visibility(
-                visible: !kIsWeb,
-                replacement: const SizedBox(),
-                maintainSize: true,
-                maintainAnimation: true,
-                maintainState: true,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 10.0),
-                  child: TextButton.icon(
-                    label: const Text("View Map"),
-                    icon: const Icon(EvaIcons.mapOutline),
-                    onPressed: () => context.push(NavigateToPage.mapView),
+      body: RefreshIndicator.adaptive(
+        onRefresh: () => ref.read(issuesProvider.notifier).getAllIssues(),
+        child: CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 100,
+              pinned: true,
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              shadowColor: Colors.transparent,
+              actions: [
+                Visibility(
+                  visible: !kIsWeb,
+                  replacement: const SizedBox(),
+                  maintainSize: true,
+                  maintainAnimation: true,
+                  maintainState: true,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 10.0),
+                    child: TextButton.icon(
+                      label: const Text("View Map"),
+                      icon: const Icon(EvaIcons.mapOutline),
+                      onPressed: () => context.push(NavigateToPage.mapView),
+                    ),
                   ),
                 ),
-              ),
-            ],
-            flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true,
-              title: Text(
-                'Issues',
-                style: AppStyles.blackBold18,
+              ],
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: Text(
+                  'Issues',
+                  style: AppStyles.blackBold18,
+                ),
               ),
             ),
-          ),
-          //* TODO: ADD FILTER CATEGORY
-          // const SliverPadding(
-          //   padding: EdgeInsets.all(16.0),
-          //   sliver: SliverToBoxAdapter(child: CategoryTabs()),
-          // ),
-          SliverPadding(
-            padding: const EdgeInsets.all(16.0),
-            sliver: ref.watch(issuesProvider).when(
-                data: (issues) => SliverList.separated(
-                      itemCount: issues.length,
-                      separatorBuilder: (context, index) => const Gap(16),
-                      itemBuilder: (context, i) => InkWell(
-                        onTap: () {
-                          context.push(
-                              "${NavigateToPage.issueDetails}/${issues[i].id}");
-                        },
-                        child: IssueCard(
-                          issue: issues[i],
+            //* TODO: ADD FILTER CATEGORY
+            // const SliverPadding(
+            //   padding: EdgeInsets.all(16.0),
+            //   sliver: SliverToBoxAdapter(child: CategoryTabs()),
+            // ),
+            SliverPadding(
+              padding: const EdgeInsets.all(16.0),
+              sliver: ref.watch(issuesProvider).when(
+                  data: (issues) => SliverList.separated(
+                        itemCount: issues.length,
+                        separatorBuilder: (context, index) => const Gap(16),
+                        itemBuilder: (context, i) => InkWell(
+                          onTap: () {
+                            context.push(
+                                "${NavigateToPage.issueDetails}/${issues[i].id}");
+                          },
+                          child: IssueCard(
+                            issue: issues[i],
+                          ),
                         ),
                       ),
-                    ),
-                error: (err, trace) => SliverToBoxAdapter(
-                      child: GreenVoiceErrorWidget(
-                        buttonText: "Try again",
-                        onGoHome: () =>
-                            ref.read(issuesProvider.notifier).getAllIssues(),
-                        title: err.toString().contains("timeout")
-                            ? "Network Timeout"
-                            : 'Oops! Unable to get issues',
-                        message: err.toString().contains("timeout")
-                            ? "Seems like the network is poor. Try again soon."
-                            : err.toString(),
+                  error: (err, trace) => SliverToBoxAdapter(
+                        child: GreenVoiceErrorWidget(
+                          buttonText: "Try again",
+                          onGoHome: () =>
+                              ref.read(issuesProvider.notifier).getAllIssues(),
+                          title: err.toString().contains("timeout")
+                              ? "Network Timeout"
+                              : 'Oops! Unable to get issues',
+                          message: err.toString().contains("timeout")
+                              ? "Seems like the network is poor. Try again soon."
+                              : err.toString(),
+                        ),
                       ),
-                    ),
-                loading: () => const IssueLoadingWidget()),
-          ),
-          const SliverGap(60)
-        ],
+                  loading: () => const IssueLoadingWidget()),
+            ),
+            const SliverGap(60)
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(NavigateToPage.addIssue),

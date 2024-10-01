@@ -17,14 +17,15 @@ class ProjectHome extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _ProjectScreenState();
 }
 
-class _ProjectScreenState extends ConsumerState<ProjectHome> with AutomaticKeepAliveClientMixin {
+class _ProjectScreenState extends ConsumerState<ProjectHome>
+    with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (ref.read(projectsProvider).hasValue &&
+      if (ref.read(projectsProvider).hasValue &&
           ref.read(projectsProvider).value != null) {
         return;
       }
@@ -37,7 +38,8 @@ class _ProjectScreenState extends ConsumerState<ProjectHome> with AutomaticKeepA
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      body: SafeArea(
+      body: RefreshIndicator.adaptive(
+        onRefresh: () => ref.read(projectsProvider.notifier).getAllProjects(),
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
