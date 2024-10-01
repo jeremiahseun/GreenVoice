@@ -1,7 +1,5 @@
 import 'dart:developer';
-import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:greenvoice/core/routes/routes.dart';
 import 'package:greenvoice/src/models/issue/issue_model.dart';
@@ -65,25 +63,9 @@ class BranchDeeplinkService {
       buo: buo,
       linkProperties: lp,
     );
-    if (!kIsWeb) {
-      if (Platform.isIOS) {
-        await FlutterBranchSdk.showShareSheet(
-            buo: buo,
-            linkProperties: lp,
-            messageText:
-                'Check out this important issue: ${issue.title}. Your input could make a difference!',
-            androidMessageTitle: 'Share Issue: ${issue.title}',
-            androidSharingTitle: 'Spread the word about this issue');
-      } else {
-        await showNativeShareSheet(response.result, issue.title,
-            description:
-                'Check out this important issue: ${issue.title}. Your input could make a difference!');
-      }
-    } else {
-      await showNativeShareSheet(response.result, issue.title,
-          description:
-              'Check out this important issue: ${issue.title}. Your input could make a difference!');
-    }
+    await showNativeShareSheet(response.result, issue.title,
+        description:
+            'Check out this important issue: ${issue.title}. Your input could make a difference!');
   }
 
   static Future<void> shareProject(ProjectModel project) async {
@@ -94,25 +76,9 @@ class BranchDeeplinkService {
       buo: buo,
       linkProperties: lp,
     );
-    if (!kIsWeb) {
-      if (Platform.isIOS) {
-        await FlutterBranchSdk.showShareSheet(
-            buo: buo,
-            linkProperties: lp,
-            messageText:
-                "I'd like to invite you to contribute to ${project.title}. Your expertise would be valuable.",
-            androidMessageTitle: 'Project Invitation: ${project.title}',
-            androidSharingTitle: 'Share Professional Opportunity');
-      } else {
-        await showNativeShareSheet(response.result, project.title,
-            description:
-                "I'd like to invite you to contribute to ${project.title}. Your expertise would be valuable.");
-      }
-    } else {
-      await showNativeShareSheet(response.result, project.title,
-          description:
-              "I'd like to invite you to contribute to ${project.title}. Your expertise would be valuable.");
-    }
+    await showNativeShareSheet(response.result, project.title,
+        description:
+            "I'd like to invite you to contribute to ${project.title}. Your expertise would be valuable.");
   }
 
   static Future<void> showNativeShareSheet(String link, String title,
