@@ -275,15 +275,17 @@ class IssuesReported extends StatelessWidget {
                   [],
             )),
         Visibility(
-            visible: issues != null && issues!.isNotEmpty && issues!.length > 3,
-            child: Align(
-                alignment: Alignment.topRight,
-                child: TextButton.icon(
-                    iconAlignment: IconAlignment.end,
-                    onPressed: () {},
-                    label: const Text("View all"),
-                    icon: const Icon(Icons.arrow_forward_ios_outlined,
-                        size: 12)))),
+          visible: issues != null && issues!.isNotEmpty && issues!.length > 3,
+          child: Align(
+            alignment: Alignment.topRight,
+            child: TextButton.icon(
+              iconAlignment: IconAlignment.end,
+              onPressed: () {},
+              label: const Text("View all"),
+              icon: const Icon(Icons.arrow_forward_ios_outlined, size: 12),
+            ),
+          ),
+        ),
       ],
     );
   }

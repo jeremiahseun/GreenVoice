@@ -123,7 +123,7 @@ class FirebaseFirestoreService {
       final docRef =
           await db.collection(FirestoreStrings.issues).add(issue.toMap());
       await docRef.update({'id': docRef.id});
-      return (true, "Comment created successfully");
+      return (true, "Issue created successfully");
     } catch (e) {
       log("Error creating issue: $e");
       return (false, "$e");
@@ -141,11 +141,43 @@ class FirebaseFirestoreService {
           .doc(messageID)
           .set(comments.toMap(), SetOptions(merge: true));
 
-      return (true, "Issue created successfully");
+      return (true, "Comment created successfully");
     } catch (e) {
       log("Error creating comments: $e");
       return (false, "$e");
     }
+  }
+
+  //*  PROJECT COMMENTS
+
+  Future<(bool status, String message)> createProjectComments(
+      CommentModel comments, String projectID, String messageID) async {
+    try {
+      await db
+          .collection(FirestoreStrings.projects)
+          .doc(projectID)
+          .collection(FirestoreStrings.userComments)
+          .doc(messageID)
+          .set(comments.toMap(), SetOptions(merge: true));
+
+      return (true, "Comment created successfully");
+    } catch (e) {
+      log("Error creating comments: $e");
+      return (false, "$e");
+    }
+  }
+
+  //* Get projectComments
+  Stream<QuerySnapshot<Map<String, dynamic>>> getProjectComments(
+    String projectID,
+  ) async* {
+    final getMessages = db
+        .collection(FirestoreStrings.projects)
+        .doc(projectID)
+        .collection(FirestoreStrings.userComments)
+        .orderBy('createdAt', descending: false)
+        .snapshots();
+    yield* getMessages;
   }
 
 //* GET COMMENTS

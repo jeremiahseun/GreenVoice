@@ -2,24 +2,26 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:greenvoice/src/features/issues/data/issues_provider.dart';
 import 'package:greenvoice/src/features/profile/data/profile_provider.dart';
+import 'package:greenvoice/src/features/projects/data/projects_provider.dart';
 import 'package:greenvoice/src/features/projects/presentation/comments/widget/comment_component.dart';
 import 'package:greenvoice/utils/common_widgets/not_logged_in.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 
-class CommentBottomSheet extends ConsumerStatefulWidget {
-  const CommentBottomSheet(
+class ProjectCommentBottomSheet extends ConsumerStatefulWidget {
+  const ProjectCommentBottomSheet(
       {super.key, required this.issueID, this.userImage = ''});
 
   final String issueID;
   final String userImage;
 
   @override
-  ConsumerState<CommentBottomSheet> createState() => _CommentBottomSheetState();
+  ConsumerState<ProjectCommentBottomSheet> createState() =>
+      _ProjectCommentBottomSheetState();
 }
 
-class _CommentBottomSheetState extends ConsumerState<CommentBottomSheet> {
+class _ProjectCommentBottomSheetState
+    extends ConsumerState<ProjectCommentBottomSheet> {
   TextEditingController commentController = TextEditingController();
   FocusNode focusNode = FocusNode();
 
@@ -37,13 +39,12 @@ class _CommentBottomSheetState extends ConsumerState<CommentBottomSheet> {
       height: MediaQuery.of(context).size.height * .65,
       padding: const EdgeInsets.all(16.0),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Flexible(
+          Expanded(
             child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
               stream: ref
-                  .read(addIssueProvider.notifier)
-                  .getComments(issueID: widget.issueID),
+                  .read(addProjectProvider.notifier)
+                  .getProjectComments(issueID: widget.issueID),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -97,7 +98,7 @@ class _CommentBottomSheetState extends ConsumerState<CommentBottomSheet> {
                             onPressed: () async {
                               if (commentController.text.isNotEmpty) {
                                 await ref
-                                    .read(addIssueProvider.notifier)
+                                    .read(addProjectProvider.notifier)
                                     .sendUserComment(
                                       issueID: widget.issueID,
                                       message: commentController.text,
@@ -125,7 +126,7 @@ class _CommentBottomSheetState extends ConsumerState<CommentBottomSheet> {
               return const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: NotLoggedInWidget(
-                  text: 'Login to comment on this issue',
+                  text: 'Login to comment on this project',
                 ),
               );
             },

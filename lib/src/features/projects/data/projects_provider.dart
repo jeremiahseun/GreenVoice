@@ -1,13 +1,17 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greenvoice/core/locator.dart';
 import 'package:greenvoice/src/models/project/project_model.dart';
+import 'package:greenvoice/src/models/socials/comment.dart';
 import 'package:greenvoice/src/services/firebase/firebase.dart';
 import 'package:greenvoice/src/services/image_service.dart';
+import 'package:greenvoice/src/services/isar_storage.dart';
 import 'package:greenvoice/src/services/storage_service.dart';
+import 'package:greenvoice/src/services/uuid.dart';
 import 'package:greenvoice/utils/common_widgets/snackbar_message.dart';
 import 'package:greenvoice/utils/constants/storage_keys.dart';
 import 'package:greenvoice/utils/helpers/greenvoice_notifier.dart';
@@ -20,6 +24,10 @@ final oneProjectProvider =
     StateNotifierProvider<OneProjectProvider, AsyncValue<ProjectModel>>(
         (ref) => OneProjectProvider(ref));
 
+final projectCommentProvider =
+    StateNotifierProvider<OneProjectProvider, AsyncValue<ProjectModel>>(
+        (ref) => OneProjectProvider(ref));
+
 final addProjectProvider =
     ChangeNotifierProvider.autoDispose((ref) => AddProjectProvider(ref));
 
@@ -27,6 +35,7 @@ class AddProjectProvider extends GreenVoiceNotifier {
   final firebaseFirestore = locator<FirebaseFirestoreService>();
   final firebaseStorage = locator<FirebaseStorageService>();
   final storageService = locator<StorageService>();
+  final isarStorageService = locator<IsarStorageService>();
   AddProjectProvider(this.ref);
   Ref ref;
   double latitude = 0.0;
@@ -36,6 +45,7 @@ class AddProjectProvider extends GreenVoiceNotifier {
   String address = '';
   List<File> images = [];
   DateTime proposedDate = DateTime.now();
+  String profileImage = '';
 
   void disposeItems() {
     latitude = 0.0;
@@ -67,6 +77,12 @@ class AddProjectProvider extends GreenVoiceNotifier {
     notifyListeners();
   }
 
+  void userImage() async {
+    final isarData = await isarStorageService.readUserDB();
+    profileImage = isarData?.photo ?? '';
+    notifyListeners();
+  }
+
   Future<void> pickImage(bool isFromGallery) async {
     final res = await ImageService().pickmage(isGallery: isFromGallery);
     if (res != null) {
@@ -95,10 +111,7 @@ class AddProjectProvider extends GreenVoiceNotifier {
 
     //* Get the current user ID
     final userId = await storageService.readSecureData(key: StorageKeys.userId);
-    final username =
-        await storageService.readSecureData(key: StorageKeys.username) ?? "";
-    final userPicture =
-        await storageService.readSecureData(key: StorageKeys.userPicture) ?? "";
+    final isarData = await isarStorageService.readUserDB();
     if (userId == null) {
       stopLoading();
       if (!context.mounted) return false;
@@ -140,8 +153,9 @@ class AddProjectProvider extends GreenVoiceNotifier {
         updatedAt: DateTime.now(),
         images: imagesList.$3,
         createdByUserId: userId,
-        createdByUserName: username,
-        createdByUserPicture: userPicture,
+        createdByUserName:
+            '${isarData?.firstName} ${isarData?.lastName?.split("").first}',
+        createdByUserPicture: isarData?.photo ?? '',
         comments: [],
         shares: []));
     stopLoading();
@@ -154,6 +168,51 @@ class AddProjectProvider extends GreenVoiceNotifier {
     if (!context.mounted) return false;
     SnackbarMessage.showError(context: context, message: res.$2);
     return false;
+  }
+
+  ///******************CREATE AND ISSUE COMMENT ******************* */
+
+  Future<bool> sendUserComment({
+    required String issueID,
+    required String message,
+    required BuildContext context,
+  }) async {
+    final String uniqueMessageID = generateUniqueID();
+    try {
+      final userId =
+          await storageService.readSecureData(key: StorageKeys.userId);
+      final isarData = await isarStorageService.readUserDB();
+      final res = await firebaseFirestore.createProjectComments(
+          CommentModel(
+              id: uniqueMessageID,
+              userId: userId ?? '',
+              userName:
+                  '${isarData?.firstName} ${isarData?.lastName?.split("").first}',
+              userPicture: isarData?.photo ?? '',
+              message: message,
+              createdAt: DateTime.now()),
+          issueID,
+          uniqueMessageID);
+      if (res.$1) {
+        if (!context.mounted) return false;
+        SnackbarMessage.showSuccess(context: context, message: 'Comment added');
+        return true;
+      } else {
+        if (!context.mounted) return false;
+        SnackbarMessage.showSuccess(context: context, message: res.$2);
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  //Get iserComments
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getProjectComments(
+      {required String issueID}) async* {
+    final messages = firebaseFirestore.getProjectComments(issueID);
+    yield* messages;
   }
 }
 

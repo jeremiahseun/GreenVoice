@@ -11,6 +11,7 @@ import 'package:greenvoice/src/models/issue/issue_model.dart';
 import 'package:greenvoice/src/models/socials/comment.dart';
 import 'package:greenvoice/src/services/firebase/firebase.dart';
 import 'package:greenvoice/src/services/image_service.dart';
+import 'package:greenvoice/src/services/isar_storage.dart';
 import 'package:greenvoice/src/services/storage_service.dart';
 import 'package:greenvoice/src/services/uuid.dart';
 import 'package:greenvoice/utils/common_widgets/snackbar_message.dart';
@@ -32,6 +33,8 @@ class AddIssueProvider extends GreenVoiceNotifier {
   final firebaseFirestore = locator<FirebaseFirestoreService>();
   final firebaseStorage = locator<FirebaseStorageService>();
   final storageService = locator<StorageService>();
+  final isarStorageService = locator<IsarStorageService>();
+
   AddIssueProvider(this.ref);
   Ref ref;
   double latitude = 0.0;
@@ -40,6 +43,7 @@ class AddIssueProvider extends GreenVoiceNotifier {
   String address = '';
   List<File> images = [];
   bool postAnonymously = false;
+  String profileImage = '';
 
   void disposeItems() {
     latitude = 0.0;
@@ -62,6 +66,12 @@ class AddIssueProvider extends GreenVoiceNotifier {
 
   void setUploadState(int number) {
     uploadState = number;
+    notifyListeners();
+  }
+
+  void userImage() async {
+    final isarData = await isarStorageService.readUserDB();
+    profileImage = isarData?.photo ?? '';
     notifyListeners();
   }
 
@@ -89,14 +99,13 @@ class AddIssueProvider extends GreenVoiceNotifier {
       required bool isAnonymous,
       required BuildContext context}) async {
     if (isLoading) return false;
+
     startLoading();
 
     //* Get the current user ID
     final userId = await storageService.readSecureData(key: StorageKeys.userId);
-    final username =
-        await storageService.readSecureData(key: StorageKeys.username) ?? "";
-    final userPicture =
-        await storageService.readSecureData(key: StorageKeys.userPicture) ?? "";
+    final isarData = await isarStorageService.readUserDB();
+
     if (userId == null) {
       stopLoading();
       if (!context.mounted) return false;
@@ -136,8 +145,9 @@ class AddIssueProvider extends GreenVoiceNotifier {
         updatedAt: DateTime.now(),
         images: imagesList.$3,
         createdByUserId: userId,
-        createdByUserName: username,
-        createdByUserPicture: userPicture,
+        createdByUserName:
+            '${isarData?.firstName} ${isarData?.lastName?.split("").first}',
+        createdByUserPicture: isarData?.photo ?? '',
         category: 'category',
         comments: [],
         shares: []));
@@ -161,19 +171,18 @@ class AddIssueProvider extends GreenVoiceNotifier {
     required BuildContext context,
   }) async {
     final String uniqueMessageID = generateUniqueID();
+    final isarData = await isarStorageService.readUserDB();
     try {
       final userId =
           await storageService.readSecureData(key: StorageKeys.userId);
-      final username =
-          await storageService.readSecureData(key: StorageKeys.username);
-      final userPicture =
-          await storageService.readSecureData(key: StorageKeys.userPicture);
+
       final res = await firebaseFirestore.createComments(
           CommentModel(
               id: uniqueMessageID,
               userId: userId ?? '',
-              userName: username ?? '',
-              userPicture: userPicture ?? '',
+              userName:
+                  '${isarData?.firstName} ${isarData?.lastName?.split("").first}',
+              userPicture: isarData?.photo ?? '',
               message: message,
               createdAt: DateTime.now()),
           issueID,
