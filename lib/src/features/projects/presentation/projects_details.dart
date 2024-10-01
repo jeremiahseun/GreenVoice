@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:greenvoice/src/features/authentication/user/user_provider.dart';
 import 'package:greenvoice/src/features/issues/widgets/adaptive_images.dart';
+import 'package:greenvoice/src/features/profile/data/profile_provider.dart';
 import 'package:greenvoice/src/features/projects/data/projects_provider.dart';
 import 'package:greenvoice/src/features/projects/presentation/comments/projectcomments_bottomsheet.dart';
 import 'package:greenvoice/src/features/projects/presentation/comments/widget/comment_component.dart';
@@ -18,6 +19,7 @@ import 'package:greenvoice/utils/common_widgets/green_voice_button.dart';
 import 'package:greenvoice/utils/common_widgets/snackbar_message.dart';
 import 'package:greenvoice/utils/helpers/date_formatter.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class ProjectDetailsView extends ConsumerStatefulWidget {
   final String id;
@@ -141,6 +143,7 @@ class _ProjectDetailsViewState extends ConsumerState<ProjectDetailsView> {
                                   width: 90,
                                   child: LinearProgressIndicator(
                                     value: daysRemaining / 100,
+                                    //* Shows red when the project is less than 10 days
                                     backgroundColor: daysRemaining < 10
                                         ? Colors.red.withOpacity(.1)
                                         : AppColors.lightPrimaryColor,
@@ -159,20 +162,33 @@ class _ProjectDetailsViewState extends ConsumerState<ProjectDetailsView> {
                           ),
                         ),
                         const Gap(20.0),
-                        Text(
-                          'Comments',
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
+                        Text('Comments', style: AppStyles.blackBold18),
                         const Gap(20.0),
                         StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                           stream: ref
                               .read(addProjectProvider.notifier)
-                              .getProjectComments(issueID: project.id),
+                              .getProjectComments(projectID: project.id),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
+                              return Skeletonizer(
+                                child: ListView.separated(
+                                  separatorBuilder: (context, index) =>
+                                      const Gap(10),
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: 3,
+                                  itemBuilder: (context, index) {
+                                    return CommentComponent(
+                                      name: 'loading...',
+                                      date:
+                                          DateTime.now().millisecondsSinceEpoch,
+                                      message: 'loading...',
+                                      image: '',
+                                    );
+                                  },
+                                ),
+                              );
                             } else if (snapshot.hasData &&
                                 snapshot.data!.docs.isNotEmpty) {
                               return Column(
@@ -192,6 +208,7 @@ class _ProjectDetailsViewState extends ConsumerState<ProjectDetailsView> {
                                         name: commentData['userName'],
                                         message: commentData['message'],
                                         image: commentData['userPicture'],
+                                        date: commentData['createdAt'],
                                       );
                                     },
                                   ),
@@ -213,7 +230,9 @@ class _ProjectDetailsViewState extends ConsumerState<ProjectDetailsView> {
                                                   ),
                                                   child:
                                                       ProjectCommentBottomSheet(
-                                                    issueID: project.id,
+                                                    projectID: project.id,
+                                                    userImage:
+                                                        user.profileImage,
                                                   ),
                                                 );
                                               },
@@ -223,7 +242,7 @@ class _ProjectDetailsViewState extends ConsumerState<ProjectDetailsView> {
                                             alignment: Alignment.centerRight,
                                             child: Text(
                                               'View all Comments',
-                                              style: AppStyles.blackNormal10
+                                              style: AppStyles.blackNormal15
                                                   .copyWith(
                                                 color: AppColors.primaryColor,
                                               ),
@@ -243,55 +262,65 @@ class _ProjectDetailsViewState extends ConsumerState<ProjectDetailsView> {
                           },
                         ),
                         const Gap(20.0),
-                        Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 20,
-                              backgroundImage:
-                                  CachedNetworkImageProvider(user.profileImage),
-                            ),
-                            const Gap(10),
-                            GestureDetector(
-                              onTap: () {
-                                showModalBottomSheet(
-                                  isScrollControlled: true,
-                                  context: context,
-                                  builder: (context) {
-                                    return Padding(
-                                      padding: EdgeInsets.only(
-                                        bottom: MediaQuery.of(context)
-                                            .viewInsets
-                                            .bottom,
-                                      ),
-                                      child: ProjectCommentBottomSheet(
-                                        userImage: user.profileImage,
-                                        issueID: project.id,
-                                      ),
+                        Visibility(
+                          visible: ref.watch(userProfileProvider).hasValue &&
+                              !ref.watch(userProfileProvider).hasError,
+                          replacement: const Align(
+                            alignment: Alignment.topCenter,
+                            child: Text("Login to comment on this issue."),
+                          ),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 15,
+                                backgroundImage: CachedNetworkImageProvider(
+                                    user.profileImage),
+                              ),
+                              const Gap(10),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                      isScrollControlled: true,
+                                      context: context,
+                                      builder: (context) {
+                                        return Padding(
+                                          padding: EdgeInsets.only(
+                                            bottom: MediaQuery.of(context)
+                                                .viewInsets
+                                                .bottom,
+                                          ),
+                                          child: ProjectCommentBottomSheet(
+                                            userImage: user.profileImage,
+                                            requestTextfieldFocus: true,
+                                            projectID: project.id,
+                                          ),
+                                        );
+                                      },
                                     );
                                   },
-                                );
-                              },
-                              child: Expanded(
-                                child: Container(
-                                  alignment: Alignment.centerLeft,
-                                  height: 50,
-                                  padding: const EdgeInsets.all(15),
-                                  width: 330,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                      color: AppColors.greyColor,
+                                  child: Container(
+                                    alignment: Alignment.centerLeft,
+                                    height: 45,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 15),
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(7),
+                                      border: Border.all(
+                                        color: AppColors.greyColor,
+                                      ),
                                     ),
-                                  ),
-                                  child: Text(
-                                    'Enter a comment',
-                                    style: AppStyles.blackNormal13
-                                        .copyWith(color: AppColors.greyColor),
+                                    child: Text(
+                                      'Enter a comment',
+                                      style: AppStyles.blackNormal13
+                                          .copyWith(color: AppColors.greyColor),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                         const Gap(40.0),
                         Row(

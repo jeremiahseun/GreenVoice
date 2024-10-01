@@ -132,7 +132,7 @@ class FirebaseFirestoreService {
   }
 
   //* Create a comment
-  Future<(bool status, String message)> createComments(
+  Future<(bool status, String message)> createIssueComments(
       CommentModel comments, String issueID, String messageID) async {
     try {
       await db
@@ -142,7 +142,7 @@ class FirebaseFirestoreService {
           .doc(messageID)
           .set(comments.toMap(), SetOptions(merge: true));
 
-      return (true, "Comment created successfully");
+      return (true, "Comment added successfully");
     } catch (e) {
       log("Error creating comments: $e");
       return (false, "$e");
@@ -176,21 +176,21 @@ class FirebaseFirestoreService {
         .collection(FirestoreStrings.projects)
         .doc(projectID)
         .collection(FirestoreStrings.userComments)
-        .orderBy('createdAt', descending: false)
+        .orderBy('createdAt', descending: true)
         .snapshots();
     yield* getMessages;
   }
 
 //* GET COMMENTS
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> getChatMessages(
+  Stream<QuerySnapshot<Map<String, dynamic>>> getIssueComments(
     String issueID,
   ) async* {
     final getMessages = db
         .collection(FirestoreStrings.issues)
         .doc(issueID)
         .collection(FirestoreStrings.userComments)
-        .orderBy('createdAt', descending: false)
+        .orderBy('createdAt', descending: true)
         .snapshots();
     yield* getMessages;
   }
@@ -198,10 +198,10 @@ class FirebaseFirestoreService {
   //* Edit your issue
   Future<(bool status, String message)> updateIssue(IssueModel issue) async {
     try {
-      await db
-          .collection(FirestoreStrings.issues)
-          .doc(issue.id)
-          .update(issue.toMap().putIfAbsent('updatedAt', () => DateTime.now()));
+      await db.collection(FirestoreStrings.issues).doc(issue.id).update(issue
+          .toMap()
+          .putIfAbsent(
+              'updatedAt', () => DateTime.now().millisecondsSinceEpoch));
       return (true, "Issue updated successfully");
     } catch (e) {
       log("Error updating issue: $e");
@@ -226,8 +226,10 @@ class FirebaseFirestoreService {
           //* It means the user has not voted
           updatedVotes.add(userId);
         }
-        await docRef
-            .update({'votes': updatedVotes, 'updatedAt': DateTime.now()});
+        await docRef.update({
+          'votes': updatedVotes,
+          'updatedAt': DateTime.now().millisecondsSinceEpoch
+        });
         return (true, "Issue liked successfully");
       } else {
         return (false, "Issue not found");
@@ -331,7 +333,10 @@ class FirebaseFirestoreService {
           //* It means the user has not voted
           updatedVotes.add(userId);
         }
-        await docRef.update({'votes': updatedVotes});
+        await docRef.update({
+          'votes': updatedVotes,
+          'updatedAt': DateTime.now().millisecondsSinceEpoch
+        });
         return (true, "Project liked successfully");
       } else {
         return (false, "Project not found");

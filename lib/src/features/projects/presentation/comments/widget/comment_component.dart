@@ -1,5 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:greenvoice/utils/helpers/date_formatter.dart';
+import 'package:greenvoice/utils/styles/styles.dart';
 
 class CommentComponent extends StatelessWidget {
   const CommentComponent({
@@ -7,12 +10,14 @@ class CommentComponent extends StatelessWidget {
     this.image,
     required this.name,
     required this.message,
+    required this.date,
     this.isDetailsPage = false,
   });
 
   final String? image;
-  final String name;
+  final String? name;
   final String message;
+  final int date;
   final bool isDetailsPage;
 
   @override
@@ -24,7 +29,7 @@ class CommentComponent extends StatelessWidget {
         children: [
           CircleAvatar(
             backgroundColor: Colors.grey,
-            backgroundImage: NetworkImage(
+            backgroundImage: CachedNetworkImageProvider(
               image ?? 'https://example.com/default-avatar.jpg',
             ),
           ),
@@ -34,12 +39,10 @@ class CommentComponent extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                    name?.isEmpty == true || name == null
+                        ? "A GreenVoice user"
+                        : name!,
+                    style: AppStyles.blackBold14),
                 const Gap(4),
                 Container(
                   padding:
@@ -53,13 +56,13 @@ class CommentComponent extends StatelessWidget {
                   constraints: const BoxConstraints(
                     maxWidth: 300,
                   ),
-                  child: Text(
-                    message,
-                    style: const TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
+                  child: Text(message.trim(), style: AppStyles.blackNormal16),
                 ),
+                const Gap(5),
+                Text(
+                    DateFormatter.formatDateWithTime(
+                        DateTime.fromMillisecondsSinceEpoch(date)),
+                    style: AppStyles.blackNormal12)
               ],
             ),
           ),

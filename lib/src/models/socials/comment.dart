@@ -46,14 +46,14 @@ class CommentModel {
     };
   }
 
-  factory CommentModel.fromMap(Map<String, dynamic> map) {
+  factory CommentModel.fromMap(Map<String, dynamic>? map) {
     return CommentModel(
-      id: map['id'] as String,
-      userId: map['userId'] as String,
-      userName: map['userName'] as String,
-      userPicture: map['userPicture'] as String,
-      message: map['message'] as String,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
+      id: map?['id'] ?? "",
+      userId: map?['userId'] ?? "",
+      userName: map?['userName'] ?? "",
+      userPicture: map?['userPicture'] ?? "",
+      message: map?['message'] ?? "",
+      createdAt: DateTime.fromMillisecondsSinceEpoch(map?['createdAt']),
     );
   }
 
@@ -70,23 +70,22 @@ class CommentModel {
   @override
   bool operator ==(covariant CommentModel other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.id == id &&
-      other.userId == userId &&
-      other.userName == userName &&
-      other.userPicture == userPicture &&
-      other.message == message &&
-      other.createdAt == createdAt;
+
+    return other.id == id &&
+        other.userId == userId &&
+        other.userName == userName &&
+        other.userPicture == userPicture &&
+        other.message == message &&
+        other.createdAt == createdAt;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      userId.hashCode ^
-      userName.hashCode ^
-      userPicture.hashCode ^
-      message.hashCode ^
-      createdAt.hashCode;
+        userId.hashCode ^
+        userName.hashCode ^
+        userPicture.hashCode ^
+        message.hashCode ^
+        createdAt.hashCode;
   }
 }
