@@ -59,40 +59,34 @@ class _RegisterState extends ConsumerState<RegisterView> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Flexible(
-                          child: SizedBox(
-                            width: 190,
-                            child: CustomTextField(
-                              labelText: 'First Name',
-                              hintText: 'last name',
-                              controller: nameController,
-                              keyboardType: TextInputType.name,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter some text';
-                                }
-                                return null;
-                              },
-                            ),
+                        Expanded(
+                          child: CustomTextField(
+                            labelText: 'First Name',
+                            hintText: 'first name',
+                            controller: nameController,
+                            keyboardType: TextInputType.name,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter some text';
+                              }
+                              return null;
+                            },
                           ),
                         ),
                         const Gap(10),
-                        Flexible(
-                          child: SizedBox(
-                            width: 190,
-                            child: CustomTextField(
-                              labelText: 'Last Name',
-                              hintText: 'last name',
-                              controller: lastNameController,
-                              keyboardType: TextInputType.name,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter some text';
-                                }
+                        Expanded(
+                          child: CustomTextField(
+                            labelText: 'Last Name',
+                            hintText: 'last name',
+                            controller: lastNameController,
+                            keyboardType: TextInputType.name,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter some text';
+                              }
 
-                                return null;
-                              },
-                            ),
+                              return null;
+                            },
                           ),
                         ),
                       ],

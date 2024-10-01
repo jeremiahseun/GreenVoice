@@ -19,13 +19,21 @@ GreenVoice is a cross-platform civic engagement application developed during the
 - **🔗 Deep Linking**: Share specific issues or projects directly to the app or web version.
 - **🕵️ Anonymous Posting**: Option to report issues anonymously to encourage participation.
 
+## 🌟 Future Features
+
+- **📢 Issue Reporting Categories**: Easily identify local issues by category on the Map.
+- **🏗️ Community Projects on the Map**: Propose, view, community improvement initiatives on the Map.
+- **🗺️ Better Location Search**: Report issues with precise locations from address and Lat, Long.
+- **🌐 Cross-Platform**: Works seamlessly on iOS, Android, and web browsers.
+- **🔗 Push Notifications**: Share reported issues or projects directly to users.
+- **🕵️ Collaboration with Goverment Agencies**: Having the Government get access to reported issues depending on the locality and location.
+
 ## 🚀 Getting Started
 
 ### Prerequisites
 
 - Flutter SDK (v3.10.0 or later)
 - Dart SDK (v3.0.0 or later)
-- Firebase account and project set-up
 
 ### Installation
 
@@ -56,6 +64,7 @@ GreenVoice is a cross-platform civic engagement application developed during the
 - **State Management**: Riverpod
 - **Routing**: go_router
 - **Maps**: Mapbox API
+- **Location Search**: Open Street Maps API
 
 ## 🤝 Contributing
 
