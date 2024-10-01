@@ -3,11 +3,11 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 
-const RESOURCES = {"flutter_bootstrap.js": "e4d83789fe58319113f6580a3b2863b1",
+const RESOURCES = {"flutter_bootstrap.js": "b31c2201d7f581e0ecefa117ef5e0574",
 "version.json": "f2697dc2e3a3aa959f26ed0f90a0ff53",
 "index.html": "e9a9f69a94d501fc234110ff80bce03f",
 "/": "e9a9f69a94d501fc234110ff80bce03f",
-"main.dart.js": "a3541f1e01f708463241e6590a224d6c",
+"main.dart.js": "08f7d8149550bcce3b26671436aa7564",
 "flutter.js": "f393d3c16b631f36852323de8e583132",
 "favicon.png": "074d90947d1a46e29aaea4142e21d61b",
 "icons/Icon-192.png": "cc06b8e8fe240b416ecca5f2a913723f",
@@ -292,7 +292,7 @@ const RESOURCES = {"flutter_bootstrap.js": "e4d83789fe58319113f6580a3b2863b1",
 "assets/packages/eva_icons_flutter/lib/fonts/Eva-Icons.ttf": "b3cfd6832181cbaa3c98988c49d34641",
 "assets/shaders/ink_sparkle.frag": "ecc85a2e95f5e9f53123dcaf8cb9b6ce",
 "assets/AssetManifest.bin": "50ed63a7f2c65df8e6414141f938f270",
-"assets/fonts/MaterialIcons-Regular.otf": "51017ac1ebb6802afdf8e5fc7f5398bc",
+"assets/fonts/MaterialIcons-Regular.otf": "9636dec9818fe58c6fa37a6fc620a19d",
 "assets/assets/images/splash.gif": "fefa1909efe509aec7b4a282f724b3b5",
 "assets/assets/images/food.jpg": "955d9a04ac2d6c6bf0eb6768e7672c7a",
 "assets/assets/lotties/cloud_disconnection.json": "6105ac1d77407464720bd07f726b276e",
