@@ -1,16 +1,25 @@
+import 'dart:math';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:greenvoice/src/features/authentication/user/user_provider.dart';
 import 'package:greenvoice/src/features/issues/data/issues_provider.dart';
+import 'package:greenvoice/src/features/issues/presentation/comments/comments_bottomsheet.dart';
 import 'package:greenvoice/src/features/issues/widgets/adaptive_images.dart';
 import 'package:greenvoice/src/features/issues/widgets/info_row.dart';
 import 'package:greenvoice/src/features/issues/widgets/status_chip.dart';
+import 'package:greenvoice/src/features/profile/data/profile_provider.dart';
+import 'package:greenvoice/src/features/projects/presentation/comments/widget/comment_component.dart';
 import 'package:greenvoice/src/services/branch_deeplink_service.dart';
 import 'package:greenvoice/utils/common_widgets/fullscreen_carousel_image.dart';
 import 'package:greenvoice/utils/common_widgets/vote_button.dart';
 import 'package:greenvoice/utils/helpers/date_formatter.dart';
+import 'package:greenvoice/utils/styles/styles.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class IssueDetailScreen extends ConsumerStatefulWidget {
   final String id;
@@ -25,6 +34,7 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((time) {
       ref.read(oneIssueProvider.notifier).getOneIssues(widget.id);
+      ref.read(addIssueProvider.notifier).userImage();
     });
     super.initState();
   }
@@ -32,6 +42,7 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
   final isLikeLoadingState = ValueNotifier<bool>(false);
   @override
   Widget build(context) {
+    final user = ref.watch(addIssueProvider);
     return Scaffold(
         appBar: AppBar(
           title: Text(ref.watch(oneIssueProvider).when(
@@ -118,7 +129,7 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
                                         .split(" ")
                                         .first
                                         .isNotEmpty
-                                    ? 'Posted by ${issue.createdByUserName.split(" ").first}'
+                                    ? 'Posted by ${issue.createdByUserName}'
                                     : "Posted by a GreenVoice user"),
                           ),
                           InfoRow(
@@ -132,6 +143,166 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
                                 'Last Update was ${DateFormatter.formatDate(issue.updatedAt)}',
                           ),
                           const Gap(16),
+                          Text('Comments', style: AppStyles.blackBold18),
+                          const Gap(20.0),
+                          StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                            stream: ref
+                                .read(addIssueProvider.notifier)
+                                .getComments(issueID: issue.id),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Skeletonizer(
+                                  child: ListView.separated(
+                                    separatorBuilder: (context, index) =>
+                                        const Gap(10),
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount: 3,
+                                    itemBuilder: (context, index) {
+                                      return CommentComponent(
+                                        name: 'loading...',
+                                        date: DateTime.now()
+                                            .millisecondsSinceEpoch,
+                                        message: 'loading...',
+                                        image: '',
+                                      );
+                                    },
+                                  ),
+                                );
+                              } else if (snapshot.hasData &&
+                                  snapshot.data!.docs.isNotEmpty) {
+                                return Column(
+                                  children: [
+                                    ListView.separated(
+                                      separatorBuilder: (context, index) =>
+                                          const Gap(10),
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemCount:
+                                          min(3, snapshot.data!.docs.length),
+                                      itemBuilder: (context, index) {
+                                        var commentData =
+                                            snapshot.data!.docs[index].data();
+                                        return CommentComponent(
+                                          date: commentData['createdAt'],
+                                          name: commentData['userName'],
+                                          message: commentData['message'],
+                                          image: commentData['userPicture'],
+                                        );
+                                      },
+                                    ),
+                                    const Gap(10.0),
+                                    snapshot.data!.docs.length < 3
+                                        ? const SizedBox()
+                                        : GestureDetector(
+                                            onTap: () {
+                                              showModalBottomSheet(
+                                                isScrollControlled: true,
+                                                context: context,
+                                                builder: (context) {
+                                                  return Padding(
+                                                    padding: EdgeInsets.only(
+                                                      bottom:
+                                                          MediaQuery.of(context)
+                                                              .viewInsets
+                                                              .bottom,
+                                                    ),
+                                                    child: CommentBottomSheet(
+                                                      issueID: issue.id,
+                                                      userImage:
+                                                          user.profileImage,
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Text(
+                                                'View all Comments',
+                                                style: AppStyles.blackNormal15
+                                                    .copyWith(
+                                                  color: AppColors.primaryColor,
+                                                ),
+                                              ),
+                                            )),
+                                  ],
+                                );
+                              } else {
+                                return const Center(
+                                  child: Text(
+                                    "No comments yet",
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                          const Gap(20.0),
+                          Visibility(
+                            visible: ref.watch(userProfileProvider).hasValue &&
+                                !ref.watch(userProfileProvider).hasError,
+                            replacement: const Align(
+                              alignment: Alignment.topCenter,
+                              child: Text("Login to comment on this issue."),
+                            ),
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  radius: 15,
+                                  backgroundImage: CachedNetworkImageProvider(
+                                      user.profileImage),
+                                ),
+                                const Gap(10),
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                        isScrollControlled: true,
+                                        context: context,
+                                        builder: (context) {
+                                          return Padding(
+                                            padding: EdgeInsets.only(
+                                              bottom: MediaQuery.of(context)
+                                                  .viewInsets
+                                                  .bottom,
+                                            ),
+                                            child: CommentBottomSheet(
+                                              userImage: user.profileImage,
+                                              requestTextfieldFocus: true,
+                                              issueID: issue.id,
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Container(
+                                      alignment: Alignment.centerLeft,
+                                      height: 45,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 15),
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(7),
+                                        border: Border.all(
+                                          color: AppColors.greyColor,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'Enter a comment',
+                                        style: AppStyles.blackNormal13.copyWith(
+                                            color: AppColors.greyColor),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Gap(26),
                           AnimatedVoteButton(
                             isVoted: ref
                                     .watch(oneIssueProvider)
@@ -161,7 +332,7 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
                                 isLikeLoadingState.value = false;
                               }
                             },
-                          )
+                          ),
                         ],
                       ),
                     ),

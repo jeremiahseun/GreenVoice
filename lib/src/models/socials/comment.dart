@@ -7,12 +7,14 @@ class CommentModel {
   final String userName;
   final String userPicture;
   final String message;
+  final DateTime createdAt;
   CommentModel({
     required this.id,
     required this.userId,
     required this.userName,
     required this.userPicture,
     required this.message,
+    required this.createdAt,
   });
 
   CommentModel copyWith({
@@ -21,6 +23,7 @@ class CommentModel {
     String? userName,
     String? userPicture,
     String? message,
+    DateTime? createdAt,
   }) {
     return CommentModel(
       id: id ?? this.id,
@@ -28,6 +31,7 @@ class CommentModel {
       userName: userName ?? this.userName,
       userPicture: userPicture ?? this.userPicture,
       message: message ?? this.message,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 
@@ -38,16 +42,18 @@ class CommentModel {
       'userName': userName,
       'userPicture': userPicture,
       'message': message,
+      'createdAt': createdAt.millisecondsSinceEpoch,
     };
   }
 
-  factory CommentModel.fromMap(Map<String, dynamic> map) {
+  factory CommentModel.fromMap(Map<String, dynamic>? map) {
     return CommentModel(
-      id: map['id'] as String,
-      userId: map['userId'] as String,
-      userName: map['userName'] as String,
-      userPicture: map['userPicture'] as String,
-      message: map['message'] as String,
+      id: map?['id'] ?? "",
+      userId: map?['userId'] ?? "",
+      userName: map?['userName'] ?? "",
+      userPicture: map?['userPicture'] ?? "",
+      message: map?['message'] ?? "",
+      createdAt: DateTime.fromMillisecondsSinceEpoch(map?['createdAt']),
     );
   }
 
@@ -58,7 +64,7 @@ class CommentModel {
 
   @override
   String toString() {
-    return 'CommentModel(id: $id, userId: $userId, userName: $userName, userPicture: $userPicture, message: $message)';
+    return 'CommentModel(id: $id, userId: $userId, userName: $userName, userPicture: $userPicture, message: $message, createdAt: $createdAt)';
   }
 
   @override
@@ -69,7 +75,8 @@ class CommentModel {
         other.userId == userId &&
         other.userName == userName &&
         other.userPicture == userPicture &&
-        other.message == message;
+        other.message == message &&
+        other.createdAt == createdAt;
   }
 
   @override
@@ -78,6 +85,7 @@ class CommentModel {
         userId.hashCode ^
         userName.hashCode ^
         userPicture.hashCode ^
-        message.hashCode;
+        message.hashCode ^
+        createdAt.hashCode;
   }
 }

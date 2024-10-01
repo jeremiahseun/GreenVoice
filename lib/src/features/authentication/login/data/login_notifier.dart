@@ -56,7 +56,7 @@ class LoginScreenNotifier extends GreenVoiceNotifier {
             lastName: nameParts[1],
             photo: loginUser.$3?.user?.photoURL);
 
-        if (kIsWeb || kIsWasm) {
+        if (kIsWeb) {
           WebService.writeUserModelData(
               userId: userId,
               username: fullName,

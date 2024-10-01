@@ -4,12 +4,14 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:greenvoice/src/models/issue/issue_model.dart';
 import 'package:greenvoice/src/models/project/project_model.dart';
+import 'package:greenvoice/src/models/socials/comment.dart';
 import 'package:greenvoice/src/models/user/user_model.dart';
 
 class FirestoreStrings {
   static const String users = "users";
   static const String issues = "issues";
   static const String projects = "projects";
+  static const String userComments = 'userComments';
 }
 
 class FirebaseFirestoreService {
@@ -129,13 +131,77 @@ class FirebaseFirestoreService {
     }
   }
 
-  //* Edit your issue
-  Future<(bool status, String message)> updateIssue(IssueModel issue) async {
+  //* Create a comment
+  Future<(bool status, String message)> createIssueComments(
+      CommentModel comments, String issueID, String messageID) async {
     try {
       await db
           .collection(FirestoreStrings.issues)
-          .doc(issue.id)
-          .update(issue.toMap().putIfAbsent('updatedAt', () => DateTime.now()));
+          .doc(issueID)
+          .collection(FirestoreStrings.userComments)
+          .doc(messageID)
+          .set(comments.toMap(), SetOptions(merge: true));
+
+      return (true, "Comment added successfully");
+    } catch (e) {
+      log("Error creating comments: $e");
+      return (false, "$e");
+    }
+  }
+
+  //*  PROJECT COMMENTS
+
+  Future<(bool status, String message)> createProjectComments(
+      CommentModel comments, String projectID, String messageID) async {
+    try {
+      await db
+          .collection(FirestoreStrings.projects)
+          .doc(projectID)
+          .collection(FirestoreStrings.userComments)
+          .doc(messageID)
+          .set(comments.toMap(), SetOptions(merge: true));
+
+      return (true, "Comment created successfully");
+    } catch (e) {
+      log("Error creating comments: $e");
+      return (false, "$e");
+    }
+  }
+
+  //* Get projectComments
+  Stream<QuerySnapshot<Map<String, dynamic>>> getProjectComments(
+    String projectID,
+  ) async* {
+    final getMessages = db
+        .collection(FirestoreStrings.projects)
+        .doc(projectID)
+        .collection(FirestoreStrings.userComments)
+        .orderBy('createdAt', descending: true)
+        .snapshots();
+    yield* getMessages;
+  }
+
+//* GET COMMENTS
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getIssueComments(
+    String issueID,
+  ) async* {
+    final getMessages = db
+        .collection(FirestoreStrings.issues)
+        .doc(issueID)
+        .collection(FirestoreStrings.userComments)
+        .orderBy('createdAt', descending: true)
+        .snapshots();
+    yield* getMessages;
+  }
+
+  //* Edit your issue
+  Future<(bool status, String message)> updateIssue(IssueModel issue) async {
+    try {
+      await db.collection(FirestoreStrings.issues).doc(issue.id).update(issue
+          .toMap()
+          .putIfAbsent(
+              'updatedAt', () => DateTime.now().millisecondsSinceEpoch));
       return (true, "Issue updated successfully");
     } catch (e) {
       log("Error updating issue: $e");
@@ -160,8 +226,10 @@ class FirebaseFirestoreService {
           //* It means the user has not voted
           updatedVotes.add(userId);
         }
-        await docRef
-            .update({'votes': updatedVotes, 'updatedAt': DateTime.now()});
+        await docRef.update({
+          'votes': updatedVotes,
+          'updatedAt': DateTime.now().millisecondsSinceEpoch
+        });
         return (true, "Issue liked successfully");
       } else {
         return (false, "Issue not found");
@@ -265,7 +333,10 @@ class FirebaseFirestoreService {
           //* It means the user has not voted
           updatedVotes.add(userId);
         }
-        await docRef.update({'votes': updatedVotes});
+        await docRef.update({
+          'votes': updatedVotes,
+          'updatedAt': DateTime.now().millisecondsSinceEpoch
+        });
         return (true, "Project liked successfully");
       } else {
         return (false, "Project not found");

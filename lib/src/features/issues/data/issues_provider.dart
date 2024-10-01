@@ -1,14 +1,20 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greenvoice/core/locator.dart';
 import 'package:greenvoice/src/models/issue/issue_model.dart';
+import 'package:greenvoice/src/models/socials/comment.dart';
 import 'package:greenvoice/src/services/firebase/firebase.dart';
 import 'package:greenvoice/src/services/image_service.dart';
+import 'package:greenvoice/src/services/isar_storage.dart';
 import 'package:greenvoice/src/services/storage_service.dart';
+import 'package:greenvoice/src/services/user_service.dart';
+import 'package:greenvoice/src/services/uuid.dart';
 import 'package:greenvoice/utils/common_widgets/snackbar_message.dart';
 import 'package:greenvoice/utils/constants/storage_keys.dart';
 import 'package:greenvoice/utils/helpers/greenvoice_notifier.dart';
@@ -28,6 +34,8 @@ class AddIssueProvider extends GreenVoiceNotifier {
   final firebaseFirestore = locator<FirebaseFirestoreService>();
   final firebaseStorage = locator<FirebaseStorageService>();
   final storageService = locator<StorageService>();
+  final isarStorageService = locator<IsarStorageService>();
+
   AddIssueProvider(this.ref);
   Ref ref;
   double latitude = 0.0;
@@ -36,6 +44,7 @@ class AddIssueProvider extends GreenVoiceNotifier {
   String address = '';
   List<File> images = [];
   bool postAnonymously = false;
+  String profileImage = '';
 
   void disposeItems() {
     latitude = 0.0;
@@ -58,6 +67,12 @@ class AddIssueProvider extends GreenVoiceNotifier {
 
   void setUploadState(int number) {
     uploadState = number;
+    notifyListeners();
+  }
+
+  void userImage() async {
+    final isarData = await UserService.getSavedUser();
+    profileImage = isarData?.photo ?? '';
     notifyListeners();
   }
 
@@ -85,15 +100,13 @@ class AddIssueProvider extends GreenVoiceNotifier {
       required bool isAnonymous,
       required BuildContext context}) async {
     if (isLoading) return false;
+
     startLoading();
 
-    //* Get the current user ID
-    final userId = await storageService.readSecureData(key: StorageKeys.userId);
-    final username =
-        await storageService.readSecureData(key: StorageKeys.username) ?? "";
-    final userPicture =
-        await storageService.readSecureData(key: StorageKeys.userPicture) ?? "";
-    if (userId == null) {
+    //* Get the current user information
+    final currentUser = await UserService.getSavedUser();
+
+    if (currentUser?.uid == null) {
       stopLoading();
       if (!context.mounted) return false;
       SnackbarMessage.showError(
@@ -102,6 +115,10 @@ class AddIssueProvider extends GreenVoiceNotifier {
               "You are not logged in. Only logged in users can add issues");
       return false;
     }
+    final firstName = currentUser?.firstName;
+    final lastName = currentUser?.lastName;
+    final userId = currentUser!.uid;
+    final userPicture = currentUser.photo;
     //* Upload Images first
     final imagesList = await firebaseStorage.uploadIssuePicture(
         image: images,
@@ -132,14 +149,14 @@ class AddIssueProvider extends GreenVoiceNotifier {
         updatedAt: DateTime.now(),
         images: imagesList.$3,
         createdByUserId: userId,
-        createdByUserName: username,
-        createdByUserPicture: userPicture,
+        createdByUserName: '$firstName ${lastName?.split("").first}',
+        createdByUserPicture: userPicture ?? '',
         category: 'category',
         comments: [],
         shares: []));
     stopLoading();
     if (res.$1) {
-      if (!context.mounted) return false;
+      if (!context.mounted) return true;
       SnackbarMessage.showSuccess(
           context: context, message: 'Issue uploaded successfully.');
       return true;
@@ -147,6 +164,56 @@ class AddIssueProvider extends GreenVoiceNotifier {
     if (!context.mounted) return false;
     SnackbarMessage.showError(context: context, message: res.$2);
     return false;
+  }
+
+  ///******************CREATE AND ISSUE COMMENT ******************* */
+
+  Future<bool> sendUserComment({
+    required String issueID,
+    required String message,
+    required BuildContext context,
+  }) async {
+    final String uniqueMessageID = generateUniqueID();
+    final isarData = await UserService.getSavedUser();
+    try {
+      final userId =
+          await storageService.readSecureData(key: StorageKeys.userId);
+
+      final res = await firebaseFirestore.createIssueComments(
+          CommentModel(
+              id: uniqueMessageID,
+              userId: userId ?? '',
+              userName:
+                  '${isarData?.firstName} ${isarData?.lastName?.split("").first}',
+              userPicture: isarData?.photo ?? '',
+              message: message,
+              createdAt: DateTime.now()),
+          issueID,
+          uniqueMessageID);
+      if (res.$1) {
+        if (!context.mounted) return true;
+        SnackbarMessage.showSuccess(
+            context: context, message: 'Comment added.');
+        return true;
+      } else {
+        if (!context.mounted) return false;
+        SnackbarMessage.showError(context: context, message: res.$2);
+        return false;
+      }
+    } catch (e) {
+      if (!context.mounted) return false;
+      SnackbarMessage.showError(context: context, message: e.toString());
+
+      return false;
+    }
+  }
+
+  //Get iserComments
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getComments(
+      {required String issueID}) async* {
+    final messages = firebaseFirestore.getIssueComments(issueID);
+    yield* messages;
   }
 }
 

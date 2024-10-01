@@ -12,6 +12,7 @@ import 'package:greenvoice/src/services/firebase/firebase.dart';
 import 'package:greenvoice/src/services/image_service.dart';
 import 'package:greenvoice/src/services/isar_storage.dart';
 import 'package:greenvoice/src/services/storage_service.dart';
+import 'package:greenvoice/src/services/user_service.dart';
 import 'package:greenvoice/src/services/web_service.dart';
 import 'package:greenvoice/utils/common_widgets/snackbar_message.dart';
 import 'package:greenvoice/utils/constants/storage_keys.dart';
@@ -43,7 +44,7 @@ class UserProfileProvider extends StateNotifier<AsyncValue<UserModel?>> {
     try {
       final upstreamUser = await _getUserDetails();
       if (upstreamUser.$1) {
-        if (kIsWeb || kIsWasm) {
+        if (kIsWeb) {
           state = AsyncValue.data(upstreamUser.$2);
           return;
         }
@@ -62,13 +63,13 @@ class UserProfileProvider extends StateNotifier<AsyncValue<UserModel?>> {
   }
 
   Future<UserModel?> _getUserDetailsFromDb() async {
-    final details = await isarStorageService.readUserDB();
+    final details = await UserService.getSavedUser();
     return details;
   }
 
   Future<(bool, UserModel?)> _getUserDetails() async {
     String? userId;
-    if (kIsWeb || kIsWasm) {
+    if (kIsWeb) {
       userId = WebService.readWebData(key: StorageKeys.userId);
     } else {
       userId = await storageService.readSecureData(key: StorageKeys.userId);
@@ -79,7 +80,7 @@ class UserProfileProvider extends StateNotifier<AsyncValue<UserModel?>> {
     try {
       final getUser = await firebaseFirestore.getUser(userId);
       if (getUser.$1 && getUser.$3 != null) {
-        if (kIsWeb || kIsWasm) {
+        if (kIsWeb) {
           return (true, getUser.$3);
         }
         await isarStorageService.writeUserDB(getUser.$3!);
@@ -169,7 +170,7 @@ class ProfileProvider extends GreenVoiceNotifier {
 
       final updateUser = await firebaseFirestore.updateUser(userData);
       if (updateUser.$1) {
-        if (!context.mounted) return false;
+        if (!context.mounted) return true;
         SnackbarMessage.showSuccess(
           context: context,
           message: 'Profile edited successfully.',
