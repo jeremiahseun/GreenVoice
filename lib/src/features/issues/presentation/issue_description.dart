@@ -12,12 +12,14 @@ import 'package:greenvoice/src/features/issues/presentation/comments/comments_bo
 import 'package:greenvoice/src/features/issues/widgets/adaptive_images.dart';
 import 'package:greenvoice/src/features/issues/widgets/info_row.dart';
 import 'package:greenvoice/src/features/issues/widgets/status_chip.dart';
+import 'package:greenvoice/src/features/profile/data/profile_provider.dart';
 import 'package:greenvoice/src/features/projects/presentation/comments/widget/comment_component.dart';
 import 'package:greenvoice/src/services/branch_deeplink_service.dart';
 import 'package:greenvoice/utils/common_widgets/fullscreen_carousel_image.dart';
 import 'package:greenvoice/utils/common_widgets/vote_button.dart';
 import 'package:greenvoice/utils/helpers/date_formatter.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class IssueDetailScreen extends ConsumerStatefulWidget {
   final String id;
@@ -141,10 +143,7 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
                                 'Last Update was ${DateFormatter.formatDate(issue.updatedAt)}',
                           ),
                           const Gap(16),
-                          Text(
-                            'Comments',
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
+                          Text('Comments', style: AppStyles.blackBold18),
                           const Gap(20.0),
                           StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                             stream: ref
@@ -153,8 +152,25 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
-                                return const Center(
-                                    child: CircularProgressIndicator());
+                                return Skeletonizer(
+                                  child: ListView.separated(
+                                    separatorBuilder: (context, index) =>
+                                        const Gap(10),
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount: 3,
+                                    itemBuilder: (context, index) {
+                                      return CommentComponent(
+                                        name: 'loading...',
+                                        date: DateTime.now()
+                                            .millisecondsSinceEpoch,
+                                        message: 'loading...',
+                                        image: '',
+                                      );
+                                    },
+                                  ),
+                                );
                               } else if (snapshot.hasData &&
                                   snapshot.data!.docs.isNotEmpty) {
                                 return Column(
@@ -171,6 +187,7 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
                                         var commentData =
                                             snapshot.data!.docs[index].data();
                                         return CommentComponent(
+                                          date: commentData['createdAt'],
                                           name: commentData['userName'],
                                           message: commentData['message'],
                                           image: commentData['userPicture'],
@@ -195,6 +212,8 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
                                                     ),
                                                     child: CommentBottomSheet(
                                                       issueID: issue.id,
+                                                      userImage:
+                                                          user.profileImage,
                                                     ),
                                                   );
                                                 },
@@ -204,7 +223,7 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
                                               alignment: Alignment.centerRight,
                                               child: Text(
                                                 'View all Comments',
-                                                style: AppStyles.blackNormal10
+                                                style: AppStyles.blackNormal15
                                                     .copyWith(
                                                   color: AppColors.primaryColor,
                                                 ),
@@ -223,55 +242,65 @@ class _IssueDetailScreenState extends ConsumerState<IssueDetailScreen> {
                             },
                           ),
                           const Gap(20.0),
-                          Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 20,
-                                backgroundImage: CachedNetworkImageProvider(
-                                    user.profileImage),
-                              ),
-                              const Gap(10),
-                              GestureDetector(
-                                onTap: () {
-                                  showModalBottomSheet(
-                                    isScrollControlled: true,
-                                    context: context,
-                                    builder: (context) {
-                                      return Padding(
-                                        padding: EdgeInsets.only(
-                                          bottom: MediaQuery.of(context)
-                                              .viewInsets
-                                              .bottom,
-                                        ),
-                                        child: CommentBottomSheet(
-                                          userImage: user.profileImage,
-                                          issueID: issue.id,
-                                        ),
+                          Visibility(
+                            visible: ref.watch(userProfileProvider).hasValue &&
+                                !ref.watch(userProfileProvider).hasError,
+                            replacement: const Align(
+                              alignment: Alignment.topCenter,
+                              child: Text("Login to comment on this issue."),
+                            ),
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  radius: 15,
+                                  backgroundImage: CachedNetworkImageProvider(
+                                      user.profileImage),
+                                ),
+                                const Gap(10),
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                        isScrollControlled: true,
+                                        context: context,
+                                        builder: (context) {
+                                          return Padding(
+                                            padding: EdgeInsets.only(
+                                              bottom: MediaQuery.of(context)
+                                                  .viewInsets
+                                                  .bottom,
+                                            ),
+                                            child: CommentBottomSheet(
+                                              userImage: user.profileImage,
+                                              requestTextfieldFocus: true,
+                                              issueID: issue.id,
+                                            ),
+                                          );
+                                        },
                                       );
                                     },
-                                  );
-                                },
-                                child: Expanded(
-                                  child: Container(
-                                    alignment: Alignment.centerLeft,
-                                    height: 50,
-                                    padding: const EdgeInsets.all(15),
-                                    width: 329,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                        color: AppColors.greyColor,
+                                    child: Container(
+                                      alignment: Alignment.centerLeft,
+                                      height: 45,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 15),
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(7),
+                                        border: Border.all(
+                                          color: AppColors.greyColor,
+                                        ),
                                       ),
-                                    ),
-                                    child: Text(
-                                      'Enter a comment',
-                                      style: AppStyles.blackNormal13
-                                          .copyWith(color: AppColors.greyColor),
+                                      child: Text(
+                                        'Enter a comment',
+                                        style: AppStyles.blackNormal13.copyWith(
+                                            color: AppColors.greyColor),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                           const Gap(26),
                           AnimatedVoteButton(

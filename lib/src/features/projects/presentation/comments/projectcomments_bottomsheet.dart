@@ -2,18 +2,23 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gap/gap.dart';
 import 'package:greenvoice/src/features/profile/data/profile_provider.dart';
 import 'package:greenvoice/src/features/projects/data/projects_provider.dart';
 import 'package:greenvoice/src/features/projects/presentation/comments/widget/comment_component.dart';
-import 'package:greenvoice/utils/common_widgets/not_logged_in.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class ProjectCommentBottomSheet extends ConsumerStatefulWidget {
   const ProjectCommentBottomSheet(
-      {super.key, required this.issueID, this.userImage = ''});
+      {super.key,
+      required this.projectID,
+      this.userImage = '',
+      this.requestTextfieldFocus = false});
 
-  final String issueID;
+  final String projectID;
   final String userImage;
+  final bool requestTextfieldFocus;
 
   @override
   ConsumerState<ProjectCommentBottomSheet> createState() =>
@@ -28,7 +33,9 @@ class _ProjectCommentBottomSheetState
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      focusNode.requestFocus(); // Request focus for the TextField
+      if (widget.requestTextfieldFocus) {
+        focusNode.requestFocus(); // Request focus for the TextField
+      }
     });
     super.initState();
   }
@@ -44,10 +51,25 @@ class _ProjectCommentBottomSheetState
             child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
               stream: ref
                   .read(addProjectProvider.notifier)
-                  .getProjectComments(issueID: widget.issueID),
+                  .getProjectComments(projectID: widget.projectID),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Skeletonizer(
+                    child: ListView.separated(
+                      separatorBuilder: (context, index) => const Gap(10),
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: 3,
+                      itemBuilder: (context, index) {
+                        return CommentComponent(
+                          name: 'loading...',
+                          date: DateTime.now().millisecondsSinceEpoch,
+                          message: 'loading...',
+                          image: '',
+                        );
+                      },
+                    ),
+                  );
                 } else if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
                   return ListView.builder(
                     itemCount: snapshot.data!.docs.length,
@@ -57,6 +79,7 @@ class _ProjectCommentBottomSheetState
                         name: commentData['userName'],
                         message: commentData['message'],
                         image: commentData['userPicture'],
+                        date: commentData['createdAt'],
                       );
                     },
                   );
@@ -71,9 +94,16 @@ class _ProjectCommentBottomSheetState
               },
             ),
           ),
-          ref.watch(userProfileProvider).when(
-            data: (userData) {
-              return Padding(
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Visibility(
+              visible: ref.watch(userProfileProvider).hasValue &&
+                  !ref.watch(userProfileProvider).hasError,
+              replacement: const Align(
+                alignment: Alignment.topCenter,
+                child: Text("Login to comment on this issue."),
+              ),
+              child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: [
@@ -100,7 +130,7 @@ class _ProjectCommentBottomSheetState
                                 await ref
                                     .read(addProjectProvider.notifier)
                                     .sendUserComment(
-                                      issueID: widget.issueID,
+                                      projectID: widget.projectID,
                                       message: commentController.text,
                                       context: context,
                                     );
@@ -120,20 +150,9 @@ class _ProjectCommentBottomSheetState
                     ),
                   ],
                 ),
-              );
-            },
-            error: (err, _) {
-              return const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: NotLoggedInWidget(
-                  text: 'Login to comment on this project',
-                ),
-              );
-            },
-            loading: () {
-              return const CircularProgressIndicator();
-            },
-          ),
+              ),
+            ),
+          )
         ],
       ),
     );

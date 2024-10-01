@@ -64,7 +64,7 @@ class FirebaseAuthService {
         return (false, "Wrong password provided for that user.", null);
       }
     }
-    return (false, "An error occurred", null);
+    return (false, "An error occurred. Maybe check your password and try again.", null);
   }
 
   Future<void> signOut() async {

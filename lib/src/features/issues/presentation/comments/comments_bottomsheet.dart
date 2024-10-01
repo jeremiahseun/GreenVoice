@@ -2,18 +2,23 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gap/gap.dart';
 import 'package:greenvoice/src/features/issues/data/issues_provider.dart';
 import 'package:greenvoice/src/features/profile/data/profile_provider.dart';
 import 'package:greenvoice/src/features/projects/presentation/comments/widget/comment_component.dart';
-import 'package:greenvoice/utils/common_widgets/not_logged_in.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class CommentBottomSheet extends ConsumerStatefulWidget {
   const CommentBottomSheet(
-      {super.key, required this.issueID, this.userImage = ''});
+      {super.key,
+      required this.issueID,
+      this.userImage = '',
+      this.requestTextfieldFocus = false});
 
   final String issueID;
   final String userImage;
+  final bool requestTextfieldFocus;
 
   @override
   ConsumerState<CommentBottomSheet> createState() => _CommentBottomSheetState();
@@ -26,7 +31,9 @@ class _CommentBottomSheetState extends ConsumerState<CommentBottomSheet> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      focusNode.requestFocus(); // Request focus for the TextField
+      if (widget.requestTextfieldFocus) {
+        focusNode.requestFocus(); // Request focus for the TextField
+      }
     });
     super.initState();
   }
@@ -37,22 +44,37 @@ class _CommentBottomSheetState extends ConsumerState<CommentBottomSheet> {
       height: MediaQuery.of(context).size.height * .65,
       padding: const EdgeInsets.all(16.0),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Flexible(
+          Expanded(
             child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
               stream: ref
                   .read(addIssueProvider.notifier)
                   .getComments(issueID: widget.issueID),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Skeletonizer(
+                    child: ListView.separated(
+                      separatorBuilder: (context, index) => const Gap(10),
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: 5,
+                      itemBuilder: (context, index) {
+                        return CommentComponent(
+                          name: 'loading...',
+                          message: 'loading...',
+                          date: DateTime.now().millisecondsSinceEpoch,
+                          image: '',
+                        );
+                      },
+                    ),
+                  );
                 } else if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
                   return ListView.builder(
                     itemCount: snapshot.data!.docs.length,
                     itemBuilder: (context, index) {
                       var commentData = snapshot.data!.docs[index].data();
                       return CommentComponent(
+                        date: commentData['createdAt'],
                         name: commentData['userName'],
                         message: commentData['message'],
                         image: commentData['userPicture'],
@@ -70,9 +92,16 @@ class _CommentBottomSheetState extends ConsumerState<CommentBottomSheet> {
               },
             ),
           ),
-          ref.watch(userProfileProvider).when(
-            data: (userData) {
-              return Padding(
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Visibility(
+              visible: ref.watch(userProfileProvider).hasValue &&
+                  !ref.watch(userProfileProvider).hasError,
+              replacement: const Align(
+                alignment: Alignment.topCenter,
+                child: Text("Login to comment on this issue."),
+              ),
+              child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: [
@@ -119,19 +148,8 @@ class _CommentBottomSheetState extends ConsumerState<CommentBottomSheet> {
                     ),
                   ],
                 ),
-              );
-            },
-            error: (err, _) {
-              return const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: NotLoggedInWidget(
-                  text: 'Login to comment on this issue',
-                ),
-              );
-            },
-            loading: () {
-              return const CircularProgressIndicator();
-            },
+              ),
+            ),
           ),
         ],
       ),

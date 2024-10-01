@@ -13,6 +13,7 @@ import 'package:greenvoice/src/services/firebase/firebase.dart';
 import 'package:greenvoice/src/services/image_service.dart';
 import 'package:greenvoice/src/services/isar_storage.dart';
 import 'package:greenvoice/src/services/storage_service.dart';
+import 'package:greenvoice/src/services/user_service.dart';
 import 'package:greenvoice/src/services/uuid.dart';
 import 'package:greenvoice/utils/common_widgets/snackbar_message.dart';
 import 'package:greenvoice/utils/constants/storage_keys.dart';
@@ -70,7 +71,7 @@ class AddIssueProvider extends GreenVoiceNotifier {
   }
 
   void userImage() async {
-    final isarData = await isarStorageService.readUserDB();
+    final isarData = await UserService.getSavedUser();
     profileImage = isarData?.photo ?? '';
     notifyListeners();
   }
@@ -102,11 +103,10 @@ class AddIssueProvider extends GreenVoiceNotifier {
 
     startLoading();
 
-    //* Get the current user ID
-    final userId = await storageService.readSecureData(key: StorageKeys.userId);
-    final isarData = await isarStorageService.readUserDB();
+    //* Get the current user information
+    final currentUser = await UserService.getSavedUser();
 
-    if (userId == null) {
+    if (currentUser?.uid == null) {
       stopLoading();
       if (!context.mounted) return false;
       SnackbarMessage.showError(
@@ -115,6 +115,10 @@ class AddIssueProvider extends GreenVoiceNotifier {
               "You are not logged in. Only logged in users can add issues");
       return false;
     }
+    final firstName = currentUser?.firstName;
+    final lastName = currentUser?.lastName;
+    final userId = currentUser!.uid;
+    final userPicture = currentUser.photo;
     //* Upload Images first
     final imagesList = await firebaseStorage.uploadIssuePicture(
         image: images,
@@ -145,15 +149,14 @@ class AddIssueProvider extends GreenVoiceNotifier {
         updatedAt: DateTime.now(),
         images: imagesList.$3,
         createdByUserId: userId,
-        createdByUserName:
-            '${isarData?.firstName} ${isarData?.lastName?.split("").first}',
-        createdByUserPicture: isarData?.photo ?? '',
+        createdByUserName: '$firstName ${lastName?.split("").first}',
+        createdByUserPicture: userPicture ?? '',
         category: 'category',
         comments: [],
         shares: []));
     stopLoading();
     if (res.$1) {
-      if (!context.mounted) return false;
+      if (!context.mounted) return true;
       SnackbarMessage.showSuccess(
           context: context, message: 'Issue uploaded successfully.');
       return true;
@@ -171,12 +174,12 @@ class AddIssueProvider extends GreenVoiceNotifier {
     required BuildContext context,
   }) async {
     final String uniqueMessageID = generateUniqueID();
-    final isarData = await isarStorageService.readUserDB();
+    final isarData = await UserService.getSavedUser();
     try {
       final userId =
           await storageService.readSecureData(key: StorageKeys.userId);
 
-      final res = await firebaseFirestore.createComments(
+      final res = await firebaseFirestore.createIssueComments(
           CommentModel(
               id: uniqueMessageID,
               userId: userId ?? '',
@@ -188,16 +191,19 @@ class AddIssueProvider extends GreenVoiceNotifier {
           issueID,
           uniqueMessageID);
       if (res.$1) {
-        if (!context.mounted) return false;
+        if (!context.mounted) return true;
         SnackbarMessage.showSuccess(
             context: context, message: 'Comment added.');
         return true;
       } else {
         if (!context.mounted) return false;
-        SnackbarMessage.showSuccess(context: context, message: res.$2);
+        SnackbarMessage.showError(context: context, message: res.$2);
         return false;
       }
     } catch (e) {
+      if (!context.mounted) return false;
+      SnackbarMessage.showError(context: context, message: e.toString());
+
       return false;
     }
   }
@@ -206,7 +212,7 @@ class AddIssueProvider extends GreenVoiceNotifier {
 
   Stream<QuerySnapshot<Map<String, dynamic>>> getComments(
       {required String issueID}) async* {
-    final messages = firebaseFirestore.getChatMessages(issueID);
+    final messages = firebaseFirestore.getIssueComments(issueID);
     yield* messages;
   }
 }

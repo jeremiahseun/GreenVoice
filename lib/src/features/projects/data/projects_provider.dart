@@ -11,6 +11,7 @@ import 'package:greenvoice/src/services/firebase/firebase.dart';
 import 'package:greenvoice/src/services/image_service.dart';
 import 'package:greenvoice/src/services/isar_storage.dart';
 import 'package:greenvoice/src/services/storage_service.dart';
+import 'package:greenvoice/src/services/user_service.dart';
 import 'package:greenvoice/src/services/uuid.dart';
 import 'package:greenvoice/utils/common_widgets/snackbar_message.dart';
 import 'package:greenvoice/utils/constants/storage_keys.dart';
@@ -78,7 +79,7 @@ class AddProjectProvider extends GreenVoiceNotifier {
   }
 
   void userImage() async {
-    final isarData = await isarStorageService.readUserDB();
+    final isarData = await UserService.getSavedUser();
     profileImage = isarData?.photo ?? '';
     notifyListeners();
   }
@@ -109,10 +110,9 @@ class AddProjectProvider extends GreenVoiceNotifier {
     if (isLoading) return false;
     startLoading();
 
-    //* Get the current user ID
-    final userId = await storageService.readSecureData(key: StorageKeys.userId);
-    final isarData = await isarStorageService.readUserDB();
-    if (userId == null) {
+//* Get the current user information
+    final currentUser = await UserService.getSavedUser();
+    if (currentUser?.uid == null) {
       stopLoading();
       if (!context.mounted) return false;
       SnackbarMessage.showError(
@@ -121,6 +121,10 @@ class AddProjectProvider extends GreenVoiceNotifier {
               "You are not logged in. Only logged in users can add issues");
       return false;
     }
+    final firstName = currentUser?.firstName;
+    final lastName = currentUser?.lastName;
+    final userId = currentUser!.uid;
+    final userPicture = currentUser.photo;
     //* Upload Images first
     final imagesList = await firebaseStorage.uploadProjectPicture(
         image: images,
@@ -153,14 +157,13 @@ class AddProjectProvider extends GreenVoiceNotifier {
         updatedAt: DateTime.now(),
         images: imagesList.$3,
         createdByUserId: userId,
-        createdByUserName:
-            '${isarData?.firstName} ${isarData?.lastName?.split("").first}',
-        createdByUserPicture: isarData?.photo ?? '',
+        createdByUserName: '$firstName ${lastName?.split("").first}',
+        createdByUserPicture: userPicture ?? '',
         comments: [],
         shares: []));
     stopLoading();
     if (res.$1) {
-      if (!context.mounted) return false;
+      if (!context.mounted) return true;
       SnackbarMessage.showSuccess(
           context: context, message: 'Project uploaded successfully.');
       return true;
@@ -173,7 +176,7 @@ class AddProjectProvider extends GreenVoiceNotifier {
   ///******************CREATE AND ISSUE COMMENT ******************* */
 
   Future<bool> sendUserComment({
-    required String issueID,
+    required String projectID,
     required String message,
     required BuildContext context,
   }) async {
@@ -181,7 +184,7 @@ class AddProjectProvider extends GreenVoiceNotifier {
     try {
       final userId =
           await storageService.readSecureData(key: StorageKeys.userId);
-      final isarData = await isarStorageService.readUserDB();
+      final isarData = await UserService.getSavedUser();
       final res = await firebaseFirestore.createProjectComments(
           CommentModel(
               id: uniqueMessageID,
@@ -191,10 +194,10 @@ class AddProjectProvider extends GreenVoiceNotifier {
               userPicture: isarData?.photo ?? '',
               message: message,
               createdAt: DateTime.now()),
-          issueID,
+          projectID,
           uniqueMessageID);
       if (res.$1) {
-        if (!context.mounted) return false;
+        if (!context.mounted) return true;
         SnackbarMessage.showSuccess(context: context, message: 'Comment added');
         return true;
       } else {
@@ -210,8 +213,8 @@ class AddProjectProvider extends GreenVoiceNotifier {
   //Get iserComments
 
   Stream<QuerySnapshot<Map<String, dynamic>>> getProjectComments(
-      {required String issueID}) async* {
-    final messages = firebaseFirestore.getProjectComments(issueID);
+      {required String projectID}) async* {
+    final messages = firebaseFirestore.getProjectComments(projectID);
     yield* messages;
   }
 }

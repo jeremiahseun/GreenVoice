@@ -8,6 +8,7 @@ import 'package:greenvoice/core/routes/routes.dart';
 import 'package:greenvoice/src/features/issues/data/issues_provider.dart';
 import 'package:greenvoice/src/features/issues/widgets/issue_card.dart';
 import 'package:greenvoice/src/features/issues/widgets/issue_loading.dart';
+import 'package:greenvoice/src/features/profile/data/profile_provider.dart';
 import 'package:greenvoice/utils/common_widgets/lottie_error_widgets.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 
@@ -34,6 +35,7 @@ class _IssuesViewState extends ConsumerState<IssuesView>
           ref.read(issuesProvider).value != null) {
         return;
       }
+      ref.read(userProfileProvider.notifier).getCurrentUserProfile();
       ref.read(issuesProvider.notifier).getAllIssues();
     });
     super.initState();
