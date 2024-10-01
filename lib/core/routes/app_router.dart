@@ -1,8 +1,5 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'dart:developer';
-
-import 'package:flutter/material.dart';
 import 'package:greenvoice/core/locator.dart';
 import 'package:greenvoice/core/routes/app_router.dart';
 import 'package:greenvoice/core/routes/routes.dart';
@@ -61,24 +58,7 @@ class GreenVoiceRoutes {
         ),
         GoRoute(
             path: AppRoutes.home,
-            pageBuilder: (BuildContext context, GoRouterState state) {
-              log("Loading screen with state ${state.fullPath}");
-              return CustomTransitionPage(
-                key: state.pageKey,
-                child: HomeScreen(),
-                transitionsBuilder: (
-                  context,
-                  animation,
-                  secondaryAnimation,
-                  child,
-                ) =>
-                    FadeTransition(
-                  opacity: CurveTween(curve: Curves.easeInOutQuart)
-                      .animate(animation),
-                  child: child,
-                ),
-              );
-            },
+            builder: (context, state) => HomeScreen(),
             routes: [
               GoRoute(
                   path: AppRoutes.issues,

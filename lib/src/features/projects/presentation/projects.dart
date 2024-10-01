@@ -46,11 +46,6 @@ class _ProjectScreenState extends ConsumerState<ProjectHome>
               expandedHeight: 100,
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
-                stretchModes: const [
-                  StretchMode.blurBackground,
-                  StretchMode.zoomBackground,
-                  StretchMode.fadeTitle,
-                ],
                 centerTitle: true,
                 title: Text(
                   'Proposed Projects',
