@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,9 +9,9 @@ import 'package:greenvoice/src/features/projects/presentation/projects.dart';
 
 class HomeScreen extends ConsumerWidget {
   final List<Widget> _screens = [
-    const IssuesView(),
-    const ProjectHome(),
-    const ProfileView()
+    const IssuesView(key: PageStorageKey('page1')),
+    const ProjectHome(key: PageStorageKey('page2')),
+    const ProfileView(key: PageStorageKey('page3'))
   ];
 
   HomeScreen({super.key});
@@ -18,11 +19,30 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = ref.watch(bottomNavigationProvider);
+    // Create a PageStorageBucket to preserve state
+    final PageStorageBucket bucket = PageStorageBucket();
 
     return Scaffold(
-      body: IndexedStack(
-        index: currentIndex,
-        children: _screens,
+      body: PageStorage(
+        bucket: bucket,
+        child: PageTransitionSwitcher(
+          duration: const Duration(milliseconds: 400),
+          reverse: currentIndex <
+              ref.read(bottomNavigationProvider.notifier).previousIndex,
+          transitionBuilder: (
+            Widget child,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) {
+            return SharedAxisTransition(
+              animation: animation,
+              secondaryAnimation: secondaryAnimation,
+              transitionType: SharedAxisTransitionType.horizontal,
+              child: child,
+            );
+          },
+          child: _screens[currentIndex],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,

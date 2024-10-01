@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:greenvoice/src/features/authentication/user/user_provider.dart';
@@ -140,9 +141,12 @@ class _ProjectDetailsViewState extends ConsumerState<ProjectDetailsView> {
                                   width: 90,
                                   child: LinearProgressIndicator(
                                     value: daysRemaining / 100,
-                                    backgroundColor:
-                                        AppColors.lightPrimaryColor,
-                                    color: AppColors.primaryColor,
+                                    backgroundColor: daysRemaining < 10
+                                        ? Colors.red.withOpacity(.1)
+                                        : AppColors.lightPrimaryColor,
+                                    color: daysRemaining < 10
+                                        ? Colors.red
+                                        : AppColors.primaryColor,
                                   ),
                                 ),
                                 const Gap(10),
@@ -351,7 +355,7 @@ class _ProjectDetailsViewState extends ConsumerState<ProjectDetailsView> {
                       ],
                     ),
                   )
-                ],
+                ].animate(interval: 200.ms).fadeIn().moveY(begin: 10, end: 0),
               ),
             );
           },

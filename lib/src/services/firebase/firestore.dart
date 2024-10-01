@@ -100,6 +100,7 @@ class FirebaseFirestoreService {
     try {
       final snapshot = await db
           .collection(FirestoreStrings.issues)
+          .orderBy('createdAt', descending: true)
           .get()
           .timeout(const Duration(seconds: 15),
               onTimeout: () =>
@@ -280,6 +281,7 @@ class FirebaseFirestoreService {
     try {
       final snapshot = await db
           .collection(FirestoreStrings.projects)
+          .orderBy('createdAt', descending: true)
           .get()
           .timeout(const Duration(seconds: 15),
               onTimeout: () =>

@@ -1,4 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -24,7 +25,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   void initState() {
     super.initState();
     // Delay the initialization by 5 seconds
-    Future.delayed(kIsWeb ? Duration.zero : const Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 5), () {
+      log("Now running splash");
       if (!kIsWeb) {
         MapboxOptions.setAccessToken(dotenv.env['MAP_KEY']!);
       }
@@ -37,7 +39,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         _isLoading = false;
       });
     });
-  }
+}
 
   @override
   void dispose() {
@@ -54,18 +56,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       return const SplashLoading();
     }
 
-    // Once loading is done, handle auth state
-    return StreamBuilder<User?>(
-      stream: firebaseAuthService
-          .authStateChanges(), // Checks the auth state of the user
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.active) {
-          return HomeScreen();
-        } else {
-          return const SplashLoading(); // Still waiting for the authentication state
-        }
-      },
-    );
+    // Once loading is done, go home
+    return HomeScreen();
   }
 }
 
