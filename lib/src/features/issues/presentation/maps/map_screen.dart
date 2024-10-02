@@ -39,7 +39,7 @@ class _MapViewState extends ConsumerState<MapScreen> {
                   if (mapWatch.isIssuesLoading) const LinearProgressIndicator(),
                   Expanded(
                     child: MapWidget(
-                      androidHostingMode: AndroidPlatformViewHostingMode.TLHC_HC,
+                      androidHostingMode: AndroidPlatformViewHostingMode.TLHC_VD,
                       styleUri: dotenv.env['MAP_STYLE']!,
                       onStyleLoadedListener: mapRead.onStyleLoaded,
                       key: const ValueKey("mapWidget"),

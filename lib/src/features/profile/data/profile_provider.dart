@@ -37,7 +37,10 @@ class UserProfileProvider extends StateNotifier<AsyncValue<UserModel?>> {
     return null;
   }
 
-  Future<void> getCurrentUserProfile() async {
+  Future<void> getCurrentUserProfile([bool force = false]) async {
+    if (state.hasValue && !force) {
+      return;
+    }
     state = const AsyncValue.loading();
 
     //* Get the current user from the backend

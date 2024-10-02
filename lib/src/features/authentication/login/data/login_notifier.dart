@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greenvoice/core/locator.dart';
+import 'package:greenvoice/src/features/profile/data/profile_provider.dart';
 import 'package:greenvoice/src/models/user/user_model.dart';
 import 'package:greenvoice/src/services/firebase/firebase.dart';
 import 'package:greenvoice/src/services/isar_storage.dart';
@@ -66,6 +67,7 @@ class LoginScreenNotifier extends GreenVoiceNotifier {
           await storageService.writeSecureData(
               key: StorageKeys.userId, value: userId);
         }
+        ref.read(userProfileProvider.notifier).getCurrentUserProfile(true);
         return (true, 'Login Successful');
       } else {
         return (false, loginUser.$2);

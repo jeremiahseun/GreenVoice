@@ -5,7 +5,6 @@ import 'package:gap/gap.dart';
 import 'package:greenvoice/core/routes/app_router.dart';
 import 'package:greenvoice/src/features/issues/data/issues_provider.dart';
 import 'package:greenvoice/src/features/issues/widgets/add_issues_widgets.dart';
-import 'package:greenvoice/src/features/profile/data/profile_provider.dart';
 import 'package:greenvoice/utils/common_widgets/green_voice_button.dart';
 import 'package:greenvoice/utils/common_widgets/not_logged_in.dart';
 import 'package:greenvoice/utils/common_widgets/snackbar_message.dart';
@@ -150,11 +149,8 @@ class _AddIssueScreenState extends ConsumerState<AddIssueScreen> {
                 onChanged: (value) => addIssueRead.setPostAnonymous(value),
               ),
               const Gap(24),
-              Visibility(
-                visible: ref.watch(userProfileProvider).hasValue &&
-                    !ref.watch(userProfileProvider).hasError,
-                replacement: const NotLoggedInWidget(),
-                child: Row(
+              NotLoggedInWidget(
+                loggedInWidget: Row(
                   children: [
                     Expanded(
                       child: GreenVoiceButton.outline(

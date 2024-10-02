@@ -29,7 +29,7 @@ class _ProfileScreenState extends ConsumerState<ProfileView> {
           ref.read(userProfileProvider).value != null) {
         return;
       }
-      ref.read(userProfileProvider.notifier).getCurrentUserProfile();
+      ref.read(userProfileProvider.notifier).getCurrentUserProfile(true);
     });
 
     super.initState();
@@ -89,7 +89,7 @@ class LoggedInProfile extends ConsumerWidget {
     return Scaffold(
       body: RefreshIndicator.adaptive(
         onRefresh: () async {
-          ref.read(userProfileProvider.notifier).getCurrentUserProfile();
+          ref.read(userProfileProvider.notifier).getCurrentUserProfile(true);
         },
         child: CustomScrollView(
           slivers: [

@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:greenvoice/core/routes/app_router.dart';
 import 'package:greenvoice/src/features/issues/widgets/add_issues_widgets.dart';
-import 'package:greenvoice/src/features/profile/data/profile_provider.dart';
 import 'package:greenvoice/src/features/projects/data/projects_provider.dart';
 import 'package:greenvoice/src/features/projects/widgets/adaptive_date_picker.dart';
 import 'package:greenvoice/src/features/projects/widgets/project_status.dart';
@@ -185,64 +184,61 @@ class _AddIssueScreenState extends ConsumerState<AddProjectScreen> {
                     );
                   }),
               const Gap(24),
-              Visibility(
-                  visible: ref.watch(userProfileProvider).hasValue &&
-                      !ref.watch(userProfileProvider).hasError,
-                  replacement: const NotLoggedInWidget(),
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: GreenVoiceButton.fill(
-                      isLoading: addProjectsWatch.isLoading,
-                      onTap: () async {
-                        if (formKey.currentState?.validate() == false) {
-                          SnackbarMessage.showInfo(
-                              context: context,
-                              message: "Fill the form and try again.");
-                          return;
-                        }
-                        if (addProjectsWatch.images.isEmpty) {
-                          SnackbarMessage.showInfo(
-                              context: context,
-                              message:
-                                  "You cannot add a project without adding images.");
-                          return;
-                        }
-                        if (ref.read(addProjectProvider).address.isEmpty) {
-                          SnackbarMessage.showInfo(
-                              context: context,
-                              message:
-                                  "You need the add the location of the project.");
-                          return;
-                        }
-                        if (ref
-                                .read(addProjectProvider)
-                                .proposedDate
-                                .difference(DateTime.now())
-                                .inDays <
-                            2) {
-                          SnackbarMessage.showInfo(
-                              context: context,
-                              message:
-                                  "The project proposed date is too short.");
-                          return;
-                        }
-                        //* We are good to go from here.
+              NotLoggedInWidget(
+                loggedInWidget: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: GreenVoiceButton.fill(
+                    isLoading: addProjectsWatch.isLoading,
+                    onTap: () async {
+                      if (formKey.currentState?.validate() == false) {
+                        SnackbarMessage.showInfo(
+                            context: context,
+                            message: "Fill the form and try again.");
+                        return;
+                      }
+                      if (addProjectsWatch.images.isEmpty) {
+                        SnackbarMessage.showInfo(
+                            context: context,
+                            message:
+                                "You cannot add a project without adding images.");
+                        return;
+                      }
+                      if (ref.read(addProjectProvider).address.isEmpty) {
+                        SnackbarMessage.showInfo(
+                            context: context,
+                            message:
+                                "You need the add the location of the project.");
+                        return;
+                      }
+                      if (ref
+                              .read(addProjectProvider)
+                              .proposedDate
+                              .difference(DateTime.now())
+                              .inDays <
+                          2) {
+                        SnackbarMessage.showInfo(
+                            context: context,
+                            message: "The project proposed date is too short.");
+                        return;
+                      }
+                      //* We are good to go from here.
 
-                        final res = await addProjectsRead.addProject(
-                            title: _titleController.text.trim(),
-                            description: _descriptionController.text.trim(),
-                            amountNeeded: _amountController.text.trim(),
-                            context: context);
-                        if (res) {
-                          if (!context.mounted) return;
-                          context.pop();
-                          ref.read(projectsProvider.notifier).getAllProjects();
-                        }
-                      },
-                      title: 'Post',
-                      size: const Size(300, 50),
-                    ),
-                  )),
+                      final res = await addProjectsRead.addProject(
+                          title: _titleController.text.trim(),
+                          description: _descriptionController.text.trim(),
+                          amountNeeded: _amountController.text.trim(),
+                          context: context);
+                      if (res) {
+                        if (!context.mounted) return;
+                        context.pop();
+                        ref.read(projectsProvider.notifier).getAllProjects();
+                      }
+                    },
+                    title: 'Post',
+                    size: const Size(300, 50),
+                  ),
+                ),
+              ),
               const Gap(5),
               Visibility(
                   visible: addProjectsWatch.isLoading,
