@@ -32,6 +32,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
     lastName.text = widget.editProfileArgument.lastName;
     emailAddress.text = widget.editProfileArgument.email;
     imageUrl = widget.editProfileArgument.image;
+    phoneNumber.text = widget.editProfileArgument.phoneNumber;
     super.initState();
   }
 
@@ -199,11 +200,11 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                           await ref
                               .read(profileProvider.notifier)
                               .editUserProfile(
-                                  imageUrl: imageUrl,
-                                  firstName: firstName.text,
-                                  lastName: lastName.text,
-                                  phoneNumber: phoneNumber.text,
-                                  email: emailAddress.text,
+                                  imageUrl: imageUrl?.trim(),
+                                  firstName: firstName.text.trim(),
+                                  lastName: lastName.text.trim(),
+                                  phoneNumber: phoneNumber.text.trim(),
+                                  email: emailAddress.text.trim(),
                                   context: context);
                         }
                       },

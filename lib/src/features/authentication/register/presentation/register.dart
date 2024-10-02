@@ -194,11 +194,11 @@ class _RegisterState extends ConsumerState<RegisterView> {
                         final registerUser = await ref
                             .read(registerNotifierProvider.notifier)
                             .createGreenVoiceUser(
-                                email: emailController.text,
-                                password: passwordController.text,
-                                firstName: nameController.text,
-                                lastName: lastNameController.text,
-                                phoneNumber: phoneNumber);
+                                email: emailController.text.trim(),
+                                password: passwordController.text.trim(),
+                                firstName: nameController.text.trim(),
+                                lastName: lastNameController.text.trim(),
+                                phoneNumber: phoneNumber.trim());
                         if (registerUser.$1 == true) {
                           SnackbarMessage.showSuccess(
                               message: 'Account created successfully',

@@ -46,6 +46,7 @@ class RegisterNotifier extends GreenVoiceNotifier {
             lastName: lastName,
             firstName: firstName,
             email: email,
+            phoneNumber: phoneNumber,
             photo: '');
         await firebaseFirestoreService.createUser(userModel);
         return (true, 'Registration Successful');

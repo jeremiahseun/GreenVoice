@@ -25,3 +25,7 @@ doc/api/
 
 .flutter-plugins
 .flutter-plugins-dependencies
+
+#files not to  be sent
+lib/src/services/web_service.dart
+lib/src/models/user/user_model.g.dart

@@ -121,11 +121,11 @@ class LoggedInProfile extends ConsumerWidget {
                               context.push(
                                 NavigateToPage.editProfile,
                                 extra: EditProfileArgument(
-                                  firstName: profile?.firstName ?? '',
-                                  lastName: profile?.lastName ?? '',
-                                  email: profile?.email ?? '',
-                                  image: profile?.photo ?? '',
-                                ),
+                                    firstName: profile?.firstName ?? '',
+                                    lastName: profile?.lastName ?? '',
+                                    email: profile?.email ?? '',
+                                    image: profile?.photo ?? '',
+                                    phoneNumber: profile?.phoneNumber ?? ''),
                               );
                             },
                           ),
@@ -200,7 +200,7 @@ class ProfileHeader extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              '$firstName, ${lastName.split('').first.toUpperCase()}',
+              '$firstName, ${lastName.split("").first}',
               style: AppStyles.blackBold24,
             ),
             IconButton(

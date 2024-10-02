@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/foundation.dart';
 import 'package:greenvoice/core/locator.dart';
 import 'package:greenvoice/src/models/user/user_model.dart';
@@ -14,6 +16,8 @@ class UserService {
     String userId = '';
     String username = '';
     String userPicture = '';
+    String phoneNumber = '';
+    String emailAddress = '';
     if (kIsWeb) {
       //* Web user reads from Web storage
       userId = WebService.readWebData(key: StorageKeys.userId) ?? '';
@@ -27,6 +31,8 @@ class UserService {
       final isarData = await isarStorageService.readUserDB();
       userPicture = isarData?.photo ?? '';
       username = "${isarData?.firstName} ${isarData?.lastName}";
+      phoneNumber = isarData?.phoneNumber ?? '';
+      emailAddress = isarData?.email ?? '';
     }
     if (userId.isEmpty) {
       return null;
@@ -34,15 +40,20 @@ class UserService {
     String firstName = '';
     String lastName = '';
     if (username.isNotEmpty) {
-      firstName = username.split(" ").first;
-      lastName = username.split(" ").last;
+      final fullname = username.split(" ");
+      firstName = fullname.first;
+
+      lastName = fullname.last;
     } else {
       firstName = username;
     }
     return UserModel(
-        uid: userId,
-        photo: userPicture,
-        firstName: firstName,
-        lastName: lastName);
+      uid: userId,
+      photo: userPicture,
+      firstName: firstName,
+      lastName: lastName,
+      phoneNumber: phoneNumber,
+      email: emailAddress,
+    );
   }
 }

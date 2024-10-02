@@ -114,10 +114,12 @@ class EditProfileArgument {
   String lastName;
   String email;
   String image;
+  String phoneNumber;
 
   EditProfileArgument(
       {required this.firstName,
       required this.lastName,
       required this.email,
-      required this.image});
+      required this.image,
+      required this.phoneNumber});
 }
