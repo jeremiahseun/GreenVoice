@@ -4,9 +4,10 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:greenvoice/core/locator.dart';
+import 'package:greenvoice/src/features/profile/data/profile_provider.dart';
 import 'package:greenvoice/src/models/user/user_model.dart';
 import 'package:greenvoice/src/services/firebase/firebase.dart';
-import 'package:greenvoice/src/services/isar_storage.dart';
+import 'package:greenvoice/src/services/hive_storage.dart';
 import 'package:greenvoice/src/services/storage_service.dart';
 import 'package:greenvoice/src/services/web_service.dart';
 import 'package:greenvoice/utils/constants/storage_keys.dart';
@@ -23,7 +24,7 @@ class LoginScreenNotifier extends GreenVoiceNotifier {
       FirebaseFirestoreService();
 
   final StorageService storageService = StorageService();
-  final isarStorageService = locator<IsarStorageService>();
+  final hiveStorageService = locator<HiveStorageService>();
 
   bool isObscurePassword = false;
 
@@ -57,15 +58,13 @@ class LoginScreenNotifier extends GreenVoiceNotifier {
             photo: loginUser.$3?.user?.photoURL);
 
         if (kIsWeb) {
-          WebService.writeUserModelData(
-              userId: userId,
-              username: fullName,
-              picture: userModel.photo ?? "");
+          WebService.writeWebData(key: StorageKeys.userId, value: userId);
         } else {
-          await isarStorageService.writeUserDB(userModel);
           await storageService.writeSecureData(
               key: StorageKeys.userId, value: userId);
         }
+        await hiveStorageService.writeUserDB(userModel);
+        ref.read(userProfileProvider.notifier).getCurrentUserProfile(true);
         return (true, 'Login Successful');
       } else {
         return (false, loginUser.$2);

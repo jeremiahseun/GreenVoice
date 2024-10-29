@@ -13,9 +13,9 @@ class GreenVoiceButton extends StatelessWidget {
   const GreenVoiceButton(
       {super.key,
       required this.onTap,
-      this.size = const Size(150, 40),
       required this.title,
       this.isOutlined = false,
+      this.size = const Size(150, 40),
       this.isLoading = false,
       this.textColor = AppColors.blackColor,
       this.outlineColor,

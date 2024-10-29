@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_web_frame/flutter_web_frame.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:greenvoice/core/locator.dart';
 import 'package:greenvoice/core/routes/app_router.dart';
-import 'package:greenvoice/src/services/isar_storage.dart';
+import 'package:greenvoice/src/services/hive_storage.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 
 import 'firebase_options.dart';
@@ -21,9 +22,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await FlutterBranchSdk.init(enableLogging: true, disableTracking: false);
-  if (!kIsWeb) {
-    await IsarStorageService.initialize();
-  }
+
+  await HiveStorageService.initialize();
+
   runApp(const ProviderScope(child: GreenVoice()));
 }
 
@@ -33,24 +34,32 @@ class GreenVoice extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routeInformationParser: greenVoice.routeInformationParser,
-      routeInformationProvider: greenVoice.routeInformationProvider,
-      routerDelegate: greenVoice.routerDelegate,
-      debugShowCheckedModeBanner: false,
-      title: 'GreenVoice',
-      theme: ThemeData(
-          brightness: Brightness.light,
-          useMaterial3: true,
-          colorScheme: const ColorScheme.light(primary: AppColors.primaryColor),
-          progressIndicatorTheme:
-              const ProgressIndicatorThemeData(color: AppColors.primaryColor),
-          textTheme: GoogleFonts.publicSansTextTheme(),
-          textButtonTheme: TextButtonThemeData(
-            style: TextButton.styleFrom(
-              textStyle: GoogleFonts.publicSans(),
-            ),
-          )),
+    return FlutterWebFrame(
+      builder: (context) {
+        return MaterialApp.router(
+          routeInformationParser: greenVoice.routeInformationParser,
+          routeInformationProvider: greenVoice.routeInformationProvider,
+          routerDelegate: greenVoice.routerDelegate,
+          debugShowCheckedModeBanner: false,
+          title: 'GreenVoice',
+          theme: ThemeData(
+              brightness: Brightness.light,
+              useMaterial3: true,
+              colorScheme:
+                  const ColorScheme.light(primary: AppColors.primaryColor),
+              progressIndicatorTheme: const ProgressIndicatorThemeData(
+                  color: AppColors.primaryColor),
+              textTheme: GoogleFonts.publicSansTextTheme(),
+              textButtonTheme: TextButtonThemeData(
+                style: TextButton.styleFrom(
+                  textStyle: GoogleFonts.publicSans(),
+                ),
+              )),
+        );
+      },
+      maximumSize: const Size(606.0, 950.0), // Maximum size
+      enabled: kIsWeb, // default is enable, when disable content is full size
+      backgroundColor: Colors.grey, // Background color/white space
     );
   }
 }
