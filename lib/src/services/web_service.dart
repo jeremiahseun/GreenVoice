@@ -1,13 +1,13 @@
-import 'package:web/web.dart' as web;
+// import 'package:web/web.dart' as web;
 
 class WebService {
   static String? readWebData({required String key}) {
-    return web.window.localStorage.getItem(key);
-    //  return '';
+    // return web.window.localStorage.getItem(key);
+    return '';
   }
 
   static void writeWebData({required String key, required String value}) {
-    web.window.localStorage.setItem(key, value);
+    // web.window.localStorage.setItem(key, value);
   }
 
   static void writeUserModelData({
@@ -23,6 +23,6 @@ class WebService {
   }
 
   static void clearAll() {
-   web.window.localStorage.clear();
+    //  web.window.localStorage.clear();
   }
 }

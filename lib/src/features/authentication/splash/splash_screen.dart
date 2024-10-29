@@ -39,7 +39,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         _isLoading = false;
       });
     });
-}
+  }
 
   @override
   void dispose() {
