@@ -10,7 +10,7 @@ import 'package:greenvoice/core/routes/app_router.dart';
 import 'package:greenvoice/src/models/user/user_model.dart';
 import 'package:greenvoice/src/services/firebase/firebase.dart';
 import 'package:greenvoice/src/services/image_service.dart';
-import 'package:greenvoice/src/services/isar_storage.dart';
+import 'package:greenvoice/src/services/hive_storage.dart';
 import 'package:greenvoice/src/services/storage_service.dart';
 import 'package:greenvoice/src/services/user_service.dart';
 import 'package:greenvoice/src/services/web_service.dart';
@@ -29,7 +29,7 @@ class UserProfileProvider extends StateNotifier<AsyncValue<UserModel?>> {
 
   Ref ref;
   final firebaseFirestore = locator<FirebaseFirestoreService>();
-  final isarStorageService = locator<IsarStorageService>();
+  final hiveStorageService = locator<HiveStorageService>();
   final storageService = locator<StorageService>();
 
   Future<List<Map<String, dynamic>>?> getVotingHistory(
@@ -47,10 +47,6 @@ class UserProfileProvider extends StateNotifier<AsyncValue<UserModel?>> {
     try {
       final upstreamUser = await _getUserDetails();
       if (upstreamUser.$1) {
-        if (kIsWeb) {
-          state = AsyncValue.data(upstreamUser.$2);
-          return;
-        }
         final savedDBUser = await _getUserDetailsFromDb();
         if (savedDBUser == null) {
           state = AsyncValue.error("No user", StackTrace.current);
@@ -83,10 +79,7 @@ class UserProfileProvider extends StateNotifier<AsyncValue<UserModel?>> {
     try {
       final getUser = await firebaseFirestore.getUser(userId);
       if (getUser.$1 && getUser.$3 != null) {
-        if (kIsWeb) {
-          return (true, getUser.$3);
-        }
-        await isarStorageService.writeUserDB(getUser.$3!);
+        await hiveStorageService.writeUserDB(getUser.$3!);
         return (true, getUser.$3);
       } else {
         return (false, null);
@@ -102,7 +95,7 @@ class ProfileProvider extends GreenVoiceNotifier {
   final firebaseFirestore = locator<FirebaseFirestoreService>();
   final firebaseAuthService = locator<FirebaseAuthService>();
   final firebaseStorage = locator<FirebaseStorageService>();
-  final isarStorageService = locator<IsarStorageService>();
+  final hiveStorageService = locator<HiveStorageService>();
   final storageService = locator<StorageService>();
   String? firstName;
   String? lastName;
@@ -180,7 +173,7 @@ class ProfileProvider extends GreenVoiceNotifier {
         );
         context.pop();
         if (!kIsWeb) {
-          await isarStorageService.writeUserDB(userData);
+          await hiveStorageService.writeUserDB(userData);
         }
 
         ref.read(userProfileProvider.notifier).getCurrentUserProfile();
@@ -198,7 +191,7 @@ class ProfileProvider extends GreenVoiceNotifier {
 
   Future exitApp() async {
     await firebaseAuthService.signOut();
-    isarStorageService.clearDB();
+    hiveStorageService.clearDB();
     storageService.clearAll();
     storageService.clearAllSecure();
   }

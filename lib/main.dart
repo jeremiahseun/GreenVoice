@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:greenvoice/core/locator.dart';
 import 'package:greenvoice/core/routes/app_router.dart';
-import 'package:greenvoice/src/services/isar_storage.dart';
+import 'package:greenvoice/src/services/hive_storage.dart';
 import 'package:greenvoice/utils/styles/styles.dart';
 
 import 'firebase_options.dart';
@@ -21,9 +21,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await FlutterBranchSdk.init(enableLogging: true, disableTracking: false);
-  if (!kIsWeb) {
-    await IsarStorageService.initialize();
-  }
+
+  await HiveStorageService.initialize();
+
   runApp(const ProviderScope(child: GreenVoice()));
 }
 

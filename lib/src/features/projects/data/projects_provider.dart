@@ -9,7 +9,7 @@ import 'package:greenvoice/src/models/project/project_model.dart';
 import 'package:greenvoice/src/models/socials/comment.dart';
 import 'package:greenvoice/src/services/firebase/firebase.dart';
 import 'package:greenvoice/src/services/image_service.dart';
-import 'package:greenvoice/src/services/isar_storage.dart';
+import 'package:greenvoice/src/services/hive_storage.dart';
 import 'package:greenvoice/src/services/storage_service.dart';
 import 'package:greenvoice/src/services/user_service.dart';
 import 'package:greenvoice/src/services/uuid.dart';
@@ -36,7 +36,7 @@ class AddProjectProvider extends GreenVoiceNotifier {
   final firebaseFirestore = locator<FirebaseFirestoreService>();
   final firebaseStorage = locator<FirebaseStorageService>();
   final storageService = locator<StorageService>();
-  final isarStorageService = locator<IsarStorageService>();
+  final hiveStorageService = locator<HiveStorageService>();
   AddProjectProvider(this.ref);
   Ref ref;
   double latitude = 0.0;
